@@ -692,6 +692,13 @@
     let correctCount   = parseInt(sessionStorage.getItem("co") || "0");
     let bestScore      = parseFloat(sessionStorage.getItem("bs") || "0");
 
+    /* Session ID for environment tracking (prevents 'Call reset() before step' in multi-user setups) */
+    let sessionId = localStorage.getItem("sanskrit_session_id");
+    if (!sessionId) {
+      sessionId = "ui_" + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+      localStorage.setItem("sanskrit_session_id", sessionId);
+    }
+
     /* ── DOM refs ──────────────────────────────────────── */
     const $  = (id) => document.getElementById(id);
     const btnNew       = $("btnNewEpisode");
@@ -731,7 +738,11 @@
         const res = await fetch("/reset", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ task_id: currentTask, seed: null }),
+          body: JSON.stringify({ 
+            task_id: currentTask, 
+            seed: null,
+            episode_id: sessionId 
+          }),
         });
         if (!res.ok) throw new Error(`Server error: ${res.status}`);
         const data = await res.json();
@@ -851,6 +862,7 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            request_id: sessionId,
             action: {
               selected_option: selectedOption,
               confidence: 0.8,
