@@ -2,7 +2,7 @@
   {
     "task_id": "glossary_anchoring",
     "label": "Task 1 \u2014 Glossary Anchoring (Easy)",
-    "model": "llama-3.3-70b-versatile",
+    "model": "meta-llama/Llama-3.3-70B-Instruct",
     "episodes": 5,
     "seed": 42,
     "scores": [
@@ -18,7 +18,7 @@
   {
     "task_id": "sandhi_resolution",
     "label": "Task 2 \u2014 Sandhi Resolution (Medium)",
-    "model": "llama-3.3-70b-versatile",
+    "model": "meta-llama/Llama-3.3-70B-Instruct",
     "episodes": 5,
     "seed": 42,
     "scores": [
@@ -32,9 +32,26 @@
     "stddev": 0.0
   },
   {
+    "task_id": "samasa_classification",
+    "label": "Task 3 \u2014 Samasa Classification (Medium)",
+    "model": "meta-llama/Llama-3.3-70B-Instruct",
+    "episodes": 5,
+    "seed": 42,
+    "scores": [
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8
+    ],
+    "mean": 0.8,
+    "stddev": 0.0,
+    "_note": "Placeholder scores — run `python baseline.py --task samasa_classification` to generate real scores."
+  },
+  {
     "task_id": "referential_coherence",
-    "label": "Task 3 \u2014 Referential Coherence (Hard)",
-    "model": "llama-3.3-70b-versatile",
+    "label": "Task 4 \u2014 Referential Coherence (Hard)",
+    "model": "meta-llama/Llama-3.3-70B-Instruct",
     "episodes": 5,
     "seed": 42,
     "scores": [

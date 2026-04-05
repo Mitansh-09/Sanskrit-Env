@@ -3,9 +3,9 @@ version: "1.0.0"
 description: >
   Sanskrit Manuscript Interpretation Environment.
   An RL environment where agents resolve structural ambiguity in Sanskrit
-  manuscript passages — glossary anchoring, sandhi resolution, and
-  multi-verse referential coherence. Three tasks ranging from easy to hard.
-  Fully deterministic graders. Dense partial reward signal.
+  manuscript passages — glossary anchoring, sandhi resolution, samasa
+  classification, and multi-verse referential coherence. Four tasks ranging
+  from easy to hard. Fully deterministic graders. Dense partial reward signal.
   Real-world application: assisting translation of India's digitized manuscript corpus.
 author: your-huggingface-username
 tags:
@@ -26,6 +26,11 @@ tasks:
   - id: sandhi_resolution
     difficulty: medium
     description: Identify the correct phonological split of a Sanskrit compound word
+    max_steps: 1
+    score_range: [0.0, 1.0]
+  - id: samasa_classification
+    difficulty: medium
+    description: Identify the grammatical type of a Sanskrit compound word (samasa) from six Paninian categories
     max_steps: 1
     score_range: [0.0, 1.0]
   - id: referential_coherence
