@@ -11,8 +11,11 @@ from fastapi.responses import FileResponse
 from server.environment import SanskritEnvironment
 from models import ManuscriptAction, ManuscriptObservation
 
+# Instantiate the environment once (singleton) to maintain session state
+env_instance = SanskritEnvironment()
+
 app = create_fastapi_app(
-    SanskritEnvironment,       # callable factory — calling it returns an Environment instance
+    lambda: env_instance,      # factory returns the singleton instance
     ManuscriptAction,          # action type class
     ManuscriptObservation,     # observation type class
 )
@@ -24,5 +27,9 @@ os.makedirs(static_dir, exist_ok=True)
 @app.get("/")
 async def serve_ui():
     return FileResponse(os.path.join(static_dir, "index.html"))
+
+@app.get("/session")
+async def check_session():
+    return {"active_sessions": list(env_instance._sessions.keys())}
 
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
