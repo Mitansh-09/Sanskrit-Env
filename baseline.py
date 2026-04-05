@@ -18,12 +18,14 @@ Usage:
     # Run a specific task only:
     python baseline.py --task glossary_anchoring
     python baseline.py --task sandhi_resolution
+    python baseline.py --task samasa_classification
     python baseline.py --task referential_coherence
 
 Expected baseline scores (llama-3.3-70b-versatile, temp=0.0):
-    Task 1 — Glossary Anchoring:     ~0.70
-    Task 2 — Sandhi Resolution:      ~0.50
-    Task 3 — Referential Coherence:  ~0.60
+    Task 1 — Glossary Anchoring:      1.000
+    Task 2 — Sandhi Resolution:       1.000
+    Task 3 — Samasa Classification:   ~0.80 (estimated)
+    Task 4 — Referential Coherence:   0.840
 """
 
 import os
@@ -52,10 +54,19 @@ RETRY_WAIT    = 2            # seconds between retries on rate-limit hit
 
 SYSTEM_PROMPT = """You are an expert Sanskrit manuscript interpreter with deep knowledge of:
 - Classical Sanskrit grammar, phonology, and sandhi rules
+- Paninian grammar: samasa (compound) classification — Tatpurusha, Karmadharaya, Dvigu, Dvandva, Bahuvrihi, Avyayibhava
 - Ayurvedic texts: Charaka Samhita, Sushruta Samhita, Ashtanga Hridayam
 - Astronomical texts: Aryabhatiya, Brahmasphutasiddhanta
 - Philosophical texts: Bhagavad Gita, Upanishads, Vivekachudamani
 - Narrative texts: Ramayana, Mahabharata, Arthashastra
+
+For samasa classification, apply these rules:
+- Tatpurusha: second member is the semantic head, first member qualifies it via a case relation
+- Karmadharaya: adjective + noun referring to the SAME entity (subtype of tatpurusha)
+- Dvigu: numeral + noun forming a collective (subtype of tatpurusha)
+- Dvandva: both members are coordinate and equal — "A and B" — dual/plural number reflects sum
+- Bahuvrihi: compound is adjectival, describes an EXTERNAL referent — neither member is the head
+- Avyayibhava: whole compound is an indeclinable adverb, first member is usually a prefix/indeclinable
 
 Your task each step:
 1. THINK: reason carefully about the Sanskrit passage and question
@@ -92,7 +103,8 @@ def build_user_prompt(obs, rolling_memory: str) -> str:
     if obs.target_term_iast:
         lines.append(f"Term to interpret: {obs.target_term_iast}")
     if obs.compound_iast:
-        lines.append(f"Compound to split: {obs.compound_iast}")
+        label = "Compound to classify" if obs.task_id == "samasa_classification" else "Compound to split"
+        lines.append(f"{label}: {obs.compound_iast}")
 
     # Task 3: full verse history
     if obs.verses_so_far:
@@ -309,7 +321,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="SanskritEnv baseline inference (Groq)")
     parser.add_argument(
         "--task",
-        choices=["glossary_anchoring", "sandhi_resolution", "referential_coherence", "all"],
+        choices=["glossary_anchoring", "sandhi_resolution", "samasa_classification", "referential_coherence", "all"],
         default="all",
         help="Which task to run (default: all)",
     )
@@ -328,9 +340,10 @@ if __name__ == "__main__":
     print(f"Architecture: ReAct + rolling_memory (Think→Act→Observe→Update)")
 
     tasks_to_run = {
-        "glossary_anchoring":   "Task 1 — Glossary Anchoring (Easy)",
-        "sandhi_resolution":    "Task 2 — Sandhi Resolution (Medium)",
-        "referential_coherence":"Task 3 — Referential Coherence (Hard)",
+        "glossary_anchoring":    "Task 1 — Glossary Anchoring (Easy)",
+        "sandhi_resolution":     "Task 2 — Sandhi Resolution (Medium)",
+        "samasa_classification": "Task 3 — Samasa Classification (Medium)",
+        "referential_coherence": "Task 4 — Referential Coherence (Hard)",
     }
 
     if args.task != "all":

@@ -6,10 +6,11 @@ Implements the OpenEnv Environment interface:
     step(action: ManuscriptAction) -> ManuscriptObservation
     state -> ManuscriptState
 
-Three task modes:
-    task_id = "glossary_anchoring"    (Easy)
-    task_id = "sandhi_resolution"     (Medium)
-    task_id = "referential_coherence" (Hard)
+Four task modes:
+    task_id = "glossary_anchoring"       (Easy)
+    task_id = "sandhi_resolution"        (Medium)
+    task_id = "samasa_classification"    (Medium)
+    task_id = "referential_coherence"    (Hard)
 
 All graders are deterministic. No external API calls inside this file.
 """
@@ -21,7 +22,7 @@ from pathlib import Path
 from typing import Optional
 from openenv.core.env_server import Environment
 from models import ManuscriptAction, ManuscriptObservation, ManuscriptState
-from graders import GlossaryGrader, SandhiGrader, CoherenceGrader
+from graders import GlossaryGrader, SandhiGrader, CoherenceGrader, SamasaGrader
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
@@ -43,11 +44,13 @@ class SanskritEnvironment(Environment):
         self._glossary_grader = GlossaryGrader()
         self._sandhi_grader = SandhiGrader()
         self._coherence_grader = CoherenceGrader()
+        self._samasa_grader = SamasaGrader()
 
         # Load all data at startup — never at step time
         self._task1_data = self._load_json("task1_glossary.json")
         self._task2_data = self._load_json("task2_sandhi.json")
         self._task3_data = self._load_json("task3_coherence.json")
+        self._task4_data = self._load_json("task4_samasa.json")
 
         # Task 3 state
         self._t3_verse_index = 0
@@ -74,7 +77,7 @@ class SanskritEnvironment(Environment):
             seed: Random seed for episode selection. None = random.
             episode_id: Optional specific episode ID to load.
             task_id: Which task to run. One of:
-                     "glossary_anchoring" | "sandhi_resolution" | "referential_coherence"
+                     "glossary_anchoring" | "sandhi_resolution" | "samasa_classification" | "referential_coherence"
                      Defaults to "glossary_anchoring".
         """
         if seed is not None:
@@ -82,7 +85,7 @@ class SanskritEnvironment(Environment):
 
         # Set task
         self._task_id = task_id or "glossary_anchoring"
-        if self._task_id not in ("glossary_anchoring", "sandhi_resolution", "referential_coherence"):
+        if self._task_id not in ("glossary_anchoring", "sandhi_resolution", "samasa_classification", "referential_coherence"):
             self._task_id = "glossary_anchoring"
 
         # Select episode
@@ -152,6 +155,8 @@ class SanskritEnvironment(Environment):
             return self._step_task2(action, ep)
         elif self._task_id == "referential_coherence":
             return self._step_task3(action, ep)
+        elif self._task_id == "samasa_classification":
+            return self._step_task4(action, ep)
         else:
             return self._step_task1(action, ep)
 
@@ -373,6 +378,54 @@ class SanskritEnvironment(Environment):
                 reward=episode_score,
             )
 
+
+    # ─────────────────────────────────────────────────────────────
+    # Task 4 — Samasa Classification
+    # ─────────────────────────────────────────────────────────────
+
+    def _step_task4(self, action: ManuscriptAction, ep: dict) -> ManuscriptObservation:
+        reward, feedback = self._samasa_grader.grade(
+            selected_option=action.selected_option,
+            correct_answer=ep["correct_answer"],
+            candidate_options=ep["candidate_options"],
+            partial_credit_indices=ep["partial_credit_indices"],
+        )
+
+        is_correct = reward == 1.0
+        is_partial = 0.0 < reward < 1.0
+        self._state.correct_decisions += int(is_correct)
+        self._state.partial_decisions += int(is_partial)
+        self._state.decision_history.append({
+            "step": self._state.step_count,
+            "selected": action.selected_option,
+            "correct": ep["correct_answer"],
+            "reward": reward,
+        })
+        self._state.is_complete = True
+
+        final_score = self._normalize_score(
+            self._state.correct_decisions,
+            self._state.partial_decisions,
+            self._state.total_decisions,
+            task_id="samasa_classification",
+        )
+
+        return ManuscriptObservation(
+            task_id=self._task_id,
+            episode_id=self._state.episode_id,
+            source_text_iast=ep["source_text_iast"],
+            source_text_devanagari=ep["source_text_devanagari"],
+            english_context=ep["english_context"],
+            domain=ep["domain"],
+            compound_iast=ep.get("compound_iast"),
+            decision_prompt=ep["decision_prompt"],
+            candidate_options=ep["candidate_options"],
+            step_reward=reward,
+            cumulative_score=final_score,
+            feedback_message=feedback,
+            done=True,
+            reward=final_score,
+        )
     # ─────────────────────────────────────────────────────────────
     # Helpers
     # ─────────────────────────────────────────────────────────────
@@ -384,6 +437,8 @@ class SanskritEnvironment(Environment):
             return self._task2_data["episodes"]
         elif task_id == "referential_coherence":
             return self._task3_data["episodes"]
+        elif task_id == "samasa_classification":
+            return self._task4_data["episodes"]
         return self._task1_data["episodes"]
 
     def _count_total_decisions(self, ep: dict) -> int:
@@ -449,19 +504,29 @@ class SanskritEnvironment(Environment):
         )
 
     def _get_checkpoint_candidates(self, correct_answer: str, ep: dict) -> list:
-        """Generate 4 candidates for a checkpoint question using character names from the episode."""
-        names = list({
-            v.get("english", "").split()[0]
-            for v in ep.get("verses", [])
-            if v.get("english")
-        })
-        candidates = [correct_answer]
-        # Fill with plausible distractors from the episode's named entities
-        for name in names:
-            if name not in candidates and len(candidates) < 4:
-                candidates.append(name)
-        while len(candidates) < 4:
-            candidates.append(f"Unnamed entity {len(candidates)}")
+        """
+        Build 4 candidates for a checkpoint question by reusing the episode's
+        candidate_options pool (which already has well-written descriptions).
+
+        The correct option is whichever candidate_option starts with correct_answer.
+        Distractors are the remaining candidate_options, shuffled.
+        This guarantees:
+          - The correct option string is always present verbatim in the list
+          - grade_checkpoint() exact-match against cp["answer"] will succeed
+          - Distractors are meaningful character names, not verse first-words
+        """
+        episode_options = ep.get("candidate_options", [])
+
+        # Find the full option string that matches the short checkpoint answer
+        correct_full = next(
+            (opt for opt in episode_options if opt.startswith(correct_answer)),
+            correct_answer,  # fallback: use short name as-is if no match found
+        )
+
+        # Build distractor list from remaining episode options
+        distractors = [opt for opt in episode_options if opt != correct_full]
+
+        candidates = [correct_full] + distractors
         random.shuffle(candidates)
         return candidates[:4]
 
@@ -479,6 +544,9 @@ class SanskritEnvironment(Environment):
             return round(min(raw / total, 1.0), 4)
         elif task_id == "sandhi_resolution":
             raw = correct * 1.0 + partial * 0.25
+            return round(min(raw / total, 1.0), 4)
+        elif task_id == "samasa_classification":
+            raw = correct * 1.0 + partial * 0.4
             return round(min(raw / total, 1.0), 4)
         return round(min(correct / total, 1.0), 4)
 

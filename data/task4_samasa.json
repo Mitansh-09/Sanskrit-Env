@@ -1,0 +1,304 @@
+{
+  "episodes": [
+    {
+      "id": "t4_001",
+      "domain": "philosophy",
+      "source_text_iast": "raja-putrah vane vasati",
+      "source_text_devanagari": "राजपुत्रः वने वसति",
+      "english_context": "Passage from Ramayana describing Rama's lineage. 'Raja-putrah' means 'son of the king'.",
+      "compound_iast": "raja-putrah",
+      "compound_devanagari": "राजपुत्रः",
+      "decision_prompt": "What type of samasa (compound) is 'raja-putrah' (son of the king)?",
+      "candidate_options": [
+        "Tatpurusha (determinative) — 'son of the king', second member is head, first qualifies it via case relation",
+        "Dvandva (copulative) — 'king and son', both members equally prominent, joined by 'and'",
+        "Bahuvrihi (possessive) — 'he who has a king as son', compound describes an outside referent",
+        "Avyayibhava (adverbial) — compound functions as an indeclinable adverb modifying the action"
+      ],
+      "correct_answer": "Tatpurusha (determinative) — 'son of the king', second member is head, first qualifies it via case relation",
+      "correct_index": 0,
+      "partial_credit_indices": [],
+      "explanation": "Raja-putrah is a shashthi-tatpurusha: 'son (putrah) of the king (rajnah)'. The second member 'putra' is the semantic head. The first member 'raja' stands in a genitive (shashthi) relationship to it."
+    },
+    {
+      "id": "t4_002",
+      "domain": "narrative",
+      "source_text_iast": "nila-utpalam tasmin sarasi vikasati sma",
+      "source_text_devanagari": "नीलोत्पलं तस्मिन् सरसि विकसति स्म",
+      "english_context": "Passage from Kalidasa's Meghaduta describing a blue lotus blooming in the lake.",
+      "compound_iast": "nila-utpalam",
+      "compound_devanagari": "नीलोत्पलम्",
+      "decision_prompt": "What type of samasa is 'nila-utpalam' (blue lotus)?",
+      "candidate_options": [
+        "Tatpurusha (determinative) — 'lotus of blueness', second member is head qualified by first via case",
+        "Karmadharaya (descriptive tatpurusha) — 'blue lotus', adjective + noun where both refer to the same thing",
+        "Dvandva (copulative) — 'blue and lotus', two equal coordinate members",
+        "Bahuvrihi (possessive) — 'that which has a blue lotus', describes an external referent"
+      ],
+      "correct_answer": "Karmadharaya (descriptive tatpurusha) — 'blue lotus', adjective + noun where both refer to the same thing",
+      "correct_index": 1,
+      "partial_credit_indices": [0],
+      "explanation": "Nila-utpalam is a karmadharaya compound: an adjective (nila, blue) modifying a noun (utpala, lotus) where both refer to the same entity. Karmadharaya is a subtype of tatpurusha with sama-adhikarana (same referent) between members."
+    },
+    {
+      "id": "t4_003",
+      "domain": "narrative",
+      "source_text_iast": "rama-lakshmanau vanam pravishtatuh",
+      "source_text_devanagari": "रामलक्ष्मणौ वनं प्रविष्टतुः",
+      "english_context": "Ramayana, Aranya Kanda. Rama and Lakshmana both entered the forest together.",
+      "compound_iast": "rama-lakshmanau",
+      "compound_devanagari": "रामलक्ष्मणौ",
+      "decision_prompt": "What type of samasa is 'rama-lakshmanau' (Rama and Lakshmana)?",
+      "candidate_options": [
+        "Tatpurusha (determinative) — 'Lakshmana of Rama', second member qualified by first",
+        "Bahuvrihi (possessive) — 'he who has Rama and Lakshmana', describes an outside person",
+        "Dvandva (copulative) — 'Rama and Lakshmana', both members equally prominent, dual number reflects two referents",
+        "Avyayibhava (adverbial) — compound functions as an indeclinable adverb"
+      ],
+      "correct_answer": "Dvandva (copulative) — 'Rama and Lakshmana', both members equally prominent, dual number reflects two referents",
+      "correct_index": 2,
+      "partial_credit_indices": [],
+      "explanation": "Rama-lakshmanau is a dvandva compound. Both members (Rama, Lakshmana) are semantically coordinate — 'Rama AND Lakshmana'. The dual ending (-au) confirms two equal referents. Dvandva always takes the number of the sum of its members."
+    },
+    {
+      "id": "t4_004",
+      "domain": "philosophy",
+      "source_text_iast": "pita-putrau grhe tishthantau drashtum ayatah",
+      "source_text_devanagari": "पितापुत्रौ गृहे तिष्ठन्तौ द्रष्टुम् आयातः",
+      "english_context": "Arthashastra passage about a father and son staying at home to be examined by the minister.",
+      "compound_iast": "pita-putrau",
+      "compound_devanagari": "पितापुत्रौ",
+      "decision_prompt": "What type of samasa is 'pita-putrau' (father and son)?",
+      "candidate_options": [
+        "Dvandva (copulative) — 'father and son', both members coordinate, dual ending confirms two referents",
+        "Tatpurusha (determinative) — 'son of the father', second member is head",
+        "Bahuvrihi (possessive) — 'he who has a father-son pair', refers to an external entity",
+        "Karmadharaya (descriptive) — adjective-noun pair referring to the same entity"
+      ],
+      "correct_answer": "Dvandva (copulative) — 'father and son', both members coordinate, dual ending confirms two referents",
+      "correct_index": 0,
+      "partial_credit_indices": [],
+      "explanation": "Pita-putrau is a dvandva: 'father (pita) AND son (putra)'. The dual ending (-au) signals two distinct coordinate referents. Neither member is subordinate to the other semantically."
+    },
+    {
+      "id": "t4_005",
+      "domain": "philosophy",
+      "source_text_iast": "pita-mahah sarvajnah iti proktam",
+      "source_text_devanagari": "पितामहः सर्वज्ञः इति प्रोक्तम्",
+      "english_context": "Upanishad passage. 'Pitamahah' refers to Brahma, the grandfatherly creator who is called omniscient.",
+      "compound_iast": "pita-mahah",
+      "compound_devanagari": "पितामहः",
+      "decision_prompt": "What type of samasa is 'pitamahah' (grandfather / Brahma)?",
+      "candidate_options": [
+        "Dvandva (copulative) — 'father and great', two coordinate members",
+        "Avyayibhava (adverbial) — compound used as indeclinable adverb",
+        "Tatpurusha (determinative) — 'great father' or 'father's father', second member is head modified by first",
+        "Bahuvrihi (possessive) — 'he for whom the father is great', describes the referent via an attribute"
+      ],
+      "correct_answer": "Tatpurusha (determinative) — 'great father' or 'father's father', second member is head modified by first",
+      "correct_index": 2,
+      "partial_credit_indices": [],
+      "explanation": "Pitamahah is a tatpurusha: maha (great/elder) + pita (father) with the compound meaning 'grandfather'. The second member pita is the head noun, modified by maha indicating seniority. This is a common kinship compound in Sanskrit."
+    },
+    {
+      "id": "t4_006",
+      "domain": "ayurveda",
+      "source_text_iast": "dasha-ahanena vyadhih prashyati iti vaidyah aha",
+      "source_text_devanagari": "दशाहेन व्याधिः प्रशाम्यति इति वैद्यः आह",
+      "english_context": "Charaka Samhita. The physician says the disease subsides within ten days.",
+      "compound_iast": "dasha-ahanena",
+      "compound_devanagari": "दशाहेन",
+      "decision_prompt": "What type of samasa is 'dasha-ahena' (within ten days / in the span of ten days)?",
+      "candidate_options": [
+        "Dvandva (copulative) — 'ten and day', two coordinate nouns",
+        "Tatpurusha (determinative) — 'day of ten', second member is head",
+        "Bahuvrihi (possessive) — 'that which has ten days', describes an outside referent",
+        "Avyayibhava (adverbial) — compound functions as an indeclinable expressing 'within ten days'"
+      ],
+      "correct_answer": "Avyayibhava (adverbial) — compound functions as an indeclinable expressing 'within ten days'",
+      "correct_index": 3,
+      "partial_credit_indices": [],
+      "explanation": "Dasha-ahena is avyayibhava: it functions as an indeclinable adverb meaning 'within ten days'. Avyayibhava compounds are recognized by their invariant (avyaya) behavior — they don't inflect for case — and typically express temporal, spatial, or manner relations."
+    },
+    {
+      "id": "t4_007",
+      "domain": "philosophy",
+      "source_text_iast": "pita-mahyam upari vasati iti uktam",
+      "source_text_devanagari": "पितृमहीम् उपरि वसति इति उक्तम्",
+      "english_context": "Arthashastra. A compound used to describe something occurring 'throughout the entire earth'.",
+      "compound_iast": "prithivi-upari",
+      "compound_devanagari": "पृथिव्युपरि",
+      "decision_prompt": "What type of samasa is 'prithivi-upari' (above the entire earth / throughout the earth)?",
+      "candidate_options": [
+        "Tatpurusha (determinative) — 'above of earth', second member is head",
+        "Avyayibhava (adverbial) — compound functions as an indeclinable adverb meaning 'above/throughout the earth'",
+        "Dvandva (copulative) — 'earth and above', two coordinate members",
+        "Bahuvrihi (possessive) — 'that which has earth above it', refers to external referent"
+      ],
+      "correct_answer": "Avyayibhava (adverbial) — compound functions as an indeclinable adverb meaning 'above/throughout the earth'",
+      "correct_index": 1,
+      "partial_credit_indices": [],
+      "explanation": "Prithivi-upari is avyayibhava: the first member is a noun (prithivi, earth) and the second is an indeclinable (upari, above/throughout). The whole compound functions adverbially and is itself indeclinable — a hallmark of avyayibhava."
+    },
+    {
+      "id": "t4_008",
+      "domain": "narrative",
+      "source_text_iast": "pita-mahah dhanur-dharah yudhe pravishyat",
+      "source_text_devanagari": "धनुर्धरः युद्धे प्रविश्यत्",
+      "english_context": "Mahabharata, Bhishma Parva. The archer (one who bears/holds a bow) entered the battlefield.",
+      "compound_iast": "dhanur-dharah",
+      "compound_devanagari": "धनुर्धरः",
+      "decision_prompt": "What type of samasa is 'dhanur-dharah' (the bow-bearer / archer)?",
+      "candidate_options": [
+        "Tatpurusha (determinative) — 'bearer of the bow', second member is head, first is object of the action",
+        "Dvandva (copulative) — 'bow and bearer', two coordinate members",
+        "Bahuvrihi (possessive) — 'he who bears a bow', compound describes an outside person (the archer)",
+        "Avyayibhava (adverbial) — compound acts as indeclinable adverb"
+      ],
+      "correct_answer": "Bahuvrihi (possessive) — 'he who bears a bow', compound describes an outside person (the archer)",
+      "correct_index": 2,
+      "partial_credit_indices": [0],
+      "explanation": "Dhanur-dharah is bahuvrihi: it describes an external referent (the warrior/archer) who possesses the attribute of bearing a bow. The compound itself is not about bows — it's an adjectival label for the person. Compare with tatpurusha 'dhanus-dharanam' (the act of bow-bearing) where the compound refers to the activity itself."
+    },
+    {
+      "id": "t4_009",
+      "domain": "philosophy",
+      "source_text_iast": "chaturbhujah vishnum namami",
+      "source_text_devanagari": "चतुर्भुजं विष्णुं नमामि",
+      "english_context": "Vishnu Sahasranama. 'Chaturbhujah' is an epithet of Vishnu meaning 'the four-armed one'.",
+      "compound_iast": "chaturbhujah",
+      "compound_devanagari": "चतुर्भुजः",
+      "decision_prompt": "What type of samasa is 'chaturbhujah' (the four-armed one, epithet of Vishnu)?",
+      "candidate_options": [
+        "Dvandva (copulative) — 'four and arm', two coordinate members",
+        "Tatpurusha (determinative) — 'arm of four', second member is head",
+        "Avyayibhava (adverbial) — compound functions as indeclinable",
+        "Bahuvrihi (possessive) — 'he who has four arms', compound refers to Vishnu as external referent"
+      ],
+      "correct_answer": "Bahuvrihi (possessive) — 'he who has four arms', compound refers to Vishnu as external referent",
+      "correct_index": 3,
+      "partial_credit_indices": [],
+      "explanation": "Chaturbhujah is a classic bahuvrihi: the compound means 'he who has four arms' — it describes Vishnu, who is external to the compound. The compound itself is adjectival. Key test: neither 'four' nor 'arm' is the main subject; Vishnu is."
+    },
+    {
+      "id": "t4_010",
+      "domain": "astronomy",
+      "source_text_iast": "surya-chandramasau gagane sthitau",
+      "source_text_devanagari": "सूर्यचन्द्रमसौ गगने स्थितौ",
+      "english_context": "Aryabhatiya. The sun and the moon are positioned in the sky — used in calculating their conjunction.",
+      "compound_iast": "surya-chandramasau",
+      "compound_devanagari": "सूर्यचन्द्रमसौ",
+      "decision_prompt": "What type of samasa is 'surya-chandramasau' (the sun and the moon)?",
+      "candidate_options": [
+        "Tatpurusha (determinative) — 'moon of the sun', second member qualified by first",
+        "Dvandva (copulative) — 'sun and moon', both equally prominent, dual ending reflects two referents",
+        "Bahuvrihi (possessive) — 'he who has sun and moon', refers to an outside entity",
+        "Karmadharaya (descriptive) — adjective-noun pair, both referring to same entity"
+      ],
+      "correct_answer": "Dvandva (copulative) — 'sun and moon', both equally prominent, dual ending reflects two referents",
+      "correct_index": 1,
+      "partial_credit_indices": [],
+      "explanation": "Surya-chandramasau is dvandva: both members (surya, sun; chandra, moon) are coordinate and equally important semantically. The dual ending (-au) signals two referents. Dvandva is the standard compound type for pairing celestial bodies in Jyotisha texts."
+    },
+    {
+      "id": "t4_011",
+      "domain": "ayurveda",
+      "source_text_iast": "tri-doshena shariram dushtam bhavati",
+      "source_text_devanagari": "त्रिदोषेण शरीरं दुष्टं भवति",
+      "english_context": "Ashtanga Hridayam. The body becomes afflicted by the three doshas (vata, pitta, kapha).",
+      "compound_iast": "tri-doshah",
+      "compound_devanagari": "त्रिदोषः",
+      "decision_prompt": "What type of samasa is 'tri-doshah' (the three doshas)?",
+      "candidate_options": [
+        "Dvandva (copulative) — 'three and dosha', two coordinate members",
+        "Bahuvrihi (possessive) — 'that body which has three doshas', refers to external referent",
+        "Avyayibhava (adverbial) — functions as indeclinable",
+        "Dvigu (numerical tatpurusha) — numeral + noun meaning 'a group of three doshas', subtype of tatpurusha"
+      ],
+      "correct_answer": "Dvigu (numerical tatpurusha) — numeral + noun meaning 'a group of three doshas', subtype of tatpurusha",
+      "correct_index": 3,
+      "partial_credit_indices": [0],
+      "explanation": "Tri-doshah is a dvigu compound: a numeral (tri, three) + noun (dosha) forming a collective meaning 'the group of three doshas'. Dvigu is a subtype of tatpurusha where the first member is always a numeral. It typically takes singular or neuter endings to signal collectivity."
+    },
+    {
+      "id": "t4_012",
+      "domain": "philosophy",
+      "source_text_iast": "sat-citam ananda-rupam brahma iti vedah vadanti",
+      "source_text_devanagari": "सच्चिदानन्दं ब्रह्म इति वेदाः वदन्ति",
+      "english_context": "Mandukya Upanishad. The Vedas declare Brahman to be sat-cit-ananda (existence-consciousness-bliss).",
+      "compound_iast": "sat-cit-ananda",
+      "compound_devanagari": "सच्चिदानन्द",
+      "decision_prompt": "What type of samasa is 'sat-cit-ananda' (existence, consciousness, bliss — the three aspects of Brahman)?",
+      "candidate_options": [
+        "Tatpurusha (determinative) — 'bliss of consciousness of being', chain of qualifications",
+        "Dvandva (copulative) — 'existence and consciousness and bliss', three coordinate equal members",
+        "Bahuvrihi (possessive) — 'that which has existence, consciousness and bliss', refers to Brahman externally",
+        "Avyayibhava (adverbial) — functions as indeclinable in Vedantic discourse"
+      ],
+      "correct_answer": "Dvandva (copulative) — 'existence and consciousness and bliss', three coordinate equal members",
+      "correct_index": 1,
+      "partial_credit_indices": [2],
+      "explanation": "Sat-cit-ananda is a dvandva: all three members (sat, cit, ananda) are semantically equal and coordinate — 'being AND consciousness AND bliss'. Dvandva can have more than two members. The compound serves as a technical definition of Brahman's nature in Advaita Vedanta."
+    },
+    {
+      "id": "t4_013",
+      "domain": "narrative",
+      "source_text_iast": "mahato devam padma-nayanam apashyan",
+      "source_text_devanagari": "पद्मनयनम् अपश्यन्",
+      "english_context": "Mahabharata. The warriors saw the lotus-eyed one (Vishnu/Krishna). 'Padma-nayanam' is a common epithet.",
+      "compound_iast": "padma-nayanam",
+      "compound_devanagari": "पद्मनयनम्",
+      "decision_prompt": "What type of samasa is 'padma-nayanam' (lotus-eyed / he whose eyes are like lotuses)?",
+      "candidate_options": [
+        "Karmadharaya (descriptive tatpurusha) — 'lotus eye', adjective + noun referring to same entity",
+        "Dvandva (copulative) — 'lotus and eye', two coordinate members",
+        "Bahuvrihi (possessive) — 'he whose eyes are like lotuses', compound refers to the deity as external referent",
+        "Tatpurusha (determinative) — 'eye of the lotus', second member is head qualified by first"
+      ],
+      "correct_answer": "Bahuvrihi (possessive) — 'he whose eyes are like lotuses', compound refers to the deity as external referent",
+      "correct_index": 2,
+      "partial_credit_indices": [0],
+      "explanation": "Padma-nayanam is bahuvrihi: it is an adjectival epithet describing an external referent (Vishnu/Krishna) whose eyes resemble lotuses. The compound itself doesn't mean 'lotus' or 'eye' — it means 'the one possessing lotus-like eyes'. This is the most common use of bahuvrihi in Sanskrit poetry for divine epithets."
+    },
+    {
+      "id": "t4_014",
+      "domain": "astronomy",
+      "source_text_iast": "pratyaham grahanam gamanam ganayati",
+      "source_text_devanagari": "प्रत्यहं ग्रहाणां गमनं गणयति",
+      "english_context": "Aryabhatiya. The astronomer calculates the daily motion of the planets.",
+      "compound_iast": "pratyaham",
+      "compound_devanagari": "प्रत्यहम्",
+      "decision_prompt": "What type of samasa is 'pratyaham' (every day / daily)?",
+      "candidate_options": [
+        "Tatpurusha (determinative) — 'day of prati', second member is head",
+        "Dvandva (copulative) — 'prati and day', two coordinate members",
+        "Avyayibhava (adverbial) — indeclinable compound meaning 'every day', first member is indeclinable prefix 'prati'",
+        "Bahuvrihi (possessive) — 'that which has every day', refers to external referent"
+      ],
+      "correct_answer": "Avyayibhava (adverbial) — indeclinable compound meaning 'every day', first member is indeclinable prefix 'prati'",
+      "correct_index": 2,
+      "partial_credit_indices": [],
+      "explanation": "Pratyaham is a canonical avyayibhava: prati (a prefix/indeclinable meaning 'each/every') + aham (day). The entire compound functions as an adverb ('daily') and is itself indeclinable. Prati-prefixed avyayibhava compounds (pratidinam, pratyabdam, etc.) are extremely common in technical Sanskrit literature."
+    },
+    {
+      "id": "t4_015",
+      "domain": "philosophy",
+      "source_text_iast": "guru-shishyau dharma-margena gacchantau",
+      "source_text_devanagari": "गुरुशिष्यौ धर्ममार्गेण गच्छन्तौ",
+      "english_context": "Upanishad passage. The teacher and student walk together on the path of dharma.",
+      "compound_iast": "guru-shishyau",
+      "compound_devanagari": "गुरुशिष्यौ",
+      "decision_prompt": "What type of samasa is 'guru-shishyau' (teacher and student)?",
+      "candidate_options": [
+        "Tatpurusha (determinative) — 'student of the teacher', second member is head qualified by first",
+        "Dvandva (copulative) — 'teacher and student', both members equally prominent, dual confirms two referents",
+        "Bahuvrihi (possessive) — 'he who has teacher and student', refers to external entity",
+        "Karmadharaya (descriptive) — adjective-noun pair referring to the same entity"
+      ],
+      "correct_answer": "Dvandva (copulative) — 'teacher and student', both members equally prominent, dual confirms two referents",
+      "correct_index": 1,
+      "partial_credit_indices": [],
+      "explanation": "Guru-shishyau is dvandva: both members (guru, teacher; shishya, student) are semantically coordinate — 'teacher AND student'. The dual ending (-au) confirms exactly two referents. This is identical in structure to rama-lakshmanau (t4_003)."
+    }
+  ]
+}
