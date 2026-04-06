@@ -291,6 +291,8 @@ The web UI now supports two modes:
 - Human mode: user manually answers each question.
 - Model mode: user selects an HF model from the dropdown and the server auto-solves the full episode, then shows score and per-model performance stats.
 
+If model mode shows a token warning on HF Space, open Space Settings -> Variables and secrets and set one of these secrets/env vars: `HF_TOKEN`, `HUGGINGFACEHUB_API_TOKEN`, `HUGGINGFACE_API_TOKEN`, `HF_API_TOKEN`, `HF_API_KEY`, or `HUGGINGFACE_TOKEN`, then restart the Space.
+
 Important note: the dropdown is restricted to HF models intended for free-tier routing, but real-time availability can still vary with provider load, throttling, or policy updates.
 
 ### Minimal example

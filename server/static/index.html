@@ -1133,9 +1133,13 @@
         if (!modelOptions.length) {
           modelHint.textContent = "No HF models configured by the server.";
         } else if (!data.token_configured) {
-          modelHint.textContent = "HF_TOKEN is not configured on the server, so model mode will fail until token is set.";
+          const keys = Array.isArray(data.token_env_keys) && data.token_env_keys.length
+            ? data.token_env_keys.join(", ")
+            : "HF_TOKEN";
+          modelHint.textContent = `No HF token detected on server. Add a Space Secret/env var (${keys}) and restart the Space.`;
         } else {
-          modelHint.textContent = "Model mode uses server-side HF Router token and computes episode scores automatically.";
+          const source = data.token_source ? ` (${data.token_source})` : "";
+          modelHint.textContent = `Model mode uses server-side HF Router token${source} and computes episode scores automatically.`;
         }
       } catch (err) {
         modelOptions = [];

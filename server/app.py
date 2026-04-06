@@ -31,9 +31,26 @@ def _env_float(name: str, default: float) -> float:
         return default
 
 
+def _first_nonempty_env(*names: str) -> tuple[str, Optional[str]]:
+    for name in names:
+        value = os.environ.get(name)
+        if value and value.strip():
+            return value.strip(), name
+    return "", None
+
+
 load_dotenv()
 
-HF_TOKEN = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACEHUB_API_TOKEN")
+HF_TOKEN_ENV_KEYS = (
+    "HF_TOKEN",
+    "HUGGINGFACEHUB_API_TOKEN",
+    "HUGGINGFACE_API_TOKEN",
+    "HF_API_TOKEN",
+    "HF_API_KEY",
+    "HUGGINGFACE_TOKEN",
+)
+
+HF_TOKEN, HF_TOKEN_SOURCE = _first_nonempty_env(*HF_TOKEN_ENV_KEYS)
 HF_ROUTER_URL = os.environ.get("HF_ROUTER_URL", "https://router.huggingface.co/v1/chat/completions")
 HF_UI_MODELS = os.environ.get("HF_UI_MODELS", "")
 
@@ -77,6 +94,8 @@ async def model_options():
     return {
         "models": models,
         "token_configured": bool(HF_TOKEN),
+        "token_source": HF_TOKEN_SOURCE,
+        "token_env_keys": list(HF_TOKEN_ENV_KEYS),
         "router_url": HF_ROUTER_URL,
         "note": "HF free-tier availability can change by provider load or policy.",
     }
@@ -85,7 +104,11 @@ async def model_options():
 @app.post("/model/run")
 async def model_run(payload: ModelEpisodeRequest):
     if not HF_TOKEN:
-        raise HTTPException(status_code=400, detail="HF_TOKEN is not configured on the server.")
+        expected = ", ".join(HF_TOKEN_ENV_KEYS)
+        raise HTTPException(
+            status_code=400,
+            detail=f"HF token is not configured on the server. Set one of: {expected}.",
+        )
 
     models = get_model_catalog(HF_UI_MODELS)
     allowed = {model["id"] for model in models}
