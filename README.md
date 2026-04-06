@@ -94,15 +94,16 @@ Four tasks, escalating difficulty:
 
 ## Baseline scores
 
-Measured with `meta-llama/Llama-3.3-70B-Instruct` (Hugging Face Router API),
-ReAct + Memory architecture, `temperature=0.0`, default 15 episodes per task, seed=42.
+Measured with `@cf/meta/llama-3.1-8b-instruct` (Cloudflare Workers AI),
+ReAct + Memory architecture, `CF_TEMPERATURE=0.0`, `EPISODES_PER_TASK=5`, `RANDOM_SEED=42`.
+Values below are from the generated `baseline_results.json`.
 
 | Task | Score | Std dev | Notes |
 |------|-------|---------|-------|
-| Task 1 — Glossary Anchoring (Easy) | `1.000` | `±0.000` | Verified |
-| Task 2 — Sandhi Resolution (Medium) | `1.000` | `±0.000` | Verified |
-| Task 3 — Samāsa Classification (Medium) | `~0.800` | `±0.000` | Estimated — run `python baseline.py --task samasa_classification` to generate real scores |
-| Task 4 — Referential Coherence (Hard) | `0.880` | `±0.075` | Verified |
+| Task 1 — Glossary Anchoring (Easy) | `1.000` | `±0.000` | Generated |
+| Task 2 — Sandhi Resolution (Medium) | `0.800` | `±0.400` | Generated |
+| Task 3 — Samāsa Classification (Medium) | `1.000` | `±0.000` | Generated |
+| Task 4 — Referential Coherence (Hard) | `0.280` | `±0.3429` | Generated |
 
 *Run `python baseline.py` to reproduce. Results are saved to `baseline_results.json`.*
 
@@ -226,7 +227,8 @@ Two runs with the same seed will always produce identical scores.
 
 - Python 3.11+
 - Docker (for containerized deployment)
-- HuggingFace token (free, no billing required): [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
+- Cloudflare Workers AI API token
+- Cloudflare account ID
 
 ### Local development
 
@@ -267,17 +269,19 @@ copy .env.example .env   # Windows
 # cp .env.example .env   # macOS/Linux
 
 # Edit .env and set at least:
-# HF_TOKEN=your_hf_token_here
+# CLOUDFLARE_API_TOKEN=your_cloudflare_api_token
+# CLOUDFLARE_ACCOUNT_ID=your_cloudflare_account_id
 # SANSKRIT_ENV_URL=http://localhost:7860
 
 # All tasks
 python baseline.py
 
-# Single task
-python baseline.py --task samasa_classification
-
-# Swap models
-python baseline.py --model meta-llama/Llama-3.3-70B-Instruct
+# Optional controls are env-driven (no CLI flags):
+# BASELINE_TASK=samasa_classification
+# BASELINE_MODEL=@cf/meta/llama-3.1-8b-instruct
+# BASELINE_NO_AUTO_FALLBACK=1
+# EPISODES_PER_TASK=5
+# RANDOM_SEED=42
 ```
 
 ---
@@ -384,13 +388,13 @@ The included `baseline.py` implements a **ReAct + Memory** loop:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  ReAct + Memory loop (one HF API call per step)         │
+│  ReAct + Memory loop (one Workers AI call per step)      │
 │                                                         │
 │  rolling_memory = ""   ← starts empty each episode     │
 │                                                         │
 │  while not done:                                        │
 │    1. THINK  — build prompt from obs + rolling_memory   │
-│    2. ACT    — call HF Inference API, get raw answer    │
+│    2. ACT    — call Cloudflare Workers AI, get answer   │
 │    3. MATCH  — match raw answer to candidate_options    │
 │    4. STEP   — env.step(ManuscriptAction(selected))     │
 │    5. UPDATE — append "Q → A" to rolling_memory        │

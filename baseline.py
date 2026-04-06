@@ -1,36 +1,37 @@
 """
-baseline.py — SanskritEnv Baseline Inference Script (HF Router API + ReAct + Memory)
+baseline.py — SanskritEnv Baseline Inference Script (Cloudflare Workers AI + ReAct + Memory)
 
 Architecture: ReAct + Memory loop
-  Think   -> agent reasons using full verse context + rolling_memory of prior decisions
-  Act     -> agent selects one candidate_option verbatim
-  Observe -> environment returns reward + feedback_message
-  Update  -> agent appends a one-line referent summary to rolling_memory
+    Think   -> agent reasons using full verse context + rolling_memory of prior decisions
+    Act     -> agent selects one candidate_option verbatim
+    Observe -> environment returns reward + feedback_message
+    Update  -> agent appends a one-line referent summary to rolling_memory
 
-LLM backend: Hugging Face Router (token auth via HF_TOKEN)
-Token: https://huggingface.co/settings/tokens
+LLM backend: Cloudflare Workers AI (OpenAI-compatible chat endpoint)
 
 Usage:
-    # Option 1: set env vars directly
-    set HF_TOKEN=your_hf_token_here
-    set SANSKRIT_ENV_URL=http://localhost:7860
+        # Option 1: set env vars directly
+        set CLOUDFLARE_API_TOKEN=your_cloudflare_api_token
+        set CLOUDFLARE_ACCOUNT_ID=your_cloudflare_account_id
+        set SANSKRIT_ENV_URL=http://localhost:7860
 
-    # Option 2: place values in .env (loaded automatically)
-    # HF_TOKEN=your_hf_token_here
-    # SANSKRIT_ENV_URL=http://localhost:7860
+        # Option 2: place values in .env (loaded automatically)
+        # CLOUDFLARE_API_TOKEN=your_cloudflare_api_token
+        # CLOUDFLARE_ACCOUNT_ID=your_cloudflare_account_id
+        # SANSKRIT_ENV_URL=http://localhost:7860
 
-    python baseline.py
+        python baseline.py
 """
 
-import argparse
 import json
 import os
 import random
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
-from typing import List
+from typing import List, Optional
 
 from dotenv import load_dotenv
 
@@ -63,27 +64,60 @@ def _env_bool(name: str, default: bool) -> bool:
     return value.strip().lower() not in {"0", "false", "no", "off"}
 
 
-HF_TOKEN = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACEHUB_API_TOKEN")
-ENV_URL = os.environ.get("SANSKRIT_ENV_URL", "http://localhost:7860")
-DEFAULT_MODEL = os.environ.get("HF_MODEL", "Qwen/Qwen2.5-72B-Instruct")
-HF_ROUTER_URL = os.environ.get("HF_ROUTER_URL", "https://router.huggingface.co/v1/chat/completions")
+def _first_nonempty_env(*names: str) -> tuple[str, Optional[str]]:
+    for name in names:
+        value = os.environ.get(name)
+        if value and value.strip():
+            return value.strip(), name
+    return "", None
 
-HF_MODEL_CANDIDATES = [
+
+ENV_URL = os.environ.get("SANSKRIT_ENV_URL", "http://localhost:7860")
+CLOUDFLARE_API_TOKEN, CLOUDFLARE_API_TOKEN_SOURCE = _first_nonempty_env(
+    "CLOUDFLARE_API_TOKEN",
+    "CF_API_TOKEN",
+    "CLOUDFLARE_TOKEN",
+    "CF_TOKEN",
+)
+CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_ACCOUNT_ID_SOURCE = _first_nonempty_env(
+    "CLOUDFLARE_ACCOUNT_ID",
+    "CF_ACCOUNT_ID",
+)
+
+DEFAULT_MODEL = os.environ.get("CF_MODEL", "@cf/meta/llama-3.1-8b-instruct")
+
+_default_cf_chat_url = ""
+if CLOUDFLARE_ACCOUNT_ID:
+    _default_cf_chat_url = (
+        f"https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/ai/v1/chat/completions"
+    )
+
+CF_CHAT_COMPLETIONS_URL = (
+    os.environ.get("CF_CHAT_COMPLETIONS_URL")
+    or os.environ.get("CF_WORKERS_AI_URL")
+    or _default_cf_chat_url
+)
+
+CF_MODEL_CANDIDATES = [
     model.strip()
     for model in os.environ.get(
-        "HF_MODEL_CANDIDATES",
-        "Qwen/Qwen2.5-72B-Instruct,meta-llama/Llama-3.3-70B-Instruct,Qwen/Qwen2.5-7B-Instruct,google/gemma-2-9b-it,mistralai/Mistral-7B-Instruct-v0.3,HuggingFaceH4/zephyr-7b-beta",
+        "CF_MODEL_CANDIDATES",
+        DEFAULT_MODEL,
     ).split(",")
     if model.strip()
 ]
-AUTO_MODEL_FALLBACK = _env_bool("HF_AUTO_MODEL_FALLBACK", True)
+AUTO_MODEL_FALLBACK = _env_bool("CF_AUTO_MODEL_FALLBACK", True)
 
-TEMPERATURE = _env_float("HF_TEMPERATURE", 0.0)
-MAX_TOKENS = _env_int("HF_MAX_TOKENS", 512)
+TEMPERATURE = _env_float("CF_TEMPERATURE", 0.0)
+MAX_TOKENS = _env_int("CF_MAX_TOKENS", 512)
 EPISODES_PER_TASK = _env_int("EPISODES_PER_TASK", 15)
 RANDOM_SEED = _env_int("RANDOM_SEED", 42)
 RETRY_WAIT = _env_int("RETRY_WAIT", 5)
-REQUEST_TIMEOUT = _env_int("HF_REQUEST_TIMEOUT", 90)
+REQUEST_TIMEOUT = _env_int("CF_REQUEST_TIMEOUT", 90)
+
+BASELINE_TASK = ((os.environ.get("BASELINE_TASK", "all") or "all").strip().lower() or "all")
+BASELINE_MODEL = ((os.environ.get("BASELINE_MODEL", DEFAULT_MODEL) or DEFAULT_MODEL).strip() or DEFAULT_MODEL)
+BASELINE_NO_AUTO_FALLBACK = _env_bool("BASELINE_NO_AUTO_FALLBACK", False)
 
 # ── System prompt ─────────────────────────────────────────────────────────────
 
@@ -200,31 +234,73 @@ def update_rolling_memory(rolling_memory: str, obs, selected_option: str) -> str
     return "\n".join(lines)
 
 
-# ── HF Router API call with retry ────────────────────────────────────────────
+# ── Cloudflare Workers AI API call with retry ────────────────────────────────
 
-def _extract_router_text(payload: dict) -> str:
+
+def _extract_chat_text(payload: dict) -> str:
     choices = payload.get("choices") or []
-    if not choices:
-        return ""
+    if choices:
+        message = choices[0].get("message") or {}
+        content = message.get("content", "")
 
-    message = choices[0].get("message") or {}
-    content = message.get("content", "")
+        if isinstance(content, str):
+            return content.strip()
 
-    if isinstance(content, str):
-        return content.strip()
+        # Some models return content as an array of chunks.
+        if isinstance(content, list):
+            chunks = []
+            for item in content:
+                if isinstance(item, dict) and isinstance(item.get("text"), str):
+                    chunks.append(item["text"])
+            return "".join(chunks).strip()
 
-    # Some models return content as an array of chunks.
-    if isinstance(content, list):
-        chunks = []
-        for item in content:
-            if isinstance(item, dict) and isinstance(item.get("text"), str):
-                chunks.append(item["text"])
-        return "".join(chunks).strip()
+        return str(content).strip()
 
-    return str(content).strip()
+    # Cloudflare native envelope (ai/run) often returns result.response
+    result = payload.get("result")
+    if isinstance(result, dict):
+        response_text = result.get("response")
+        if isinstance(response_text, str):
+            return response_text.strip()
+
+    return ""
 
 
-def _parse_router_error_text(raw: str) -> str:
+def _is_openai_chat_endpoint(url: str) -> bool:
+    return "/ai/v1/chat/completions" in (url or "")
+
+
+def _build_worker_url(base_url: str, model: str) -> str:
+    url = (base_url or "").strip()
+    if not url:
+        return url
+
+    encoded_model = urllib.parse.quote(model, safe="@/-._")
+    if "{model}" in url:
+        return url.replace("{model}", encoded_model)
+
+    # If user supplies /ai/run without the model suffix, append it.
+    if "/ai/run" in url and url.rstrip("/").endswith("/ai/run"):
+        return f"{url.rstrip('/')}/{encoded_model}"
+
+    return url
+
+
+def _build_cf_payload(model: str, system: str, user: str, max_tokens: int) -> dict:
+    payload = {
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        "temperature": TEMPERATURE,
+        "max_tokens": max_tokens,
+    }
+    if _is_openai_chat_endpoint(CF_CHAT_COMPLETIONS_URL):
+        payload["model"] = model
+    return payload
+
+
+def _parse_api_error_text(raw: str) -> str:
     text = (raw or "").strip()
     if not text:
         return "unknown provider error"
@@ -232,6 +308,7 @@ def _parse_router_error_text(raw: str) -> str:
     try:
         payload = json.loads(text)
         if isinstance(payload, dict):
+            # OpenAI-style error envelope
             err = payload.get("error")
             if isinstance(err, dict):
                 msg = err.get("message")
@@ -239,6 +316,18 @@ def _parse_router_error_text(raw: str) -> str:
                     return msg.strip()
             if isinstance(err, str) and err.strip():
                 return err.strip()
+
+            # Cloudflare API envelope
+            errs = payload.get("errors")
+            if isinstance(errs, list):
+                messages = []
+                for item in errs:
+                    if isinstance(item, dict):
+                        msg = item.get("message")
+                        if isinstance(msg, str) and msg.strip():
+                            messages.append(msg.strip())
+                if messages:
+                    return "; ".join(messages)
     except json.JSONDecodeError:
         pass
 
@@ -254,31 +343,38 @@ def _parse_router_error_text(raw: str) -> str:
     return " ".join(text.split())[:220]
 
 
-def _is_credits_exhausted(message: str) -> bool:
+def _is_quota_exhausted(message: str) -> bool:
     msg = (message or "").lower()
-    return "depleted your monthly included credits" in msg or "purchase pre-paid credits" in msg
+    checks = (
+        "insufficient credits",
+        "depleted your monthly included credits",
+        "purchase pre-paid credits",
+        "quota",
+        "billing",
+    )
+    return any(token in msg for token in checks)
+
+
+def _cf_headers() -> dict:
+    return {
+        "Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}",
+        "Content-Type": "application/json",
+    }
 
 
 def _probe_model_access(model: str) -> tuple[bool, str]:
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": "Reply with OK only."},
-            {"role": "user", "content": "OK"},
-        ],
-        "temperature": 0,
-        "max_tokens": 4,
-    }
+    payload = _build_cf_payload(
+        model=model,
+        system="Reply with OK only.",
+        user="OK",
+        max_tokens=4,
+    )
 
     request_body = json.dumps(payload).encode("utf-8")
-    headers = {
-        "Authorization": f"Bearer {HF_TOKEN}",
-        "Content-Type": "application/json",
-    }
     req = urllib.request.Request(
-        HF_ROUTER_URL,
+        _build_worker_url(CF_CHAT_COMPLETIONS_URL, model),
         data=request_body,
-        headers=headers,
+        headers=_cf_headers(),
         method="POST",
     )
 
@@ -289,7 +385,7 @@ def _probe_model_access(model: str) -> tuple[bool, str]:
             return False, f"HTTP {response.status}"
     except urllib.error.HTTPError as exc:
         error_body = exc.read().decode("utf-8", errors="ignore")
-        parsed = _parse_router_error_text(error_body)
+        parsed = _parse_api_error_text(error_body)
         return False, f"{exc.code}: {parsed}"
     except urllib.error.URLError as exc:
         return False, f"network: {exc.reason}"
@@ -299,9 +395,9 @@ def _probe_model_access(model: str) -> tuple[bool, str]:
 
 def select_model_for_run(requested_model: str) -> str:
     ordered: List[str] = [requested_model]
-    ordered.extend(m for m in HF_MODEL_CANDIDATES if m != requested_model)
+    ordered.extend(m for m in CF_MODEL_CANDIDATES if m != requested_model)
 
-    print("Checking HF model availability for current token/provider...")
+    print("Checking Cloudflare Workers AI model availability...")
     unavailable = []
 
     for model in ordered:
@@ -316,44 +412,36 @@ def select_model_for_run(requested_model: str) -> str:
         unavailable.append((model, detail))
         print(f"  Unavailable: {model} ({detail})")
 
-        if _is_credits_exhausted(detail):
+        if _is_quota_exhausted(detail):
             raise RuntimeError(
-                f"HF Router credits exhausted for this token. {detail}"
+                f"Cloudflare Workers AI quota appears exhausted for this token/account. {detail}"
             )
 
     summary = "; ".join(f"{model} -> {reason}" for model, reason in unavailable[:4])
     raise RuntimeError(
-        "No available HF chat model found for this token/provider setup. "
+        "No available Cloudflare Workers AI chat model found for this token/account setup. "
         f"Tried: {summary}"
     )
 
 
 def call_llm(model: str, system: str, user: str) -> str:
     """
-    Call Hugging Face Router chat completions endpoint with exponential backoff.
-    Auth uses HF_TOKEN, not any OpenAI/Groq client SDK.
+    Call Cloudflare Workers AI OpenAI-compatible chat completions endpoint.
     """
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        "temperature": TEMPERATURE,
-        "max_tokens": MAX_TOKENS,
-    }
+    payload = _build_cf_payload(
+        model=model,
+        system=system,
+        user=user,
+        max_tokens=MAX_TOKENS,
+    )
 
     request_body = json.dumps(payload).encode("utf-8")
-    headers = {
-        "Authorization": f"Bearer {HF_TOKEN}",
-        "Content-Type": "application/json",
-    }
 
     for attempt in range(4):
         req = urllib.request.Request(
-            HF_ROUTER_URL,
+            _build_worker_url(CF_CHAT_COMPLETIONS_URL, model),
             data=request_body,
-            headers=headers,
+            headers=_cf_headers(),
             method="POST",
         )
 
@@ -361,22 +449,22 @@ def call_llm(model: str, system: str, user: str) -> str:
             with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT) as response:
                 body = response.read().decode("utf-8")
                 data = json.loads(body)
-                return _extract_router_text(data)
+                return _extract_chat_text(data)
         except urllib.error.HTTPError as exc:
             error_body = exc.read().decode("utf-8", errors="ignore")
             if exc.code in (429, 500, 502, 503, 504):
                 wait = RETRY_WAIT * (2 ** attempt)
-                print(f"    [router {exc.code}] waiting {wait}s before retry {attempt + 1}/3...")
+                print(f"    [cloudflare {exc.code}] waiting {wait}s before retry {attempt + 1}/3...")
                 time.sleep(wait)
                 continue
-            parsed = _parse_router_error_text(error_body)
-            raise RuntimeError(f"Router request failed ({exc.code}): {parsed}")
+            parsed = _parse_api_error_text(error_body)
+            raise RuntimeError(f"Workers AI request failed ({exc.code}): {parsed}")
         except urllib.error.URLError as exc:
             wait = RETRY_WAIT * (2 ** attempt)
             print(f"    [network] {exc.reason}; waiting {wait}s before retry {attempt + 1}/3...")
             time.sleep(wait)
         except json.JSONDecodeError as exc:
-            raise RuntimeError(f"Router returned non-JSON response: {exc}")
+            raise RuntimeError(f"Workers AI returned non-JSON response: {exc}")
 
     return ""
 
@@ -490,11 +578,11 @@ def run_task(task_id: str, label: str, model: str) -> dict:
                 message = str(exc)
                 print(f"  ERROR: {message}")
                 scores.append(0.0)
-                if _is_credits_exhausted(message):
+                if _is_quota_exhausted(message):
                     remaining = EPISODES_PER_TASK - len(scores)
                     if remaining > 0:
                         scores.extend([0.0] * remaining)
-                    print("  Stopping task early: HF Router credits are exhausted.")
+                    print("  Stopping task early: Workers AI quota appears exhausted.")
                     break
 
     mean   = sum(scores) / len(scores)
@@ -518,64 +606,60 @@ def run_task(task_id: str, label: str, model: str) -> dict:
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="SanskritEnv baseline inference (HF Router API + ReAct + Memory)")
-    parser.add_argument(
-        "--task",
-        choices=["glossary_anchoring", "sandhi_resolution", "samasa_classification", "referential_coherence", "all"],
-        default="all",
-        help="Which task to run (default: all)",
-    )
-    parser.add_argument(
-        "--model",
-        default=DEFAULT_MODEL,
-        help="HF model ID to use (default from HF_MODEL or Qwen/Qwen2.5-72B-Instruct)",
-    )
-    parser.add_argument(
-        "--no-auto-fallback",
-        action="store_true",
-        help="Disable automatic fallback to an available HF model.",
-    )
-    parser.add_argument(
-        "--episodes",
-        type=int,
-        default=EPISODES_PER_TASK,
-        help="Episodes per task (default from EPISODES_PER_TASK env or 15)",
-    )
-    parser.add_argument(
-        "--seed",
-        type=int,
-        default=RANDOM_SEED,
-        help="Random seed base (default from RANDOM_SEED env or 42)",
-    )
-    args = parser.parse_args()
+    task_choice = BASELINE_TASK
+    model_choice = BASELINE_MODEL
+    no_auto_fallback = BASELINE_NO_AUTO_FALLBACK
 
-    EPISODES_PER_TASK = args.episodes
-    RANDOM_SEED = args.seed
-
-    if not HF_TOKEN:
-        print("ERROR: HF_TOKEN environment variable is not set.")
-        print("  Get a free HF token at: https://huggingface.co/settings/tokens")
-        print("  Or set HUGGINGFACEHUB_API_TOKEN in .env")
+    valid_tasks = {
+        "glossary_anchoring",
+        "sandhi_resolution",
+        "samasa_classification",
+        "referential_coherence",
+        "all",
+    }
+    if task_choice not in valid_tasks:
+        print(
+            "ERROR: BASELINE_TASK must be one of: "
+            "glossary_anchoring, sandhi_resolution, samasa_classification, referential_coherence, all"
+        )
+        print(f"Current BASELINE_TASK: {task_choice}")
         sys.exit(1)
 
-    effective_model = args.model
-    auto_fallback_enabled = AUTO_MODEL_FALLBACK and not args.no_auto_fallback
+    if not CLOUDFLARE_API_TOKEN:
+        print("ERROR: CLOUDFLARE_API_TOKEN (or CF_API_TOKEN) is not set.")
+        print("  Create an API token with Workers AI access in Cloudflare dashboard.")
+        sys.exit(1)
+
+    if not CF_CHAT_COMPLETIONS_URL:
+        print("ERROR: Workers AI URL could not be resolved.")
+        print("  Set CLOUDFLARE_ACCOUNT_ID (or CF_ACCOUNT_ID), or set CF_CHAT_COMPLETIONS_URL directly.")
+        sys.exit(1)
+
+    effective_model = model_choice
+    auto_fallback_enabled = AUTO_MODEL_FALLBACK and not no_auto_fallback
     if auto_fallback_enabled:
         try:
-            effective_model = select_model_for_run(args.model)
+            effective_model = select_model_for_run(model_choice)
         except RuntimeError as exc:
             print(f"ERROR: {exc}")
-            print("Hint: try a supported model explicitly, e.g. --model Qwen/Qwen2.5-72B-Instruct")
+            print("Hint: set BASELINE_MODEL to a supported model, e.g. @cf/meta/llama-3.1-8b-instruct")
             sys.exit(1)
-    elif args.no_auto_fallback:
-        print("Model fallback disabled via --no-auto-fallback")
+    elif no_auto_fallback:
+        print("Model fallback disabled via BASELINE_NO_AUTO_FALLBACK=1")
     else:
-        print("Model fallback disabled via HF_AUTO_MODEL_FALLBACK=0")
+        print("Model fallback disabled via CF_AUTO_MODEL_FALLBACK=0")
 
-    print(f"\nSanskritEnv Baseline — HF Router API + ReAct + Memory")
+    print(f"\nSanskritEnv Baseline — Cloudflare Workers AI + ReAct + Memory")
     print(f"Environment: {ENV_URL}")
     print(f"Model:       {effective_model}")
-    print(f"Router URL:  {HF_ROUTER_URL}")
+    print(f"Task scope:  {task_choice}")
+    print(f"Episodes:    {EPISODES_PER_TASK}")
+    print(f"Seed base:   {RANDOM_SEED}")
+    print(f"Workers URL: {CF_CHAT_COMPLETIONS_URL}")
+    if CLOUDFLARE_API_TOKEN_SOURCE:
+        print(f"Token source: {CLOUDFLARE_API_TOKEN_SOURCE}")
+    if CLOUDFLARE_ACCOUNT_ID_SOURCE:
+        print(f"Account source: {CLOUDFLARE_ACCOUNT_ID_SOURCE}")
     print(f"Architecture: ReAct + rolling_memory (Think->Act->Observe->Update)")
 
     # Canonical task ordering:
@@ -590,8 +674,8 @@ if __name__ == "__main__":
         "referential_coherence": "Task 4 — Referential Coherence (Hard)",
     }
 
-    if args.task != "all":
-        tasks_to_run = {args.task: tasks_to_run[args.task]}
+    if task_choice != "all":
+        tasks_to_run = {task_choice: tasks_to_run[task_choice]}
 
     results = []
     for task_id, label in tasks_to_run.items():
