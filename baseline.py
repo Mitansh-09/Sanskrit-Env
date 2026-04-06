@@ -1,59 +1,71 @@
 """
-baseline.py — SanskritEnv Baseline Inference Script (HF Inference API + ReAct + Memory)
+baseline.py — SanskritEnv Baseline Inference Script (HF Router API + ReAct + Memory)
 
 Architecture: ReAct + Memory loop
-  Think  → agent reasons using full verse context + rolling_memory of prior decisions
-  Act    → agent selects one candidate_option verbatim
-  Observe→ environment returns reward + feedback_message
-  Update → agent appends a one-line referent summary to rolling_memory
+  Think   -> agent reasons using full verse context + rolling_memory of prior decisions
+  Act     -> agent selects one candidate_option verbatim
+  Observe -> environment returns reward + feedback_message
+  Update  -> agent appends a one-line referent summary to rolling_memory
 
-LLM: meta-llama/Llama-3.3-70B-Instruct via HuggingFace Serverless Inference API (free tier)
-Free token: https://huggingface.co/settings/tokens  (no billing required)
+LLM backend: Hugging Face Router (token auth via HF_TOKEN)
+Token: https://huggingface.co/settings/tokens
 
 Usage:
-    export OPENAI_API_KEY=your_hf_token_here
-    export SANSKRIT_ENV_URL=http://localhost:7860    # or HF Space URL
+    # Option 1: set env vars directly
+    set HF_TOKEN=your_hf_token_here
+    set SANSKRIT_ENV_URL=http://localhost:7860
+
+    # Option 2: place values in .env (loaded automatically)
+    # HF_TOKEN=your_hf_token_here
+    # SANSKRIT_ENV_URL=http://localhost:7860
+
     python baseline.py
-
-    # Run a specific task only:
-    python baseline.py --task glossary_anchoring
-    python baseline.py --task sandhi_resolution
-    python baseline.py --task samasa_classification
-    python baseline.py --task referential_coherence
-
-    # Swap models:
-    python baseline.py --model meta-llama/Llama-3.3-70B-Instruct
-
-Expected baseline scores (meta-llama/Llama-3.3-70B-Instruct, temp=0.0):
-    Task 1 — Glossary Anchoring:      1.000
-    Task 2 — Sandhi Resolution:       1.000
-    Task 3 — Samasa Classification:   ~0.80 (estimated — run python baseline.py --task samasa_classification to generate)
-    Task 4 — Referential Coherence:   0.840
 """
 
+import argparse
+import json
 import os
+import random
 import sys
 import time
-import json
-import random
-import argparse
-from openai import OpenAI
+import urllib.error
+import urllib.request
+
+from dotenv import load_dotenv
 
 from client import SanskritEnv
 from models import ManuscriptAction
 
 # ── Configuration ────────────────────────────────────────────────────────────
 
-HF_API_KEY    = os.environ.get("OPENAI_API_KEY")   # HF token — reuse OPENAI_API_KEY for spec compliance
-ENV_URL       = os.environ.get("SANSKRIT_ENV_URL", "http://localhost:7860")
-DEFAULT_MODEL = "meta-llama/Llama-3.3-70B-Instruct"
-TEMPERATURE   = 0.0          # deterministic — required for reproducible scores
-MAX_TOKENS    = 512
-EPISODES_PER_TASK = 15
-RANDOM_SEED   = 42
-RETRY_WAIT    = 5            # seconds between retries on rate-limit hit
+load_dotenv()
 
-HF_BASE_URL   = "https://api-inference.huggingface.co/v1"
+
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int(os.environ.get(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+def _env_float(name: str, default: float) -> float:
+    try:
+        return float(os.environ.get(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+HF_TOKEN = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACEHUB_API_TOKEN")
+ENV_URL = os.environ.get("SANSKRIT_ENV_URL", "http://localhost:7860")
+DEFAULT_MODEL = os.environ.get("HF_MODEL", "meta-llama/Llama-3.3-70B-Instruct")
+HF_ROUTER_URL = os.environ.get("HF_ROUTER_URL", "https://router.huggingface.co/v1/chat/completions")
+
+TEMPERATURE = _env_float("HF_TEMPERATURE", 0.0)
+MAX_TOKENS = _env_int("HF_MAX_TOKENS", 512)
+EPISODES_PER_TASK = _env_int("EPISODES_PER_TASK", 15)
+RANDOM_SEED = _env_int("RANDOM_SEED", 42)
+RETRY_WAIT = _env_int("RETRY_WAIT", 5)
+REQUEST_TIMEOUT = _env_int("HF_REQUEST_TIMEOUT", 90)
 
 # ── System prompt ─────────────────────────────────────────────────────────────
 
@@ -170,36 +182,79 @@ def update_rolling_memory(rolling_memory: str, obs, selected_option: str) -> str
     return "\n".join(lines)
 
 
-# ── HF Inference API call with retry ─────────────────────────────────────────
+# ── HF Router API call with retry ────────────────────────────────────────────
 
-def call_llm(client: OpenAI, model: str, system: str, user: str) -> str:
+def _extract_router_text(payload: dict) -> str:
+    choices = payload.get("choices") or []
+    if not choices:
+        return ""
+
+    message = choices[0].get("message") or {}
+    content = message.get("content", "")
+
+    if isinstance(content, str):
+        return content.strip()
+
+    # Some models return content as an array of chunks.
+    if isinstance(content, list):
+        chunks = []
+        for item in content:
+            if isinstance(item, dict) and isinstance(item.get("text"), str):
+                chunks.append(item["text"])
+        return "".join(chunks).strip()
+
+    return str(content).strip()
+
+
+def call_llm(model: str, system: str, user: str) -> str:
     """
-    Call HuggingFace Serverless Inference API with exponential backoff on rate-limit errors.
-    Free tier: uses HF token via OpenAI-compatible endpoint at api-inference.huggingface.co/v1.
+    Call Hugging Face Router chat completions endpoint with exponential backoff.
+    Auth uses HF_TOKEN, not any OpenAI/Groq client SDK.
     """
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        "temperature": TEMPERATURE,
+        "max_tokens": MAX_TOKENS,
+    }
+
+    request_body = json.dumps(payload).encode("utf-8")
+    headers = {
+        "Authorization": f"Bearer {HF_TOKEN}",
+        "Content-Type": "application/json",
+    }
+
     for attempt in range(4):
+        req = urllib.request.Request(
+            HF_ROUTER_URL,
+            data=request_body,
+            headers=headers,
+            method="POST",
+        )
+
         try:
-            response = client.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": system},
-                    {"role": "user",   "content": user},
-                ],
-                temperature=TEMPERATURE,
-                max_tokens=MAX_TOKENS,
-            )
-            return response.choices[0].message.content.strip()
-        except Exception as exc:
-            err_str = str(exc).lower()
-            # Handle HF rate limit (429) and similar transient errors
-            if "429" in err_str or "rate limit" in err_str or "too many requests" in err_str:
+            with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT) as response:
+                body = response.read().decode("utf-8")
+                data = json.loads(body)
+                return _extract_router_text(data)
+        except urllib.error.HTTPError as exc:
+            error_body = exc.read().decode("utf-8", errors="ignore")
+            if exc.code in (429, 500, 502, 503, 504):
                 wait = RETRY_WAIT * (2 ** attempt)
-                print(f"    [rate limit] waiting {wait}s before retry {attempt + 1}/3...")
+                print(f"    [router {exc.code}] waiting {wait}s before retry {attempt + 1}/3...")
                 time.sleep(wait)
-            else:
-                # Non-rate-limit error — re-raise immediately
-                raise
-    # Final fallback after all retries exhausted
+                continue
+            raise RuntimeError(f"Router request failed ({exc.code}): {error_body[:400]}")
+        except urllib.error.URLError as exc:
+            wait = RETRY_WAIT * (2 ** attempt)
+            print(f"    [network] {exc.reason}; waiting {wait}s before retry {attempt + 1}/3...")
+            time.sleep(wait)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f"Router returned non-JSON response: {exc}")
+
     return ""
 
 
@@ -239,14 +294,14 @@ def match_to_option(raw_answer: str, candidate_options: list) -> str:
 
 # ── Episode runner (ReAct + Memory loop) ─────────────────────────────────────
 
-def run_episode(env, client: OpenAI, model: str, task_id: str, seed: int, verbose: bool = True) -> float:
+def run_episode(env, model: str, task_id: str, seed: int, verbose: bool = True) -> float:
     """
     Run one complete episode using the ReAct + Memory architecture.
 
     Loop:
         while not done:
             user_prompt = build_user_prompt(obs, rolling_memory)
-            raw_answer  = call_llm(client, model, system, user_prompt)
+            raw_answer  = call_llm(model, system, user_prompt)
             selected    = match_to_option(raw_answer, obs.candidate_options)
             result      = env.step(ManuscriptAction(selected_option=selected, reasoning=raw_answer))
             rolling_memory = update_rolling_memory(rolling_memory, obs, selected)
@@ -262,7 +317,7 @@ def run_episode(env, client: OpenAI, model: str, task_id: str, seed: int, verbos
     while not obs.done:
         step += 1
         user_prompt = build_user_prompt(obs, rolling_memory)
-        raw_answer  = call_llm(client, model, SYSTEM_PROMPT, user_prompt)
+        raw_answer  = call_llm(model, SYSTEM_PROMPT, user_prompt)
         selected    = match_to_option(raw_answer, obs.candidate_options)
 
         if verbose:
@@ -290,7 +345,7 @@ def run_episode(env, client: OpenAI, model: str, task_id: str, seed: int, verbos
 
 # ── Task runner ───────────────────────────────────────────────────────────────
 
-def run_task(task_id: str, label: str, client: OpenAI, model: str) -> dict:
+def run_task(task_id: str, label: str, model: str) -> dict:
     # Task 1 — glossary_anchoring  (Easy)
     # Task 2 — sandhi_resolution   (Medium)
     # Task 3 — samasa_classification (Medium)
@@ -306,7 +361,7 @@ def run_task(task_id: str, label: str, client: OpenAI, model: str) -> dict:
             seed = RANDOM_SEED + i
             print(f"\n  Episode {i + 1}/{EPISODES_PER_TASK} (seed={seed})")
             try:
-                score = run_episode(env, client, model, task_id, seed, verbose=True)
+                score = run_episode(env, model, task_id, seed, verbose=True)
                 scores.append(score)
             except Exception as exc:
                 print(f"  ERROR: {exc}")
@@ -333,7 +388,7 @@ def run_task(task_id: str, label: str, client: OpenAI, model: str) -> dict:
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="SanskritEnv baseline inference (HF Inference API + ReAct + Memory)")
+    parser = argparse.ArgumentParser(description="SanskritEnv baseline inference (HF Router API + ReAct + Memory)")
     parser.add_argument(
         "--task",
         choices=["glossary_anchoring", "sandhi_resolution", "samasa_classification", "referential_coherence", "all"],
@@ -343,26 +398,36 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model",
         default=DEFAULT_MODEL,
-        help="HF model ID to use (default: meta-llama/Llama-3.3-70B-Instruct)",
+        help="HF model ID to use (default from HF_MODEL or meta-llama/Llama-3.3-70B-Instruct)",
+    )
+    parser.add_argument(
+        "--episodes",
+        type=int,
+        default=EPISODES_PER_TASK,
+        help="Episodes per task (default from EPISODES_PER_TASK env or 15)",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=RANDOM_SEED,
+        help="Random seed base (default from RANDOM_SEED env or 42)",
     )
     args = parser.parse_args()
 
-    if not HF_API_KEY:
-        print("ERROR: OPENAI_API_KEY environment variable is not set.")
+    EPISODES_PER_TASK = args.episodes
+    RANDOM_SEED = args.seed
+
+    if not HF_TOKEN:
+        print("ERROR: HF_TOKEN environment variable is not set.")
         print("  Get a free HF token at: https://huggingface.co/settings/tokens")
+        print("  Or set HUGGINGFACEHUB_API_TOKEN in .env")
         sys.exit(1)
 
-    # Instantiate OpenAI client pointed at HF Serverless Inference API
-    hf_client = OpenAI(
-        base_url=HF_BASE_URL,
-        api_key=HF_API_KEY,
-    )
-
-    print(f"\nSanskritEnv Baseline — HF Inference API + ReAct + Memory")
+    print(f"\nSanskritEnv Baseline — HF Router API + ReAct + Memory")
     print(f"Environment: {ENV_URL}")
     print(f"Model:       {args.model}")
-    print(f"Endpoint:    {HF_BASE_URL}")
-    print(f"Architecture: ReAct + rolling_memory (Think→Act→Observe→Update)")
+    print(f"Router URL:  {HF_ROUTER_URL}")
+    print(f"Architecture: ReAct + rolling_memory (Think->Act->Observe->Update)")
 
     # Canonical task ordering:
     #   Task 1 — glossary_anchoring       (Easy)
@@ -381,7 +446,7 @@ if __name__ == "__main__":
 
     results = []
     for task_id, label in tasks_to_run.items():
-        results.append(run_task(task_id, label, hf_client, args.model))
+        results.append(run_task(task_id, label, args.model))
 
     # ── Summary table ────────────────────────────────────────────────────
     print(f"\n{'='*65}")

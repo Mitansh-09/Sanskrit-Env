@@ -170,6 +170,63 @@
       background: rgba(255,255,255,0.25);
       color: white;
     }
+
+    .mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+    .mode-pill {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 0.45rem 0.8rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-sans);
+    }
+    .mode-pill.active {
+      background: var(--text);
+      color: white;
+      border-color: var(--text);
+    }
+    .mode-pill:hover { border-color: var(--saffron); }
+
+    .model-controls {
+      margin-bottom: 0.8rem;
+      display: none;
+    }
+    .model-controls.show { display: block; }
+    .model-select-label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .model-select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: white;
+      padding: 0.55rem 0.65rem;
+      font-size: 0.83rem;
+      color: var(--text);
+      margin-bottom: 0.55rem;
+      font-family: var(--font-sans);
+    }
+    .mode-hint {
+      font-size: 0.76rem;
+      color: var(--text-faint);
+      margin-top: 0.45rem;
+      line-height: 1.4;
+    }
     .diff-badge {
       font-size: 0.65rem;
       font-weight: 600;
@@ -444,6 +501,45 @@
       color: var(--red-text);
     }
 
+    .model-run-summary {
+      display: none;
+      margin-top: 0.75rem;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      padding: 0.65rem 0.8rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .model-run-summary.show { display: block; }
+
+    .model-trace {
+      display: none;
+      margin-top: 0.6rem;
+      max-height: 230px;
+      overflow: auto;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      background: white;
+    }
+    .model-trace.show { display: block; }
+    .trace-row {
+      border-bottom: 1px solid var(--border-light);
+      padding: 0.55rem 0.7rem;
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+    .trace-row:last-child { border-bottom: none; }
+    .trace-head {
+      font-weight: 700;
+      color: var(--text);
+    }
+    .trace-score {
+      color: var(--saffron);
+      font-weight: 600;
+      margin-left: 0.35rem;
+    }
+
     /* ── Score bar ─────────────────────────────────────────── */
     .score-section { margin-top: 1rem; }
     .score-section.hidden { display: none; }
@@ -553,6 +649,48 @@
       font-size: 0.85rem;
     }
 
+    .perf-empty {
+      font-size: 0.82rem;
+      color: var(--text-faint);
+      line-height: 1.45;
+    }
+    .perf-table-wrap {
+      margin-top: 0.7rem;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .perf-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.76rem;
+    }
+    .perf-table th,
+    .perf-table td {
+      text-align: left;
+      padding: 0.45rem 0.5rem;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: top;
+    }
+    .perf-table tr:last-child td { border-bottom: none; }
+    .perf-table th {
+      background: var(--bg);
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.66rem;
+    }
+    .perf-subtitle {
+      margin-top: 0.5rem;
+      margin-bottom: 0.35rem;
+      font-size: 0.67rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
     /* ── Transition helper for multi-step ─────────────────── */
     .fade-in {
       animation: fadeIn 0.35s ease;
@@ -603,6 +741,22 @@
             Referential coherence <span class="diff-badge diff-hard">hard</span>
           </button>
         </div>
+
+        <div class="mode-switch" id="modeSwitch">
+          <button class="mode-pill active" data-mode="human" type="button">Human mode</button>
+          <button class="mode-pill" data-mode="model" type="button">Model mode</button>
+        </div>
+
+        <div class="model-controls" id="modelControls">
+          <label class="model-select-label" for="modelSelect">HF model (free tier)</label>
+          <select id="modelSelect" class="model-select"></select>
+          <button class="btn-primary" id="btnRunModel" onclick="runModelEpisode()">
+            <span class="spinner" id="modelSpinner"></span>
+            Run model episode
+          </button>
+          <div class="mode-hint" id="modelHint">Model mode uses the server-side HF token and auto-solves all steps in the episode.</div>
+        </div>
+
         <button class="btn-primary" id="btnNewEpisode" onclick="startEpisode()">
           <span class="spinner" id="btnSpinner"></span>
           New episode
@@ -641,6 +795,8 @@
           <div class="options-placeholder">Start an episode to see options</div>
         </div>
         <div class="feedback-callout" id="feedbackCallout"></div>
+        <div class="model-run-summary" id="modelRunSummary"></div>
+        <div class="model-trace" id="modelTrace"></div>
       </div>
 
       <!-- Score bar -->
@@ -680,57 +836,347 @@
           </div>
         </div>
       </div>
+
+      <div class="card" style="margin-top:1rem;">
+        <div class="card-title">Model performance</div>
+        <div id="modelPerfEmpty" class="perf-empty">Run model episodes to see overall and task-wise model score summaries.</div>
+        <div id="modelPerfTable"></div>
+      </div>
     </div>
   </div>
 
   <!-- ═══ JAVASCRIPT ════════════════════════════════════════ -->
   <script>
-    /* ── State ──────────────────────────────────────────── */
     let currentTask = "glossary_anchoring";
+    let interactionMode = sessionStorage.getItem("interaction_mode") || "human";
     let currentObs = null;
-    let episodesPlayed = parseInt(sessionStorage.getItem("ep") || "0");
-    let correctCount   = parseInt(sessionStorage.getItem("co") || "0");
-    let bestScore      = parseFloat(sessionStorage.getItem("bs") || "0");
+    let autoNextTimer = null;
+    let modelOptions = [];
+    let selectedModel = sessionStorage.getItem("selected_hf_model") || "";
+    let modelPerformance = JSON.parse(sessionStorage.getItem("model_performance") || "{}");
 
-    /* Session ID for environment tracking (prevents 'Call reset() before step' in multi-user setups) */
+    let episodesPlayed = parseInt(sessionStorage.getItem("ep") || "0", 10);
+    let correctCount = parseInt(sessionStorage.getItem("co") || "0", 10);
+    let bestScore = parseFloat(sessionStorage.getItem("bs") || "0");
+
+    const AUTO_NEXT_DELAY_MS = 900;
+
     let sessionId = localStorage.getItem("sanskrit_session_id");
     if (!sessionId) {
       sessionId = "ui_" + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
       localStorage.setItem("sanskrit_session_id", sessionId);
     }
 
-    /* ── DOM refs ──────────────────────────────────────── */
-    const $  = (id) => document.getElementById(id);
-    const btnNew       = $("btnNewEpisode");
-    const btnSpinner   = $("btnSpinner");
-    const errorMsg     = $("errorMsg");
+    const $ = (id) => document.getElementById(id);
+
+    const btnNew = $("btnNewEpisode");
+    const btnSpinner = $("btnSpinner");
+    const btnRunModel = $("btnRunModel");
+    const modelSpinner = $("modelSpinner");
+    const modelControls = $("modelControls");
+    const modelSelect = $("modelSelect");
+    const modelHint = $("modelHint");
+
+    const errorMsg = $("errorMsg");
     const mPlaceholder = $("manuscriptPlaceholder");
-    const mContent     = $("manuscriptContent");
+    const mContent = $("manuscriptContent");
     const optContainer = $("optionsContainer");
-    const feedback     = $("feedbackCallout");
+    const feedback = $("feedbackCallout");
+    const modelRunSummary = $("modelRunSummary");
+    const modelTrace = $("modelTrace");
+    const modelPerfEmpty = $("modelPerfEmpty");
+    const modelPerfTable = $("modelPerfTable");
+
     const scoreSection = $("scoreSection");
     const scorePercent = $("scorePercent");
     const scoreBarFill = $("scoreBarFill");
-    const epComplete   = $("episodeComplete");
-    const finalScore   = $("finalScoreDisplay");
-    const finalMsg     = $("finalScoreMsg");
+    const epComplete = $("episodeComplete");
+    const finalScore = $("finalScoreDisplay");
+    const finalMsg = $("finalScoreMsg");
+    const optionsTitle = $("optionsTitle");
 
-    updateStats();
+    function makeRunId(prefix) {
+      return `${prefix}_${Math.random().toString(36).slice(2)}_${Date.now().toString(36)}`;
+    }
 
-    /* ── Task pills ────────────────────────────────────── */
-    document.querySelectorAll(".task-pill").forEach(pill => {
-      pill.addEventListener("click", () => {
-        document.querySelectorAll(".task-pill").forEach(p => p.classList.remove("active"));
-        pill.classList.add("active");
-        currentTask = pill.dataset.task;
+    function setError(message) {
+      if (!message) return;
+      errorMsg.textContent = message;
+      errorMsg.classList.add("show");
+    }
+
+    function clearError() {
+      errorMsg.textContent = "";
+      errorMsg.classList.remove("show");
+    }
+
+    function persistModelPerformance() {
+      sessionStorage.setItem("model_performance", JSON.stringify(modelPerformance));
+    }
+
+    function modelLabel(modelId) {
+      const found = modelOptions.find((m) => m.id === modelId);
+      return found ? found.label : modelId;
+    }
+
+    function taskLabel(taskId) {
+      const labels = {
+        glossary_anchoring: "Glossary Anchoring",
+        sandhi_resolution: "Sandhi Resolution",
+        samasa_classification: "Samasa Classification",
+        referential_coherence: "Referential Coherence",
+      };
+      return labels[taskId] || taskId;
+    }
+
+    function updateModelPerformanceView() {
+      const entries = Object.entries(modelPerformance);
+      if (!entries.length) {
+        modelPerfEmpty.style.display = "block";
+        modelPerfTable.innerHTML = "";
+        return;
+      }
+
+      modelPerfEmpty.style.display = "none";
+
+      const overallRows = entries
+        .map(([modelId, stats]) => {
+          const avg = stats.runs > 0 ? (stats.total / stats.runs) : 0;
+          return {
+            modelId,
+            label: modelLabel(modelId),
+            runs: stats.runs,
+            avg,
+            best: stats.best,
+            last: stats.last,
+          };
+        })
+        .sort((a, b) => b.avg - a.avg);
+
+      const taskRows = [];
+      for (const [modelId, stats] of entries) {
+        const tasks = stats.tasks || {};
+        for (const [taskId, taskStats] of Object.entries(tasks)) {
+          const runs = taskStats.runs || 0;
+          const total = taskStats.total || 0;
+          const best = taskStats.best || 0;
+          const last = taskStats.last || 0;
+          const avg = runs > 0 ? (total / runs) : 0;
+          taskRows.push({
+            modelId,
+            label: modelLabel(modelId),
+            taskId,
+            taskLabel: taskLabel(taskId),
+            runs,
+            avg,
+            best,
+            last,
+          });
+        }
+      }
+      taskRows.sort((a, b) => b.avg - a.avg);
+
+      let html = "<div class=\"perf-subtitle\">Overall model ranking</div>";
+      html += "<div class=\"perf-table-wrap\"><table class=\"perf-table\">";
+      html += "<thead><tr><th>Model</th><th>Runs</th><th>Avg</th><th>Best</th><th>Last</th></tr></thead><tbody>";
+      for (const row of overallRows) {
+        html += `<tr>
+          <td>${esc(row.label)}</td>
+          <td>${row.runs}</td>
+          <td>${row.avg.toFixed(3)}</td>
+          <td>${row.best.toFixed(3)}</td>
+          <td>${row.last.toFixed(3)}</td>
+        </tr>`;
+      }
+      html += "</tbody></table></div>";
+
+      html += "<div class=\"perf-subtitle\">Task-wise model performance</div>";
+      if (!taskRows.length) {
+        html += "<div class=\"perf-empty\">Run at least one model episode to populate task-wise rows.</div>";
+      } else {
+        html += "<div class=\"perf-table-wrap\"><table class=\"perf-table\">";
+        html += "<thead><tr><th>Task</th><th>Model</th><th>Runs</th><th>Avg</th><th>Best</th><th>Last</th></tr></thead><tbody>";
+        for (const row of taskRows) {
+          html += `<tr>
+            <td>${esc(row.taskLabel)}</td>
+            <td>${esc(row.label)}</td>
+            <td>${row.runs}</td>
+            <td>${row.avg.toFixed(3)}</td>
+            <td>${row.best.toFixed(3)}</td>
+            <td>${row.last.toFixed(3)}</td>
+          </tr>`;
+        }
+        html += "</tbody></table></div>";
+      }
+
+      modelPerfTable.innerHTML = html;
+    }
+
+    function recordEpisodeScore(score) {
+      episodesPlayed++;
+      if (score >= 0.7) correctCount++;
+      if (score > bestScore) bestScore = score;
+      sessionStorage.setItem("ep", episodesPlayed);
+      sessionStorage.setItem("co", correctCount);
+      sessionStorage.setItem("bs", bestScore);
+      updateStats();
+    }
+
+    function recordModelRun(modelId, score, taskId) {
+      if (!modelPerformance[modelId]) {
+        modelPerformance[modelId] = {
+          runs: 0,
+          total: 0,
+          best: 0,
+          last: 0,
+          tasks: {},
+        };
+      }
+
+      const modelStats = modelPerformance[modelId];
+      modelStats.runs += 1;
+      modelStats.total += score;
+      modelStats.last = score;
+      modelStats.best = Math.max(modelStats.best, score);
+
+      if (!modelStats.tasks[taskId]) {
+        modelStats.tasks[taskId] = { runs: 0, total: 0, best: 0, last: 0 };
+      }
+      modelStats.tasks[taskId].runs += 1;
+      modelStats.tasks[taskId].total += score;
+      modelStats.tasks[taskId].best = Math.max(modelStats.tasks[taskId].best, score);
+      modelStats.tasks[taskId].last = score;
+
+      persistModelPerformance();
+      updateModelPerformanceView();
+    }
+
+    function clearModelTrace() {
+      modelRunSummary.classList.remove("show");
+      modelRunSummary.textContent = "";
+      modelTrace.classList.remove("show");
+      modelTrace.innerHTML = "";
+    }
+
+    function renderModelTrace(runResult) {
+      const steps = runResult.steps || [];
+      const score = typeof runResult.final_score === "number" ? runResult.final_score : 0;
+      const elapsed = typeof runResult.elapsed_seconds === "number" ? runResult.elapsed_seconds : 0;
+      const label = modelLabel(runResult.model_id || selectedModel || "");
+
+      modelRunSummary.textContent = `Model: ${label} | Final score: ${score.toFixed(3)} | Steps: ${steps.length} | Time: ${elapsed.toFixed(2)}s`;
+      modelRunSummary.classList.add("show");
+
+      if (!steps.length) {
+        modelTrace.innerHTML = "";
+        modelTrace.classList.remove("show");
+        return;
+      }
+
+      let html = "";
+      for (const step of steps) {
+        const reward = typeof step.step_reward === "number" ? step.step_reward : 0;
+        html += `<div class=\"trace-row\">`;
+        html += `<div class=\"trace-head\">Step ${step.step}<span class=\"trace-score\">reward ${reward.toFixed(2)}</span></div>`;
+        html += `<div><strong>Q:</strong> ${esc(step.decision_prompt || "")}</div>`;
+        html += `<div><strong>A:</strong> ${esc(step.selected_option || "")}</div>`;
+        html += `</div>`;
+      }
+      modelTrace.innerHTML = html;
+      modelTrace.classList.add("show");
+    }
+
+    function updateStats() {
+      $("statEpisodes").textContent = episodesPlayed;
+      $("statCorrect").textContent = correctCount;
+      $("statBest").textContent = bestScore.toFixed(2);
+    }
+
+    function updateScoreBar(score) {
+      const pct = Math.round(score * 100);
+      scorePercent.textContent = pct + "%";
+      scoreBarFill.style.width = pct + "%";
+    }
+
+    function setInteractionMode(mode) {
+      interactionMode = mode === "model" ? "model" : "human";
+      sessionStorage.setItem("interaction_mode", interactionMode);
+
+      document.querySelectorAll(".mode-pill").forEach((pill) => {
+        const active = pill.dataset.mode === interactionMode;
+        pill.classList.toggle("active", active);
       });
-    });
 
-    /* ── Start episode ─────────────────────────────────── */
+      const isModel = interactionMode === "model";
+      modelControls.classList.toggle("show", isModel);
+      btnNew.style.display = isModel ? "none" : "inline-flex";
+      optionsTitle.textContent = isModel ? "Model run output" : "Choose an interpretation";
+
+      if (isModel && autoNextTimer) {
+        clearTimeout(autoNextTimer);
+        autoNextTimer = null;
+      }
+
+      if (currentObs) {
+        renderOptions(currentObs.candidate_options || [], !isModel);
+      }
+    }
+
+    async function loadModelOptions() {
+      try {
+        const res = await fetch("/model/options");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || `Server error: ${res.status}`);
+
+        modelOptions = Array.isArray(data.models) ? data.models : [];
+
+        if (!modelOptions.length) {
+          modelHint.textContent = "No HF models configured by the server.";
+        } else if (!data.token_configured) {
+          modelHint.textContent = "HF_TOKEN is not configured on the server, so model mode will fail until token is set.";
+        } else {
+          modelHint.textContent = "Model mode uses server-side HF Router token and computes episode scores automatically.";
+        }
+      } catch (err) {
+        modelOptions = [];
+        modelHint.textContent = "Could not load model options from server.";
+      }
+
+      if (!modelOptions.length) {
+        modelSelect.innerHTML = `<option value=\"\">No models available</option>`;
+        return;
+      }
+
+      modelSelect.innerHTML = "";
+      for (const model of modelOptions) {
+        const opt = document.createElement("option");
+        opt.value = model.id;
+        opt.textContent = model.label;
+        modelSelect.appendChild(opt);
+      }
+
+      const exists = modelOptions.some((m) => m.id === selectedModel);
+      if (!exists) {
+        selectedModel = modelOptions[0].id;
+      }
+      modelSelect.value = selectedModel;
+      sessionStorage.setItem("selected_hf_model", selectedModel);
+    }
+
     async function startEpisode() {
+      if (interactionMode === "model") {
+        await runModelEpisode();
+        return;
+      }
+
+      if (autoNextTimer) {
+        clearTimeout(autoNextTimer);
+        autoNextTimer = null;
+      }
+
       btnNew.disabled = true;
       btnSpinner.classList.add("show");
-      errorMsg.classList.remove("show");
+      clearError();
       epComplete.classList.remove("show");
       feedback.classList.remove("show");
 
@@ -738,124 +1184,184 @@
         const res = await fetch("/reset", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            task_id: currentTask, 
+          body: JSON.stringify({
+            task_id: currentTask,
             seed: null,
-            episode_id: sessionId 
+            episode_id: sessionId,
           }),
         });
-        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+
         const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || `Server error: ${res.status}`);
+
+        clearModelTrace();
         renderObservation(data);
         updateScoreBar(0);
         scoreSection.classList.remove("hidden");
       } catch (err) {
-        errorMsg.textContent = `Failed to start episode: ${err.message}`;
-        errorMsg.classList.add("show");
+        setError(`Failed to start episode: ${err.message}`);
       } finally {
         btnNew.disabled = false;
         btnSpinner.classList.remove("show");
       }
     }
 
-    /* ── Render observation ─────────────────────────────── */
+    async function runModelEpisode() {
+      if (!selectedModel) {
+        setError("Select an HF model first.");
+        return;
+      }
+
+      if (autoNextTimer) {
+        clearTimeout(autoNextTimer);
+        autoNextTimer = null;
+      }
+
+      btnRunModel.disabled = true;
+      modelSpinner.classList.add("show");
+      clearError();
+      epComplete.classList.remove("show");
+      feedback.classList.remove("show");
+      modelRunSummary.textContent = "Running model episode...";
+      modelRunSummary.classList.add("show");
+      modelTrace.classList.remove("show");
+      modelTrace.innerHTML = "";
+
+      try {
+        const payload = {
+          task_id: currentTask,
+          model_id: selectedModel,
+          seed: null,
+          episode_id: makeRunId("model_ui"),
+        };
+
+        const res = await fetch("/model/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || `Server error: ${res.status}`);
+
+        const obs = data.observation || data;
+        renderObservation(data);
+
+        const finalReward = typeof data.final_score === "number"
+          ? data.final_score
+          : (typeof obs.reward === "number" ? obs.reward : (obs.cumulative_score || 0));
+
+        updateScoreBar(finalReward);
+        scoreSection.classList.remove("hidden");
+        recordEpisodeScore(finalReward);
+
+        finalScore.textContent = finalReward.toFixed(2);
+        finalMsg.textContent = `Solved by ${modelLabel(data.model_id || selectedModel)}`;
+        epComplete.classList.add("show");
+
+        recordModelRun(data.model_id || selectedModel, finalReward, data.task_id || currentTask);
+        renderModelTrace(data);
+      } catch (err) {
+        setError(`Model run failed: ${err.message}`);
+        modelRunSummary.textContent = "Model run failed. Check HF token and model availability.";
+        modelRunSummary.classList.add("show");
+      } finally {
+        btnRunModel.disabled = false;
+        modelSpinner.classList.remove("show");
+      }
+    }
+
     function renderObservation(data) {
-      /* Normalize: observation may be nested or flat */
       const obs = data.observation || data;
       currentObs = obs;
 
-      /* Hide placeholder, show content */
       mPlaceholder.style.display = "none";
       mContent.style.display = "block";
       mContent.classList.add("fade-in");
 
-      /* Build left pane */
       let html = "";
 
-      /* Domain badge */
       if (obs.domain) {
-        html += `<span class="domain-badge">${esc(obs.domain)}</span>`;
+        html += `<span class=\"domain-badge\">${esc(obs.domain)}</span>`;
       }
-
-      /* Devanagari */
       if (obs.source_text_devanagari) {
-        html += `<div class="deva-text" lang="sa">${esc(obs.source_text_devanagari)}</div>`;
+        html += `<div class=\"deva-text\" lang=\"sa\">${esc(obs.source_text_devanagari)}</div>`;
       }
-
-      /* IAST */
       if (obs.source_text_iast) {
-        html += `<div class="iast-text">${esc(obs.source_text_iast)}</div>`;
+        html += `<div class=\"iast-text\">${esc(obs.source_text_iast)}</div>`;
       }
-
-      /* English context */
       if (obs.english_context) {
-        html += `<div class="context-text">${esc(obs.english_context)}</div>`;
+        html += `<div class=\"context-text\">${esc(obs.english_context)}</div>`;
       }
 
-      /* Task-specific term/compound highlight */
       if (obs.task_id === "glossary_anchoring" && obs.target_term_iast) {
-        html += `<div class="term-line">Term: <span class="term-highlight">${esc(obs.target_term_iast)}</span></div>`;
+        html += `<div class=\"term-line\">Term: <span class=\"term-highlight\">${esc(obs.target_term_iast)}</span></div>`;
       }
       if ((obs.task_id === "sandhi_resolution" || obs.task_id === "samasa_classification") && obs.compound_iast) {
-        html += `<div class="term-line">Compound: <span class="term-highlight">${esc(obs.compound_iast)}</span></div>`;
+        html += `<div class=\"term-line\">Compound: <span class=\"term-highlight\">${esc(obs.compound_iast)}</span></div>`;
       }
 
-      /* Task 4: verses */
       if (obs.verses_so_far && obs.verses_so_far.length > 0) {
-        html += `<div class="verses-section">`;
-        html += `<div class="verses-section-title">Verses so far</div>`;
+        html += `<div class=\"verses-section\">`;
+        html += `<div class=\"verses-section-title\">Verses so far</div>`;
         for (const v of obs.verses_so_far) {
-          html += `<div class="verse-card">`;
-          html += `<div class="verse-num">Verse ${v.verse_num}</div>`;
-          html += `<div class="verse-iast">${esc(v.iast)}</div>`;
-          html += `<div class="verse-eng">${esc(v.english)}</div>`;
+          html += `<div class=\"verse-card\">`;
+          html += `<div class=\"verse-num\">Verse ${v.verse_num}</div>`;
+          html += `<div class=\"verse-iast\">${esc(v.iast)}</div>`;
+          html += `<div class=\"verse-eng\">${esc(v.english)}</div>`;
           html += `</div>`;
         }
         html += `</div>`;
       }
 
-      /* Decision prompt */
       if (obs.decision_prompt) {
-        html += `<div class="decision-prompt">${esc(obs.decision_prompt)}</div>`;
+        html += `<div class=\"decision-prompt\">${esc(obs.decision_prompt)}</div>`;
       }
 
       mContent.innerHTML = html;
 
-      /* Build right pane: option cards */
-      renderOptions(obs.candidate_options || []);
+      const interactive = interactionMode === "human" && !obs.done;
+      renderOptions(obs.candidate_options || [], interactive);
 
-      /* Hide episode complete & feedback */
-      epComplete.classList.remove("show");
-      feedback.classList.remove("show", "correct", "wrong");
+      if (interactionMode === "human") {
+        modelRunSummary.classList.remove("show");
+        modelTrace.classList.remove("show");
+      }
     }
 
-    /* ── Render option cards ───────────────────────────── */
-    function renderOptions(options) {
+    function renderOptions(options, interactive) {
       let html = "";
       options.forEach((opt, i) => {
-        html += `<div class="option-card" tabindex="0" data-idx="${i}" 
-                      onclick="handleOptionClick(this)" 
-                      onkeydown="if(event.key==='Enter')handleOptionClick(this)">
-          <span class="option-icon">${String.fromCharCode(65 + i)}</span>
-          <span class="option-text">${esc(opt)}</span>
-        </div>`;
+        const disabledClass = interactive ? "" : " disabled";
+        const tabIndex = interactive ? "0" : "-1";
+        const handlers = interactive
+          ? `onclick=\"handleOptionClick(this)\" onkeydown=\"if(event.key==='Enter')handleOptionClick(this)\"`
+          : "";
+
+        html += `<div class=\"option-card${disabledClass}\" tabindex=\"${tabIndex}\" data-idx=\"${i}\" ${handlers}>`;
+        html += `<span class=\"option-icon\">${String.fromCharCode(65 + i)}</span>`;
+        html += `<span class=\"option-text\">${esc(opt)}</span>`;
+        html += `</div>`;
       });
+
+      if (!options.length) {
+        html = `<div class=\"options-placeholder\">No options available for this state.</div>`;
+      }
+
       optContainer.innerHTML = html;
     }
 
-    /* ── Handle option click ───────────────────────────── */
     async function handleOptionClick(card) {
+      if (interactionMode !== "human") return;
       if (card.classList.contains("disabled")) return;
 
       const allCards = optContainer.querySelectorAll(".option-card");
-      allCards.forEach(c => c.classList.add("disabled"));
+      allCards.forEach((c) => c.classList.add("disabled"));
 
-      const selectedOption = currentObs.candidate_options[parseInt(card.dataset.idx)];
-
-      /* Add spinner to clicked card */
+      const selectedOption = currentObs.candidate_options[parseInt(card.dataset.idx, 10)];
       const icon = card.querySelector(".option-icon");
-      const origIcon = icon.textContent;
-      icon.innerHTML = `<span class="spinner dark show" style="width:14px;height:14px;"></span>`;
+      const originalIcon = icon.textContent;
+      icon.innerHTML = `<span class=\"spinner dark show\" style=\"width:14px;height:14px;\"></span>`;
 
       try {
         const res = await fetch("/step", {
@@ -866,29 +1372,27 @@
             action: {
               selected_option: selectedOption,
               confidence: 0.8,
-              reasoning: ""
-            }
+              reasoning: "",
+            },
           }),
         });
-        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+
         const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || `Server error: ${res.status}`);
         processStepResult(data, card, allCards);
       } catch (err) {
-        icon.textContent = origIcon;
-        errorMsg.textContent = `Step failed: ${err.message}`;
-        errorMsg.classList.add("show");
-        allCards.forEach(c => c.classList.remove("disabled"));
+        icon.textContent = originalIcon;
+        setError(`Step failed: ${err.message}`);
+        allCards.forEach((c) => c.classList.remove("disabled"));
       }
     }
 
-    /* ── Process step result ───────────────────────────── */
-    function processStepResult(data, clickedCard, allCards) {
+    function processStepResult(data, clickedCard) {
       const obs = data.observation || data;
       const reward = obs.step_reward;
       const isCorrect = reward > 0;
       const isDone = obs.done;
 
-      /* Mark clicked card */
       const icon = clickedCard.querySelector(".option-icon");
       if (isCorrect) {
         clickedCard.classList.add("correct");
@@ -898,30 +1402,18 @@
         icon.textContent = "✗";
       }
 
-      /* Show feedback */
       if (obs.feedback_message) {
         feedback.textContent = obs.feedback_message;
         feedback.className = `feedback-callout show ${isCorrect ? "correct" : "wrong"}`;
       }
 
-      /* Update score bar */
       const cumulative = obs.cumulative_score || 0;
       updateScoreBar(cumulative);
 
       if (isDone) {
-        /* Episode finished */
         const finalReward = obs.reward != null ? obs.reward : cumulative;
+        recordEpisodeScore(finalReward);
 
-        /* Update session stats */
-        episodesPlayed++;
-        if (finalReward >= 0.7) correctCount++;
-        if (finalReward > bestScore) bestScore = finalReward;
-        sessionStorage.setItem("ep", episodesPlayed);
-        sessionStorage.setItem("co", correctCount);
-        sessionStorage.setItem("bs", bestScore);
-        updateStats();
-
-        /* Show episode complete */
         finalScore.textContent = finalReward.toFixed(2);
         if (finalReward >= 1.0) finalMsg.textContent = "Perfect score";
         else if (finalReward >= 0.7) finalMsg.textContent = "Strong performance";
@@ -929,8 +1421,12 @@
         else finalMsg.textContent = "Keep practising";
         epComplete.classList.add("show");
 
+        if (interactionMode === "human") {
+          autoNextTimer = setTimeout(() => {
+            startEpisode();
+          }, AUTO_NEXT_DELAY_MS);
+        }
       } else {
-        /* Multi-step (Task 4): re-render after a delay */
         currentObs = obs;
         setTimeout(() => {
           renderObservation(data);
@@ -939,27 +1435,41 @@
       }
     }
 
-    /* ── Score bar ──────────────────────────────────────── */
-    function updateScoreBar(score) {
-      const pct = Math.round(score * 100);
-      scorePercent.textContent = pct + "%";
-      scoreBarFill.style.width = pct + "%";
-    }
-
-    /* ── Session stats ─────────────────────────────────── */
-    function updateStats() {
-      $("statEpisodes").textContent = episodesPlayed;
-      $("statCorrect").textContent  = correctCount;
-      $("statBest").textContent     = bestScore.toFixed(2);
-    }
-
-    /* ── Escape HTML ───────────────────────────────────── */
     function esc(str) {
       if (!str) return "";
       const d = document.createElement("div");
       d.textContent = str;
       return d.innerHTML;
     }
+
+    async function init() {
+      updateStats();
+      updateModelPerformanceView();
+
+      document.querySelectorAll(".task-pill").forEach((pill) => {
+        pill.addEventListener("click", () => {
+          document.querySelectorAll(".task-pill").forEach((p) => p.classList.remove("active"));
+          pill.classList.add("active");
+          currentTask = pill.dataset.task;
+        });
+      });
+
+      document.querySelectorAll(".mode-pill").forEach((pill) => {
+        pill.addEventListener("click", () => {
+          setInteractionMode(pill.dataset.mode || "human");
+        });
+      });
+
+      modelSelect.addEventListener("change", () => {
+        selectedModel = modelSelect.value;
+        sessionStorage.setItem("selected_hf_model", selectedModel);
+      });
+
+      await loadModelOptions();
+      setInteractionMode(interactionMode);
+    }
+
+    init();
   </script>
 </body>
 </html>

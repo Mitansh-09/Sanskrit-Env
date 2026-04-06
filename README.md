@@ -85,17 +85,17 @@ Four tasks, escalating difficulty:
 
 | Task | Episodes | Domains covered | Difficulty |
 |------|----------|-----------------|------------|
-| Glossary Anchoring | 8 | Ayurveda, Astronomy, Philosophy | Easy |
-| Sandhi Resolution | 8 | Philosophy, Ayurveda, Narrative | Medium |
-| Samāsa Classification | 15 | Philosophy, Narrative, Ayurveda, Astronomy | Medium |
-| Referential Coherence | 4 | Narrative, Philosophy | Hard |
+| Glossary Anchoring | 1500 | Ayurveda, Astronomy, Philosophy | Easy |
+| Sandhi Resolution | 1500 | Philosophy, Ayurveda, Narrative | Medium |
+| Samāsa Classification | 1500 | Philosophy, Narrative, Ayurveda, Astronomy | Medium |
+| Referential Coherence | 1500 | Narrative, Philosophy | Hard |
 
 ---
 
 ## Baseline scores
 
-Measured with `meta-llama/Llama-3.3-70B-Instruct` (HuggingFace Serverless Inference API),
-ReAct + Memory architecture, `temperature=0.0`, 5 episodes per task, seed=42.
+Measured with `meta-llama/Llama-3.3-70B-Instruct` (Hugging Face Router API),
+ReAct + Memory architecture, `temperature=0.0`, default 15 episodes per task, seed=42.
 
 | Task | Score | Std dev | Notes |
 |------|-------|---------|-------|
@@ -262,8 +262,13 @@ curl http://localhost:7860/health
 ### Run baseline
 
 ```bash
-export OPENAI_API_KEY=your_hf_token_here   # HF token — no billing required
-export SANSKRIT_ENV_URL=http://localhost:7860
+# Create .env from template
+copy .env.example .env   # Windows
+# cp .env.example .env   # macOS/Linux
+
+# Edit .env and set at least:
+# HF_TOKEN=your_hf_token_here
+# SANSKRIT_ENV_URL=http://localhost:7860
 
 # All tasks
 python baseline.py
@@ -278,6 +283,15 @@ python baseline.py --model meta-llama/Llama-3.3-70B-Instruct
 ---
 
 ## Usage
+
+### HF Space UI modes
+
+The web UI now supports two modes:
+
+- Human mode: user manually answers each question.
+- Model mode: user selects an HF model from the dropdown and the server auto-solves the full episode, then shows score and per-model performance stats.
+
+Important note: the dropdown is restricted to HF models intended for free-tier routing, but real-time availability can still vary with provider load, throttling, or policy updates.
 
 ### Minimal example
 
