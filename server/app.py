@@ -1,7 +1,10 @@
 import sys
 import os
+import logging
 from pathlib import Path
 from typing import Optional
+from contextlib import redirect_stderr
+from io import StringIO
 
 # Ensure the project root is on sys.path so models/graders imports work
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -16,6 +19,8 @@ from server.environment import SanskritEnvironment
 from server.model_agent import get_available_model_catalog, get_model_catalog, run_model_episode
 from models import ManuscriptAction, ManuscriptObservation
 
+
+logging.getLogger("dotenv.main").setLevel(logging.ERROR)
 
 def _env_int(name: str, default: int) -> int:
     try:
@@ -42,7 +47,8 @@ def _first_nonempty_env(*names: str) -> tuple[str, Optional[str]]:
     return "", None
 
 
-load_dotenv()
+with redirect_stderr(StringIO()):
+    load_dotenv()
 
 HF_TOKEN_ENV_KEYS = (
     "HF_TOKEN",
