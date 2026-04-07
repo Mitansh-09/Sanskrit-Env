@@ -1130,7 +1130,11 @@
 
         modelOptions = Array.isArray(data.models) ? data.models : [];
 
-        if (!modelOptions.length) {
+        if (data.auth_error) {
+          modelOptions = [];
+          const reason = data.auth_error_reason ? ` (${data.auth_error_reason})` : "";
+          modelHint.textContent = `HF token is configured but invalid for HF Router${reason}. Update Space Secret HF_TOKEN and restart the Space.`;
+        } else if (!modelOptions.length) {
           if (data.availability_checked) {
             const hidden = Array.isArray(data.unavailable_models) ? data.unavailable_models.length : 0;
             const total = typeof data.catalog_size === "number" ? data.catalog_size : hidden;
@@ -1281,8 +1285,13 @@
         recordModelRun(data.model_id || selectedModel, finalReward, data.task_id || currentTask);
         renderModelTrace(data);
       } catch (err) {
-        setError(`Model run failed: ${err.message}`);
-        modelRunSummary.textContent = "Model run failed. Check HF token and model availability.";
+        const msg = String(err.message || "");
+        setError(`Model run failed: ${msg}`);
+        if (/invalid username or password|authentication failed|401/i.test(msg)) {
+          modelRunSummary.textContent = "Model run failed: HF token is invalid for router. Update HF_TOKEN secret/env var and restart Space.";
+        } else {
+          modelRunSummary.textContent = "Model run failed. Check HF token and model availability.";
+        }
         modelRunSummary.classList.add("show");
       } finally {
         btnRunModel.disabled = false;

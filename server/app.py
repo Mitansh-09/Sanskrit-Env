@@ -35,7 +35,10 @@ def _first_nonempty_env(*names: str) -> tuple[str, Optional[str]]:
     for name in names:
         value = os.environ.get(name)
         if value and value.strip():
-            return value.strip(), name
+            normalized = value.strip().strip('"').strip("'")
+            if normalized.lower().startswith("bearer "):
+                normalized = normalized[7:].strip()
+            return normalized, name
     return "", None
 
 
@@ -116,6 +119,8 @@ async def model_options():
         "unavailable_models": catalog.get("unavailable_models", []),
         "availability_checked": bool(catalog.get("availability_checked")),
         "catalog_size": catalog.get("catalog_size", 0),
+        "auth_error": bool(catalog.get("auth_error")),
+        "auth_error_reason": catalog.get("auth_error_reason", ""),
         "token_configured": bool(HF_TOKEN),
         "token_source": HF_TOKEN_SOURCE,
         "token_env_keys": list(HF_TOKEN_ENV_KEYS),
@@ -134,6 +139,16 @@ async def model_run(payload: ModelEpisodeRequest):
         )
 
     catalog = _resolve_ui_models()
+    if catalog.get("auth_error"):
+        reason = str(catalog.get("auth_error_reason") or "HF token rejected by router")
+        raise HTTPException(
+            status_code=401,
+            detail=(
+                "HF token authentication failed. Update HF_TOKEN secret/env var, "
+                f"restart the Space, then retry. Reason: {reason}"
+            ),
+        )
+
     models = catalog.get("models", [])
     allowed = {model["id"] for model in models}
     if payload.model_id not in allowed:
@@ -165,7 +180,16 @@ async def model_run(payload: ModelEpisodeRequest):
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     except RuntimeError as exc:
-        raise HTTPException(status_code=502, detail=str(exc))
+        message = str(exc)
+        if "401" in message or "invalid username or password" in message.lower():
+            raise HTTPException(
+                status_code=401,
+                detail=(
+                    "HF router authentication failed for current HF token. "
+                    "Update HF_TOKEN secret/env var and restart the Space."
+                ),
+            )
+        raise HTTPException(status_code=502, detail=message)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Unexpected model run error: {exc}")
 

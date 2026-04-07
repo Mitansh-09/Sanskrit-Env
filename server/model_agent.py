@@ -38,6 +38,23 @@ DEFAULT_FREE_MODELS: List[Dict[str, str]] = [
 _MODEL_CATALOG_CACHE: Dict[str, Dict[str, Any]] = {}
 
 
+def _normalize_hf_token(token: str) -> str:
+    value = (token or "").strip().strip('"').strip("'")
+    if value.lower().startswith("bearer "):
+        value = value[7:].strip()
+    return value
+
+
+def _is_auth_error_reason(reason: str) -> bool:
+    text = (reason or "").lower()
+    return (
+        "401" in text
+        or "invalid username or password" in text
+        or "unauthorized" in text
+        or "invalid token" in text
+    )
+
+
 def get_model_catalog(configured_models: str = "") -> List[Dict[str, str]]:
     """
     Build model options from HF_UI_MODELS env var if provided,
@@ -86,6 +103,7 @@ def _probe_model_availability(
     router_url: str,
     request_timeout: int,
 ) -> tuple[bool, str]:
+    hf_token = _normalize_hf_token(hf_token)
     payload = {
         "model": model_id,
         "messages": [
@@ -144,6 +162,7 @@ def _fetch_router_model_index(
     router_url: str,
     request_timeout: int,
 ) -> List[Dict[str, Any]]:
+    hf_token = _normalize_hf_token(hf_token)
     models_url = _models_endpoint_from_router(router_url)
     headers = {
         "Authorization": f"Bearer {hf_token}",
@@ -168,6 +187,8 @@ def _discover_available_models_from_router(
     max_probe: int = 24,
     max_available: int = 8,
 ) -> Dict[str, Any]:
+    hf_token = _normalize_hf_token(hf_token)
+
     try:
         index = _fetch_router_model_index(
             hf_token=hf_token,
@@ -175,16 +196,19 @@ def _discover_available_models_from_router(
             request_timeout=request_timeout,
         )
     except Exception as exc:
+        reason = f"model discovery failed: {exc}"
         return {
             "models": [],
             "unavailable_models": [
                 {
                     "id": "router-index",
                     "label": "router-index",
-                    "reason": f"model discovery failed: {exc}",
+                    "reason": reason,
                 }
             ],
             "catalog_size": 0,
+            "auth_error": _is_auth_error_reason(reason),
+            "auth_error_reason": reason if _is_auth_error_reason(reason) else "",
         }
 
     candidates: List[Dict[str, Any]] = []
@@ -213,6 +237,7 @@ def _discover_available_models_from_router(
 
     available: List[Dict[str, str]] = []
     unavailable: List[Dict[str, str]] = []
+    auth_error_reason = ""
 
     for item in candidates[:max_probe]:
         model_id = str(item.get("id")).strip()
@@ -228,6 +253,8 @@ def _discover_available_models_from_router(
             if len(available) >= max_available:
                 break
         else:
+            if not auth_error_reason and _is_auth_error_reason(reason):
+                auth_error_reason = reason
             unavailable.append({
                 "id": model_id,
                 "label": model_id,
@@ -238,6 +265,8 @@ def _discover_available_models_from_router(
         "models": available,
         "unavailable_models": unavailable,
         "catalog_size": len(candidates),
+        "auth_error": bool(auth_error_reason),
+        "auth_error_reason": auth_error_reason,
     }
 
 
@@ -248,6 +277,7 @@ def get_available_model_catalog(
     request_timeout: int,
     cache_ttl: int = 300,
 ) -> Dict[str, Any]:
+    hf_token = _normalize_hf_token(hf_token)
     models = get_model_catalog(configured_models)
     if not models:
         return {
@@ -277,6 +307,7 @@ def get_available_model_catalog(
 
     available: List[Dict[str, str]] = []
     unavailable: List[Dict[str, str]] = []
+    auth_error_reason = ""
 
     for model in models:
         ok, reason = _probe_model_availability(
@@ -288,6 +319,8 @@ def get_available_model_catalog(
         if ok:
             available.append(model)
         else:
+            if not auth_error_reason and _is_auth_error_reason(reason):
+                auth_error_reason = reason
             unavailable.append(
                 {
                     "id": model["id"],
@@ -296,12 +329,27 @@ def get_available_model_catalog(
                 }
             )
 
+    if not available and auth_error_reason:
+        data = {
+            "models": [],
+            "unavailable_models": unavailable,
+            "availability_checked": True,
+            "catalog_size": len(models),
+            "discovery_used": False,
+            "auth_error": True,
+            "auth_error_reason": auth_error_reason,
+        }
+        _MODEL_CATALOG_CACHE[cache_key] = {"ts": now, "data": data}
+        return data
+
     data = {
         "models": available,
         "unavailable_models": unavailable,
         "availability_checked": True,
         "catalog_size": len(models),
         "discovery_used": False,
+        "auth_error": False,
+        "auth_error_reason": "",
     }
 
     # If the curated list is fully blocked, attempt live model discovery via router index.
@@ -314,6 +362,8 @@ def get_available_model_catalog(
         discovered_models = discovered.get("models") or []
         discovered_unavailable = discovered.get("unavailable_models") or []
         discovered_catalog_size = int(discovered.get("catalog_size") or 0)
+        discovered_auth_error = bool(discovered.get("auth_error"))
+        discovered_auth_reason = str(discovered.get("auth_error_reason") or "")
 
         if discovered_models:
             data = {
@@ -322,6 +372,18 @@ def get_available_model_catalog(
                 "availability_checked": True,
                 "catalog_size": discovered_catalog_size,
                 "discovery_used": True,
+                "auth_error": False,
+                "auth_error_reason": "",
+            }
+        elif discovered_auth_error:
+            data = {
+                "models": [],
+                "unavailable_models": unavailable + discovered_unavailable,
+                "availability_checked": True,
+                "catalog_size": max(len(models), discovered_catalog_size),
+                "discovery_used": True,
+                "auth_error": True,
+                "auth_error_reason": discovered_auth_reason,
             }
         else:
             # Graceful fallback: keep dropdown usable even if probe checks fail for all defaults.
@@ -332,6 +394,8 @@ def get_available_model_catalog(
                 "availability_checked": False,
                 "catalog_size": len(models),
                 "discovery_used": True,
+                "auth_error": False,
+                "auth_error_reason": "",
             }
 
     _MODEL_CATALOG_CACHE[cache_key] = {"ts": now, "data": data}
@@ -452,6 +516,7 @@ def call_hf_router(
     retry_wait: int,
     request_timeout: int,
 ) -> str:
+    hf_token = _normalize_hf_token(hf_token)
     payload = {
         "model": model_id,
         "messages": [
