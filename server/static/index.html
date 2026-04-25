@@ -304,6 +304,16 @@
       color: var(--red-text);
     }
 
+    .diff-expert {
+      background: #553C9A;
+      color: white;
+    }
+
+    .diff-master {
+      background: #1A202C;
+      color: white;
+    }
+
     /* ── New episode button ───────────────────────────────── */
     .btn-primary {
       width: 100%;
@@ -897,24 +907,12 @@
       <div class="card">
         <div class="card-title">Select a task</div>
         <div class="task-pills" id="taskPills">
-          <button class="task-pill active" data-task="glossary_anchoring" tabindex="0">
-            Glossary anchoring <span class="diff-badge diff-easy">easy</span>
-          </button>
-          <button class="task-pill" data-task="sandhi_resolution" tabindex="0">
-            Sandhi resolution <span class="diff-badge diff-medium">medium</span>
-          </button>
-          <button class="task-pill" data-task="samasa_classification" tabindex="0">
-            Samāsa classification <span class="diff-badge diff-medium">medium</span>
-          </button>
-          <button class="task-pill" data-task="referential_coherence" tabindex="0">
-            Referential coherence <span class="diff-badge diff-hard">hard</span>
-          </button>
-          <button class="task-pill" data-task="manuscript_restoration" tabindex="0">
-            Manuscript restoration <span class="diff-badge" style="background:#553C9A; color:white;">expert</span>
-          </button>
-          <button class="task-pill" data-task="full_manuscript_session" tabindex="0">
-            Full manuscript session <span class="diff-badge" style="background:#1A202C; color:white;">master</span>
-          </button>
+          <button class="task-pill" data-task="glossary_anchoring" tabindex="0">Glossary anchoring <span class="diff-badge diff-easy">easy</span></button>
+          <button class="task-pill" data-task="sandhi_resolution" tabindex="0">Sandhi resolution <span class="diff-badge diff-medium">medium</span></button>
+          <button class="task-pill" data-task="samasa_classification" tabindex="0">Samasa classification <span class="diff-badge diff-medium">medium</span></button>
+          <button class="task-pill" data-task="referential_coherence" tabindex="0">Referential coherence <span class="diff-badge diff-hard">hard</span></button>
+          <button class="task-pill" data-task="manuscript_restoration" tabindex="0">Manuscript restoration <span class="diff-badge diff-expert">expert</span></button>
+          <button class="task-pill" data-task="full_manuscript_session" tabindex="0">Full manuscript session <span class="diff-badge diff-master">master</span></button>
         </div>
 
         <div class="mode-switch" id="modeSwitch">
@@ -1033,12 +1031,12 @@
   <!-- ═══ JAVASCRIPT ════════════════════════════════════════ -->
   <script>
     const TASK_CONFIG = [
-      { id: "glossary_anchoring", label: "Glossary anchoring", badgeClass: "diff-easy", badgeText: "easy" },
-      { id: "sandhi_resolution", label: "Sandhi resolution", badgeClass: "diff-medium", badgeText: "medium" },
-      { id: "samasa_classification", label: "Samasa classification", badgeClass: "diff-medium", badgeText: "medium" },
-      { id: "referential_coherence", label: "Referential coherence", badgeClass: "diff-hard", badgeText: "hard" },
-      { id: "manuscript_restoration", label: "Manuscript restoration", badgeClass: "", badgeText: "expert", badgeStyle: "background:#553C9A; color:white;" },
-      { id: "full_manuscript_session", label: "Full manuscript session", badgeClass: "", badgeText: "master", badgeStyle: "background:#1A202C; color:white;" },
+      { id: "glossary_anchoring",    label: "Glossary Anchoring" },
+      { id: "sandhi_resolution",     label: "Sandhi Resolution" },
+      { id: "samasa_classification", label: "Samasa Classification" },
+      { id: "referential_coherence", label: "Referential Coherence" },
+      { id: "manuscript_restoration",  label: "Manuscript Restoration" },
+      { id: "full_manuscript_session", label: "Full Manuscript Session" },
     ];
 
     let currentTask = "glossary_anchoring";
@@ -1089,18 +1087,6 @@
     const finalMsg = $("finalScoreMsg");
     const optionsTitle = $("optionsTitle");
 
-    function buildTaskPills() {
-      const container = $("taskPills");
-      if (!container) return;
-
-      container.innerHTML = TASK_CONFIG.map((task, idx) => {
-        const active = task.id === currentTask || (idx === 0 && !TASK_CONFIG.some((t) => t.id === currentTask)) ? " active" : "";
-        const badgeClass = task.badgeClass ? ` ${task.badgeClass}` : "";
-        const badgeStyle = task.badgeStyle ? ` style="${task.badgeStyle}"` : "";
-        return `<button class="task-pill${active}" data-task="${task.id}" tabindex="0">${task.label} <span class="diff-badge${badgeClass}"${badgeStyle}>${task.badgeText}</span></button>`;
-      }).join("");
-    }
-
     function makeRunId(prefix) {
       return `${prefix}_${Math.random().toString(36).slice(2)}_${Date.now().toString(36)}`;
     }
@@ -1126,13 +1112,8 @@
     }
 
     function taskLabel(taskId) {
-      const labels = {
-        glossary_anchoring: "Glossary Anchoring",
-        sandhi_resolution: "Sandhi Resolution",
-        samasa_classification: "Samasa Classification",
-        referential_coherence: "Referential Coherence",
-      };
-      return labels[taskId] || taskId;
+      const found = TASK_CONFIG.find((t) => t.id === taskId);
+      return found ? found.label : taskId.replace(/_/g, " ");
     }
 
     function updateModelPerformanceView() {
@@ -1679,10 +1660,11 @@
     async function init() {
       updateStats();
       updateModelPerformanceView();
-      if (!TASK_CONFIG.some((task) => task.id === currentTask)) {
-        currentTask = TASK_CONFIG[0].id;
-      }
-      buildTaskPills();
+
+      // Mark the current task pill as active based on currentTask state.
+      document.querySelectorAll(".task-pill").forEach((pill) => {
+        pill.classList.toggle("active", pill.dataset.task === currentTask);
+      });
 
       document.querySelectorAll(".task-pill").forEach((pill) => {
         pill.addEventListener("click", () => {
