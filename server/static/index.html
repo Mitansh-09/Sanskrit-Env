@@ -1032,6 +1032,15 @@
 
   <!-- ═══ JAVASCRIPT ════════════════════════════════════════ -->
   <script>
+    const TASK_CONFIG = [
+      { id: "glossary_anchoring", label: "Glossary anchoring", badgeClass: "diff-easy", badgeText: "easy" },
+      { id: "sandhi_resolution", label: "Sandhi resolution", badgeClass: "diff-medium", badgeText: "medium" },
+      { id: "samasa_classification", label: "Samasa classification", badgeClass: "diff-medium", badgeText: "medium" },
+      { id: "referential_coherence", label: "Referential coherence", badgeClass: "diff-hard", badgeText: "hard" },
+      { id: "manuscript_restoration", label: "Manuscript restoration", badgeClass: "", badgeText: "expert", badgeStyle: "background:#553C9A; color:white;" },
+      { id: "full_manuscript_session", label: "Full manuscript session", badgeClass: "", badgeText: "master", badgeStyle: "background:#1A202C; color:white;" },
+    ];
+
     let currentTask = "glossary_anchoring";
     let interactionMode = sessionStorage.getItem("interaction_mode") || "human";
     let currentObs = null;
@@ -1079,6 +1088,18 @@
     const finalScore = $("finalScoreDisplay");
     const finalMsg = $("finalScoreMsg");
     const optionsTitle = $("optionsTitle");
+
+    function buildTaskPills() {
+      const container = $("taskPills");
+      if (!container) return;
+
+      container.innerHTML = TASK_CONFIG.map((task, idx) => {
+        const active = task.id === currentTask || (idx === 0 && !TASK_CONFIG.some((t) => t.id === currentTask)) ? " active" : "";
+        const badgeClass = task.badgeClass ? ` ${task.badgeClass}` : "";
+        const badgeStyle = task.badgeStyle ? ` style="${task.badgeStyle}"` : "";
+        return `<button class="task-pill${active}" data-task="${task.id}" tabindex="0">${task.label} <span class="diff-badge${badgeClass}"${badgeStyle}>${task.badgeText}</span></button>`;
+      }).join("");
+    }
 
     function makeRunId(prefix) {
       return `${prefix}_${Math.random().toString(36).slice(2)}_${Date.now().toString(36)}`;
@@ -1658,6 +1679,10 @@
     async function init() {
       updateStats();
       updateModelPerformanceView();
+      if (!TASK_CONFIG.some((task) => task.id === currentTask)) {
+        currentTask = TASK_CONFIG[0].id;
+      }
+      buildTaskPills();
 
       document.querySelectorAll(".task-pill").forEach((pill) => {
         pill.addEventListener("click", () => {
