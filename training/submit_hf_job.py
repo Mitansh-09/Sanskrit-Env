@@ -4,12 +4,12 @@ on hosted GPU. See https://huggingface.co/docs/huggingface_hub/guides/jobs
 
 Usage (from your machine; never commit tokens):
   export HF_TOKEN=...          # or: hf auth login
-  # Set HF_JOB_NAMESPACE to your Hub username to avoid /whoami-v2 rate limits (429) on repeated submits.
+  # Default --namespace is Adityahars; set HF_JOB_NAMESPACE to override (avoids /whoami-v2 429 on resubmits).
   python training/submit_hf_job.py
-  python training/submit_hf_job.py --namespace YourHFUsername --flavor a10g-small --smoke --timeout 45m
-  python training/submit_hf_job.py --namespace YourHFUsername --flavor a100-large --timeout 12h
+  python training/submit_hf_job.py --flavor a10g-small --smoke --timeout 45m
+  python training/submit_hf_job.py --flavor a100-large --timeout 12h
   # Full pipeline check: 5 train ep/task, 2 eval ep/task (baseline + post + compare), separate e2e artifacts
-  python training/submit_hf_job.py --namespace YourHFUsername --e2e-pipeline --flavor a100-large --timeout 3h
+  python training/submit_hf_job.py --e2e-pipeline --flavor a100-large --timeout 3h
 """
 
 from __future__ import annotations
@@ -74,8 +74,8 @@ def main() -> int:
     )
     parser.add_argument(
         "--namespace",
-        default=os.environ.get("HF_JOB_NAMESPACE", "").strip() or None,
-        help="Hub username or org for the job URL. If set, skips /whoami-v2 (avoids 429 on rapid resubmits). Env: HF_JOB_NAMESPACE.",
+        default=(os.environ.get("HF_JOB_NAMESPACE") or "Adityahars").strip(),
+        help="Hub username or org for the job URL (skips /whoami-v2; avoids 429 on rapid resubmits). Default: Adityahars. Env: HF_JOB_NAMESPACE.",
     )
     args = parser.parse_args()
 

@@ -67,7 +67,7 @@ export HF_TOKEN=hf_...   # or run: hf auth login
 # Quick wiring test (minutes):
 python training/submit_hf_job.py --smoke --flavor a10g-small --timeout 45m
 # Full GRPO on A100 (set namespace; 1 epoch is default in hf_job_entrypoint / train_grpo; use 12h+ timeout):
-python training/submit_hf_job.py --namespace YourHFUsername --flavor a100-large --timeout 12h
+python training/submit_hf_job.py --flavor a100-large --timeout 12h
 ```
 
 The script calls [`run_job()`](https://huggingface.co/docs/huggingface_hub/guides/jobs) with `secrets={"HF_TOKEN": ...}`. The bootstrap uses `bash -c` (not `bash -lc`), **`set -eo` without `-u`**, installs **git** + **ca-certificates**, then **`git clone`** with **shlex-quoted** URL and branch in the command string. It prints a **Job URL** where you can follow logs; the first line from our script should be **`[hf-job] bootstrap: installing git + cloning repo`**.
@@ -76,10 +76,10 @@ The script calls [`run_job()`](https://huggingface.co/docs/huggingface_hub/guide
 
 **429 on `/whoami-v2`:** The Hub rate-limits identity checks. Submitting several jobs in a row can hit this. Set your Hub **username** once so the client does not call `whoami` for every submit:
 
-- Bash: `export HF_JOB_NAMESPACE=YourHFUsername`
-- PowerShell: `$env:HF_JOB_NAMESPACE = "YourHFUsername"`
+- Bash: `export HF_JOB_NAMESPACE=Adityahars` (default in `submit_hf_job.py`; set to your org if different)
+- PowerShell: `$env:HF_JOB_NAMESPACE = "Adityahars"`
 
-Or pass `python training/submit_hf_job.py --namespace YourHFUsername ...`. Wait a few minutes if you still see 429, then retry.
+Or pass `python training/submit_hf_job.py --namespace Adityahars ...`. Wait a few minutes if you still see 429, then retry.
 
 **Forwarded environment variables** (optional): set any of `EPISODES_PER_TASK`, `TRAIN_EPOCHS`, `MODEL_ID`, `OUTPUT_DIR`, `GROUP_SIZE`, etc., before `submit_hf_job.py`; they are passed into the job as plain `env` (not secrets). Training knobs are the same as `train_grpo.py`.
 
