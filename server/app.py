@@ -91,7 +91,15 @@ os.makedirs(static_dir, exist_ok=True)
 
 @app.get("/")
 async def serve_ui():
-    return FileResponse(os.path.join(static_dir, "index.html"))
+    return FileResponse(
+        os.path.join(static_dir, "index.html"),
+        headers={
+            # Prevent stale Space/browser caches from serving an old task selector UI.
+            "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+            "Pragma": "no-cache",
+            "Expires": "0",
+        },
+    )
 
 @app.get("/session")
 async def check_session():
