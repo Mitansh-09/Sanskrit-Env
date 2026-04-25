@@ -469,7 +469,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--episodes-per-task",
         type=int,
-        default=int(os.environ.get("EPISODES_PER_TASK", "1500")),
+        default=int(os.environ.get("EPISODES_PER_TASK", "250")),
         help="Episodes for tasks 5–6 (and for all tasks if --episodes-per-task-easy is not set).",
     )
     parser.add_argument(
@@ -486,7 +486,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--difficulty", default="auto", help="Used by tasks 5/6 (beginner|intermediate|hard|expert|auto).")
     parser.add_argument("--base-seed", type=int, default=42)
     parser.add_argument("--output-dir", default="runs/qwen25-1p5b-grpo")
-    parser.add_argument("--group-size", type=int, default=8, help="GRPO num_generations per prompt (A100 default).")
+    parser.add_argument("--group-size", type=int, default=4, help="GRPO num_generations per prompt (smaller = faster, default 4).")
     parser.add_argument("--per-device-batch", type=int, default=2, help="Per-device batch size (A100 default).")
     parser.add_argument("--grad-accum", type=int, default=4, help="Gradient accumulation steps (A100 default).")
     parser.add_argument("--epochs", type=float, default=1.0, help="Number of full passes over the prompt set.")

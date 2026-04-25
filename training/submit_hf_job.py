@@ -10,8 +10,10 @@ Usage (from your machine; never commit tokens):
   python training/submit_hf_job.py --flavor a100-large --timeout 12h
   # Full pipeline check: 5 train ep/task, 2 eval ep/task (baseline + post + compare), separate e2e artifacts
   python training/submit_hf_job.py --e2e-pipeline --flavor a100-large --timeout 3h
-  # Final production run: 500 ep/task, 50 eval ep/task, push adapter to Hub (huggingface.co/Adityahars/sanskrit-qwen-grpo)
-  python training/submit_hf_job.py --push-to-hub --flavor a100-large --timeout 12h
+  # Default full run: 250 ep/task, group_size=4, upload prompts to datasets/Adityahars/sanskrit-grpo-prompts, push model
+  python training/submit_hf_job.py --push-prompts --push-to-hub --flavor a100-large --timeout 12h
+  # Reuse cached prompts from Hub (skip local collection)
+  python training/submit_hf_job.py --pull-prompts --flavor a100-large --timeout 8h
 """
 
 from __future__ import annotations
@@ -89,6 +91,23 @@ def main() -> int:
         help="Hub repo for the adapter, e.g. Adityahars/sanskrit-qwen-grpo. Env: HUB_MODEL_ID.",
     )
     parser.add_argument(
+        "--push-prompts",
+        action="store_true",
+        default=os.environ.get("PUSH_PROMPTS_TO_HUB") == "1",
+        help="Upload prompts.jsonl to a Hub dataset (HUB_PROMPTS_REPO). Env: PUSH_PROMPTS_TO_HUB=1.",
+    )
+    parser.add_argument(
+        "--pull-prompts",
+        action="store_true",
+        default=os.environ.get("PULL_PROMPTS_FROM_HUB") == "1",
+        help="Download prompts from Hub; skips local collect. Env: PULL_PROMPTS_FROM_HUB=1.",
+    )
+    parser.add_argument(
+        "--hub-prompts-repo",
+        default=(os.environ.get("HUB_PROMPTS_REPO") or "Adityahars/sanskrit-grpo-prompts").strip(),
+        help="Hugging Face dataset id for shared prompts.jsonl. Env: HUB_PROMPTS_REPO.",
+    )
+    parser.add_argument(
         "--namespace",
         default=(os.environ.get("HF_JOB_NAMESPACE") or "Adityahars").strip(),
         help="Hub username or org for the job URL (skips /whoami-v2; avoids 429 on rapid resubmits). Default: Adityahars. Env: HF_JOB_NAMESPACE.",
@@ -138,12 +157,22 @@ def main() -> int:
     if args.push_to_hub:
         env["PUSH_TO_HUB"] = "1"
         env["HUB_MODEL_ID"] = args.hub_model_id
+    if args.push_prompts:
+        env["PUSH_PROMPTS_TO_HUB"] = "1"
+        env["HUB_PROMPTS_REPO"] = args.hub_prompts_repo
+    if args.pull_prompts:
+        env["PULL_PROMPTS_FROM_HUB"] = "1"
+        env["HUB_PROMPTS_REPO"] = args.hub_prompts_repo
     for key in (
         "EPISODES_PER_TASK",
         "EPISODES_PER_TASK_EASY",
         "E2E_PIPELINE_TEST",
         "PUSH_TO_HUB",
         "HUB_MODEL_ID",
+        "PUSH_PROMPTS_TO_HUB",
+        "PULL_PROMPTS_FROM_HUB",
+        "HUB_PROMPTS_REPO",
+        "HUB_PROMPTS_PATH_IN_REPO",
         "TRAIN_EPOCHS",
         "EVAL_EPISODES",
         "EVAL_DURING_TRAIN",
@@ -178,6 +207,16 @@ def main() -> int:
         print("  mode:    e2e-pipeline (5 ep/task train, 2 ep/task eval, full baseline+train+post+compare)", flush=True)
     if env.get("PUSH_TO_HUB") == "1":
         print(f"  push:    Hub model -> {env.get('HUB_MODEL_ID', 'Adityahars/sanskrit-qwen-grpo')}", flush=True)
+    if env.get("PULL_PROMPTS_FROM_HUB") == "1":
+        print(
+            f"  prompts: pull from datasets/{env.get('HUB_PROMPTS_REPO', 'Adityahars/sanskrit-grpo-prompts')}",
+            flush=True,
+        )
+    if env.get("PUSH_PROMPTS_TO_HUB") == "1":
+        print(
+            f"  prompts: push to datasets/{env.get('HUB_PROMPTS_REPO', 'Adityahars/sanskrit-grpo-prompts')}",
+            flush=True,
+        )
 
     job = run_job(
         image=args.image,

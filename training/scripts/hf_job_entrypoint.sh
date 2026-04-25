@@ -40,12 +40,12 @@ elif [[ "${E2E_PIPELINE_TEST:-0}" == "1" ]]; then
   export IMPROVE_MD="${IMPROVE_MD:-$ROOT/runs/improvement_table_e2e.md}"
   echo "[e2e-pipeline] train 5 ep/task, eval 2 ep/task, baseline+post+compare; DATASET_CACHE=$DATASET_CACHE OUTPUT_DIR=$OUTPUT_DIR"
 else
-  # Full production run: 500 ep/task (uniform across all tasks), 50 ep/task eval, 1 epoch.
-  export EPISODES_PER_TASK_EASY="${EPISODES_PER_TASK_EASY:-500}"
-  export EPISODES_PER_TASK="${EPISODES_PER_TASK:-500}"
+  # Full run: 250 ep/task, lean eval, GRPO group_size=4 in train for speed. 1 epoch.
+  export EPISODES_PER_TASK_EASY="${EPISODES_PER_TASK_EASY:-250}"
+  export EPISODES_PER_TASK="${EPISODES_PER_TASK:-250}"
   export TRAIN_EPOCHS="${TRAIN_EPOCHS:-1.0}"
-  export EVAL_EPISODES="${EVAL_EPISODES:-50}"
-  export EVAL_DURING_TRAIN="${EVAL_DURING_TRAIN:-20}"
+  export EVAL_EPISODES="${EVAL_EPISODES:-30}"
+  export EVAL_DURING_TRAIN="${EVAL_DURING_TRAIN:-10}"
   export NO_BASELINE_EVAL="${NO_BASELINE_EVAL:-0}"
 fi
 
@@ -55,8 +55,10 @@ BASELINE_JSON="${BASELINE_JSON:-$ROOT/runs/eval_baseline.json}"
 POST_JSON="${POST_JSON:-$ROOT/runs/eval_post.json}"
 IMPROVE_MD="${IMPROVE_MD:-$ROOT/runs/improvement_table.md}"
 MODEL_ID="${MODEL_ID:-Qwen/Qwen2.5-1.5B-Instruct}"
-# Hub push: set PUSH_TO_HUB=1 + HUB_MODEL_ID=Adityahars/sanskrit-qwen-grpo (or pass via submit_hf_job.py --push-to-hub)
+# Hub push: set PUSH_TO_HUB=1 + HUB_MODEL_ID=...; prompts JSONL dataset: PUSH_PROMPTS_TO_HUB=1, HUB_PROMPTS_REPO, etc.
 HUB_MODEL_ID="${HUB_MODEL_ID:-Adityahars/sanskrit-qwen-grpo}"
+HUB_PROMPTS_REPO="${HUB_PROMPTS_REPO:-Adityahars/sanskrit-grpo-prompts}"
+HUB_PROMPTS_PATH_IN_REPO="${HUB_PROMPTS_PATH_IN_REPO:-data/prompts.jsonl}"
 
 echo "[info] repo root: $ROOT"
 echo "[info] ENV_URL=$ENV_URL"
@@ -65,10 +67,48 @@ echo "[info] EPISODES_PER_TASK_EASY=$EPISODES_PER_TASK_EASY EPISODES_PER_TASK(ha
 if [[ "${PUSH_TO_HUB:-0}" == "1" ]]; then
   echo "[info] PUSH_TO_HUB=1 -> adapter will be pushed to Hub as $HUB_MODEL_ID after training"
 fi
+if [[ "${PUSH_PROMPTS_TO_HUB:-0}" == "1" ]]; then
+  echo "[info] PUSH_PROMPTS_TO_HUB=1 -> prompts JSONL -> datasets/$HUB_PROMPTS_REPO ($HUB_PROMPTS_PATH_IN_REPO)"
+fi
 
-echo "[info] pip install (training)..."
+echo "[info] pip install (SanskritEnv + training)..."
 python -m pip install -q -U pip
+python -m pip install -q -r "$ROOT/requirements.txt"
 python -m pip install -q -r "$ROOT/training/requirements-train.txt"
+
+mkdir -p "$(dirname "$BASELINE_JSON")" "$(dirname "$POST_JSON")" "$(dirname "$DATASET_CACHE")" "$OUTPUT_DIR"
+
+# JSONL: pull from dataset repo, or build from local data/ (no HTTP), then optionally push dataset to Hub.
+if [[ "${PULL_PROMPTS_FROM_HUB:-0}" == "1" ]]; then
+  echo "[info] pull prompts: Hub $HUB_PROMPTS_REPO / $HUB_PROMPTS_PATH_IN_REPO -> $DATASET_CACHE"
+  python "$ROOT/training/upload_prompts_to_hub.py" download \
+    --output "$DATASET_CACHE" \
+    --repo-id "$HUB_PROMPTS_REPO" \
+    --path-in-repo "$HUB_PROMPTS_PATH_IN_REPO"
+elif [[ "${USE_HTTP_DATASET:-0}" != "1" ]]; then
+  if [[ "${SKIP_DATASET_REBUILD:-0}" != "1" ]] || [[ ! -f "$DATASET_CACHE" ]]; then
+    echo "[info] collect_prompts_jsonl.py (local data/ -> $DATASET_CACHE)..."
+    python "$ROOT/training/collect_prompts_jsonl.py" \
+      --output "$DATASET_CACHE" \
+      --model-id "$MODEL_ID" \
+      --episodes-per-task "$EPISODES_PER_TASK" \
+      --episodes-per-task-easy "$EPISODES_PER_TASK_EASY" \
+      --base-seed 42 \
+      --difficulty "${DIFFICULTY:-auto}"
+  else
+    echo "[info] SKIP_DATASET_REBUILD=1 and cache exists: $DATASET_CACHE"
+  fi
+else
+  echo "[info] USE_HTTP_DATASET=1: train will HTTP-collect if no cache at train time"
+fi
+
+if [[ "${PUSH_PROMPTS_TO_HUB:-0}" == "1" ]] && [[ -f "$DATASET_CACHE" ]]; then
+  echo "[info] upload prompts JSONL to Hub dataset $HUB_PROMPTS_REPO..."
+  python "$ROOT/training/upload_prompts_to_hub.py" upload "$DATASET_CACHE" \
+    --repo-id "$HUB_PROMPTS_REPO" \
+    --path-in-repo "$HUB_PROMPTS_PATH_IN_REPO" \
+    --message "GRPO prompts JSONL (HF Job)"
+fi
 
 echo "[info] wait for remote env /health..."
 for i in $(seq 1 90); do
@@ -83,8 +123,6 @@ if ! python -c "import requests; r=requests.get('$ENV_URL/health', timeout=30); 
   echo "ERROR: $ENV_URL/health did not return 200."
   exit 1
 fi
-
-mkdir -p "$(dirname "$BASELINE_JSON")" "$(dirname "$POST_JSON")" "$(dirname "$DATASET_CACHE")" "$OUTPUT_DIR"
 
 # At least 1 episode/task so the HF-downloaded model actually runs generate+step (not only load).
 EVAL_RUN_EPISODES="${EVAL_EPISODES:-30}"
@@ -130,7 +168,7 @@ python "$ROOT/training/train_grpo.py" \
   --base-seed 42 \
   --dataset-cache "$DATASET_CACHE" \
   --output-dir "$OUTPUT_DIR" \
-  --group-size "${GROUP_SIZE:-8}" \
+  --group-size "${GROUP_SIZE:-4}" \
   --per-device-batch "${PER_DEVICE_BATCH:-2}" \
   --grad-accum "${GRAD_ACCUM:-4}" \
   --epochs "$TRAIN_EPOCHS" \
