@@ -1,64 +1,104 @@
 name: sanskrit-env
-version: "1.0.0"
+version: "2.0.0"
 description: >
-  Sanskrit Manuscript Interpretation Environment.
-  An RL environment where agents resolve structural ambiguity in Sanskrit
-  manuscript passages — glossary anchoring, sandhi resolution, samasa
-  classification, and multi-verse referential coherence. Four tasks ranging
-  from easy to hard. Fully deterministic graders. Dense partial reward signal.
-  Real-world application: assisting translation of India's digitized manuscript corpus.
-author: your-huggingface-username
+  Sanskrit Manuscript Interpretation Environment — an RL environment where agents act
+  as AI philologists, using deterministic tools (lexicon, sandhi parser, meter checker,
+  commentary, witness comparison, referent tracker) to restore and interpret ambiguous
+  Sanskrit manuscript passages. Five tasks: glossary anchoring (easy), sandhi resolution
+  (medium), samasa classification (medium), referential coherence (hard), and manuscript
+  restoration (expert, tool-use POMDP). Adaptive difficulty curriculum. Dense, evidence-
+  backed reward signal. Real-world application: India's Gyan Bharatam Mission to digitize
+  and translate 1 crore Sanskrit manuscripts.
+author: Adityahars
 tags:
   - openenv
   - sanskrit
   - nlp
   - cultural-heritage
   - manuscript
-  - translation
-  - linguistics
+  - tool-use
+  - pomdp
+  - philology
 license: apache-2.0
 tasks:
   - id: glossary_anchoring
     difficulty: easy
-    description: Select the correct domain-specific meaning of a Sanskrit technical term
+    description: Select correct domain-specific meaning of a Sanskrit technical term
     max_steps: 1
-    score_range: [0.5, 0.95]
+    score_range: [0.0, 0.95]
   - id: sandhi_resolution
     difficulty: medium
-    description: Identify the correct phonological split of a Sanskrit compound word
+    description: Identify correct phonological split of a Sanskrit compound word
     max_steps: 1
-    score_range: [0.5, 0.95]
+    score_range: [0.0, 0.95]
   - id: samasa_classification
     difficulty: medium
-    description: Identify the grammatical type of a Sanskrit compound word (samasa) from six Paninian categories
+    description: Identify grammatical type of a Sanskrit compound (six Paninian categories)
     max_steps: 1
-    score_range: [0.5, 0.95]
+    score_range: [0.0, 0.95]
   - id: referential_coherence
     difficulty: hard
-    description: Track pronouns and implicit subjects across a multi-verse Sanskrit passage
+    description: Track pronouns and implicit subjects across a multi-verse passage
     max_steps: 7
-    score_range: [0.5, 0.95]
+    score_range: [0.0, 0.95]
+  - id: manuscript_restoration
+    difficulty: expert
+    description: >
+      Use philological tools (lexicon, sandhi parser, meter checker, commentary, witness
+      comparison, referent tracker) to gather evidence and interpret an ambiguous Sanskrit
+      manuscript passage. Tool budget varies by difficulty (4–8 steps). Evidence-backed
+      reward: correct answers without evidence are penalized.
+    max_steps: 10
+    score_range: [0.0, 0.95]
+  - id: full_manuscript_session
+    difficulty: expert
+    description: >
+      Long-horizon session chaining all five tasks on a single manuscript passage.
+      Cross-phase consistency is rewarded. Early mistakes cascade to later decisions.
+    max_steps: 16
+    score_range: [0.0, 0.95]
 observation_space:
   type: structured
   fields:
     - name: source_text_iast
       type: string
-      description: Sanskrit passage in IAST transliteration
+      description: Sanskrit passage in IAST (may contain OCR noise at higher difficulty)
     - name: decision_prompt
       type: string
       description: The specific question the agent must answer
     - name: candidate_options
       type: list[string]
-      description: Exactly 4 options; agent must select one verbatim
+      description: 4 options; agent must select one verbatim (tasks 1–4) or use tool protocol (task 5)
+    - name: tool_call_history
+      type: list[object]
+      description: History of tool calls and their outputs (task 5 only)
+    - name: steps_remaining
+      type: integer
+      description: Remaining tool budget (task 5 only)
+    - name: difficulty
+      type: string
+      description: Current difficulty level (beginner/intermediate/hard/expert)
 action_space:
   type: structured
   fields:
+    - name: action_type
+      type: string
+      description: '"option_select" (tasks 1–4) | "tool_call" | "commit" (task 5)'
     - name: selected_option
       type: string
-      description: Must exactly match one entry in candidate_options
+      description: Must exactly match one entry in candidate_options (tasks 1–4)
+    - name: tool_name
+      type: string
+      description: Tool to call (task 5 tool_call only)
+    - name: tool_input
+      type: string
+      description: Input to the tool (task 5 tool_call only)
+    - name: final_answer
+      type: string
+      description: Final interpretation (task 5 commit only)
     - name: confidence
       type: float
-      description: Agent self-reported confidence 0.0–1.0 (not graded)
+      description: Agent self-reported confidence 0.0–1.0 (logged, not graded)
     - name: reasoning
       type: string
-      description: Agent explanation (logged, not graded)
+      description: Agent explanation (logged, partially contributes to restoration reward)

@@ -1,0 +1,588 @@
+{
+  "task": "full_manuscript_session",
+  "version": "2.0.0",
+  "episodes": [
+    {
+      "id": "session_001",
+      "source": "Bhagavad Gita 2.19-2.47",
+      "domain": "philosophy",
+      "phases": [
+        {
+          "phase": "glossary",
+          "passage_iast": "ya enam vetti hantaram",
+          "passage_dev": "य एनं वेत्ति हन्तारम्",
+          "prompt": "What does 'hantaram' mean in this context?",
+          "options": [
+            "Agent of action (philosophical)",
+            "Physical killer",
+            "Destroyer of worlds",
+            "One who harms"
+          ],
+          "correct": "Agent of action (philosophical)",
+          "partial_idx": [
+            3
+          ]
+        },
+        {
+          "phase": "sandhi",
+          "passage_iast": "karmanye vadhikaras te",
+          "passage_dev": "कर्मण्येवाधिकारस्ते",
+          "prompt": "How does 'karmanyevadhikaras' split?",
+          "options": [
+            "karmani + eva + adhikarah",
+            "karmanya + eva + dhikarah",
+            "karma + nyeva + adhikarah",
+            "karmani + evadhikarah"
+          ],
+          "correct": "karmani + eva + adhikarah",
+          "partial_idx": [
+            3
+          ]
+        },
+        {
+          "phase": "samasa",
+          "passage_iast": "sthitaprajna",
+          "passage_dev": "स्थितप्रज्ञ",
+          "prompt": "What type of compound is 'sthitaprajna'?",
+          "options": [
+            "Bahuvrihi — one whose prajna is established",
+            "Tatpurusa — established wisdom",
+            "Karmadharaya — steady-wise",
+            "Dvandva — steadiness and wisdom"
+          ],
+          "correct": "Bahuvrihi — one whose prajna is established",
+          "partial_idx": [
+            2
+          ]
+        },
+        {
+          "phase": "coherence",
+          "passage_iast": "sa budhhya yukto",
+          "passage_dev": "स बुद्ध्या युक्तो",
+          "prompt": "Who does 'sa' refer to in this verse?",
+          "options": [
+            "The sthitaprajna (man of steady wisdom)",
+            "Arjuna",
+            "Krishna",
+            "Dhritarashtra"
+          ],
+          "correct": "The sthitaprajna (man of steady wisdom)",
+          "partial_idx": [
+            1
+          ]
+        },
+        {
+          "phase": "restoration",
+          "passage_iast": "ya enam vetti hantaram yas cainam manyate hatam",
+          "passage_dev": "य एनं वेत्ति हन्तारं यश्चैनं मन्यते हतम्",
+          "gloss": "He who thinks this is slayer and he who thinks it slain",
+          "correct": "The Self neither slays nor is slain — hantaram refers to the apparent agent not the atman",
+          "options": [
+            "The Self neither slays nor is slain — hantaram refers to the apparent agent not the atman",
+            "The verse describes physical combat ethics",
+            "The verse concerns action and inaction",
+            "Both slaying and being slain are valid interpretations"
+          ],
+          "partial_idx": [
+            2
+          ],
+          "tool_budget": 4,
+          "tools_needed": [
+            "lexicon_lookup",
+            "commentary_fetch"
+          ],
+          "glossary_data": {
+            "hantaram": [
+              {
+                "meaning": "agent of action",
+                "domain": "vedanta",
+                "confidence": 0.95
+              }
+            ]
+          },
+          "sandhi_data": {},
+          "meter_data": {},
+          "commentary_data": {
+            "hantaram": "Sankara: hanta here is buddhi not atman"
+          },
+          "witness_data": {},
+          "entity_map": {
+            "enam": [
+              "atman",
+              "sarira"
+            ]
+          }
+        }
+      ],
+      "contradiction_pairs": [
+        [
+          "hantaram means physical killer",
+          "The Self neither slays"
+        ]
+      ]
+    },
+    {
+      "id": "session_002",
+      "source": "Ramayana 1.2-2.34",
+      "domain": "narrative",
+      "phases": [
+        {
+          "phase": "glossary",
+          "passage_iast": "ko nv asmin sampratam loke gunavaan",
+          "passage_dev": "को न्वस्मिन् साम्प्रतं लोके गुणवान्",
+          "prompt": "What does 'gunavaan' mean here?",
+          "options": [
+            "One possessing virtues (guna)",
+            "One with ropes (guna=rope)",
+            "A skilled warrior",
+            "A wealthy person"
+          ],
+          "correct": "One possessing virtues (guna)",
+          "partial_idx": [
+            2
+          ]
+        },
+        {
+          "phase": "sandhi",
+          "passage_iast": "kas ca viryavaan",
+          "passage_dev": "कश्च वीर्यवान्",
+          "prompt": "How does 'kasca' split?",
+          "options": [
+            "kah + ca",
+            "kas + ca",
+            "ka + sca",
+            "kash + ca"
+          ],
+          "correct": "kah + ca",
+          "partial_idx": [
+            1
+          ]
+        },
+        {
+          "phase": "samasa",
+          "passage_iast": "dharmatma",
+          "passage_dev": "धर्मात्मा",
+          "prompt": "What compound type is 'dharmatma'?",
+          "options": [
+            "Bahuvrihi — one whose atma is dharma",
+            "Tatpurusa — soul of dharma",
+            "Karmadharaya — righteous soul",
+            "Avyayibhava — according to dharma"
+          ],
+          "correct": "Bahuvrihi — one whose atma is dharma",
+          "partial_idx": [
+            2
+          ]
+        },
+        {
+          "phase": "coherence",
+          "passage_iast": "sa ramah pitaram natva vanam jagama",
+          "passage_dev": "स रामः पितरं नत्वा वनं जगाम",
+          "prompt": "Who does 'sa' refer to?",
+          "options": [
+            "Rama who departed for exile",
+            "Lakshmana who accompanied",
+            "Bharata who protested",
+            "Dasharatha who grieved"
+          ],
+          "correct": "Rama who departed for exile",
+          "partial_idx": [
+            1
+          ]
+        },
+        {
+          "phase": "restoration",
+          "passage_iast": "ko nv asmin sampratam loke gunavaan kas ca viryavaan",
+          "passage_dev": "को न्वस्मिन् साम्प्रतं लोके गुणवान् कश्च वीर्यवान्",
+          "gloss": "Who in this world today is virtuous and valorous?",
+          "correct": "Valmiki asks Narada about the ideal man — both kah pronouns seek one person",
+          "options": [
+            "Valmiki asks Narada about the ideal man — both kah pronouns seek one person",
+            "The verse asks about two different people",
+            "The pronouns refer to gods",
+            "kah is rhetorical"
+          ],
+          "partial_idx": [
+            1
+          ],
+          "tool_budget": 4,
+          "tools_needed": [
+            "referent_tracker",
+            "commentary_fetch"
+          ],
+          "glossary_data": {},
+          "sandhi_data": {},
+          "meter_data": {},
+          "commentary_data": {
+            "1.2": "This is the prasna initiating the Ramayana"
+          },
+          "witness_data": {},
+          "entity_map": {
+            "kah": [
+              "Rama",
+              "ideal person"
+            ]
+          }
+        }
+      ],
+      "contradiction_pairs": [
+        [
+          "kah refers to gods",
+          "both kah pronouns seek one person"
+        ]
+      ]
+    },
+    {
+      "id": "session_003",
+      "source": "Sushruta Samhita 1.15-6.1",
+      "domain": "ayurveda",
+      "phases": [
+        {
+          "phase": "glossary",
+          "passage_iast": "agnih sarvam pacati dhatusu",
+          "passage_dev": "अग्निः सर्वं पचति धातुषु",
+          "prompt": "What does 'agnih' mean in this medical context?",
+          "options": [
+            "Digestive fire (jatharagni)",
+            "Fire element generally",
+            "Ritual fire",
+            "Inflammation"
+          ],
+          "correct": "Digestive fire (jatharagni)",
+          "partial_idx": [
+            1
+          ]
+        },
+        {
+          "phase": "sandhi",
+          "passage_iast": "vatapittakaphas caiva",
+          "passage_dev": "वातपित्तकफश्चैव",
+          "prompt": "How does 'vatapittakaphas' split?",
+          "options": [
+            "vata + pitta + kaphah + ca + eva",
+            "vatapitta + kaphas",
+            "vata + pittakaphah + ca + eva",
+            "vatapittaka + phas + ca + eva"
+          ],
+          "correct": "vata + pitta + kaphah + ca + eva",
+          "partial_idx": [
+            2
+          ]
+        },
+        {
+          "phase": "samasa",
+          "passage_iast": "tridosa",
+          "passage_dev": "त्रिदोष",
+          "prompt": "What compound type is 'tridosa'?",
+          "options": [
+            "Dvigu — a group of three dosas",
+            "Tatpurusa — third dosa",
+            "Bahuvrihi — having three dosas",
+            "Dvandva — three and dosa"
+          ],
+          "correct": "Dvigu — a group of three dosas",
+          "partial_idx": [
+            2
+          ]
+        },
+        {
+          "phase": "coherence",
+          "passage_iast": "sa vaidyah rogam jnatva cikitsam kuryat",
+          "passage_dev": "स वैद्यः रोगं ज्ञात्वा चिकित्सां कुर्यात्",
+          "prompt": "Who is 'sa' in this verse?",
+          "options": [
+            "The skilled physician (prapta-sastra)",
+            "The patient",
+            "Any healer",
+            "The teacher"
+          ],
+          "correct": "The skilled physician (prapta-sastra)",
+          "partial_idx": [
+            2
+          ]
+        },
+        {
+          "phase": "restoration",
+          "passage_iast": "agnih sarvam pacati dhatusu",
+          "passage_dev": "अग्निः सर्वं पचति धातुषु",
+          "gloss": "Agni digests everything in the bodily tissues",
+          "correct": "agnih refers to jatharagni that transforms nutrients within the seven dhatus",
+          "options": [
+            "agnih refers to jatharagni that transforms nutrients within the seven dhatus",
+            "Agni means the general fire element",
+            "The verse describes ritual fire offerings",
+            "Agni refers to tissue inflammation"
+          ],
+          "partial_idx": [
+            1
+          ],
+          "tool_budget": 4,
+          "tools_needed": [
+            "lexicon_lookup",
+            "commentary_fetch"
+          ],
+          "glossary_data": {
+            "agnih": [
+              {
+                "meaning": "digestive fire",
+                "domain": "ayurveda",
+                "confidence": 0.95
+              }
+            ]
+          },
+          "sandhi_data": {},
+          "meter_data": {},
+          "commentary_data": {
+            "agnih": "Dalhana: agni is jatharagni"
+          },
+          "witness_data": {},
+          "entity_map": {
+            "agnih": [
+              "jatharagni",
+              "bhutagni"
+            ]
+          }
+        }
+      ],
+      "contradiction_pairs": [
+        [
+          "Agni means the general fire element",
+          "agnih refers to jatharagni"
+        ]
+      ]
+    },
+    {
+      "id": "session_004",
+      "source": "Arthashastra 2.6-7.1",
+      "domain": "narrative",
+      "phases": [
+        {
+          "phase": "glossary",
+          "passage_iast": "koso hi rajnah pradhanam angam",
+          "passage_dev": "कोशो हि राज्ञः प्रधानम् अङ्गम्",
+          "prompt": "What does 'kosa' mean here?",
+          "options": [
+            "State treasury (rajakosa)",
+            "Sheath or covering",
+            "Five sheaths of self",
+            "Military storage"
+          ],
+          "correct": "State treasury (rajakosa)",
+          "partial_idx": [
+            1
+          ]
+        },
+        {
+          "phase": "sandhi",
+          "passage_iast": "rajnah pradhanam",
+          "passage_dev": "राज्ञः प्रधानम्",
+          "prompt": "How does the genitive 'rajnah' relate to 'pradhanam'?",
+          "options": [
+            "rajnah is genitive of rajan — 'of the king'",
+            "rajnah is ablative — 'from the king'",
+            "raja + nah is a compound",
+            "rajnah is locative — 'in the king'"
+          ],
+          "correct": "rajnah is genitive of rajan — 'of the king'",
+          "partial_idx": [
+            3
+          ]
+        },
+        {
+          "phase": "samasa",
+          "passage_iast": "sadgunaya",
+          "passage_dev": "षाड्गुण्य",
+          "prompt": "What compound type is 'sadgunya'?",
+          "options": [
+            "Dvigu — group of six policies",
+            "Bahuvrihi — having six qualities",
+            "Tatpurusa — sixth quality",
+            "Karmadharaya — good quality"
+          ],
+          "correct": "Dvigu — group of six policies",
+          "partial_idx": [
+            1
+          ]
+        },
+        {
+          "phase": "coherence",
+          "passage_iast": "sadgunyam rajnam pradhanam sadhanam vijaye",
+          "passage_dev": "षाड्गुण्यं राज्ञां प्रधानं साधनं विजये",
+          "prompt": "What does 'sadgunya' refer to in Kautilya's framework?",
+          "options": [
+            "Six measures of foreign policy",
+            "Six personal virtues",
+            "Six military formations",
+            "Six seasonal strategies"
+          ],
+          "correct": "Six measures of foreign policy",
+          "partial_idx": [
+            1
+          ]
+        },
+        {
+          "phase": "restoration",
+          "passage_iast": "koso hi rajnah pradhanam angam",
+          "passage_dev": "कोशो हि राज्ञः प्रधानम् अङ्गम्",
+          "gloss": "The treasury is the chief limb of the king",
+          "correct": "kosa means rajakosa — the primary resource for governance per Kautilya",
+          "options": [
+            "kosa means rajakosa — the primary resource for governance per Kautilya",
+            "kosa means a repository or sheath",
+            "kosa refers to pancakosa",
+            "The verse describes military storage"
+          ],
+          "partial_idx": [
+            1
+          ],
+          "tool_budget": 4,
+          "tools_needed": [
+            "lexicon_lookup",
+            "commentary_fetch"
+          ],
+          "glossary_data": {
+            "kosa": [
+              {
+                "meaning": "state treasury",
+                "domain": "arthashastra",
+                "confidence": 0.95
+              }
+            ]
+          },
+          "sandhi_data": {},
+          "meter_data": {},
+          "commentary_data": {
+            "kosa": "Kautilya uses kosa for rajakosa"
+          },
+          "witness_data": {},
+          "entity_map": {}
+        }
+      ],
+      "contradiction_pairs": [
+        [
+          "kosa means a repository or sheath",
+          "kosa means rajakosa"
+        ]
+      ]
+    },
+    {
+      "id": "session_005",
+      "source": "Bhagavad Gita 4.7-13.2",
+      "domain": "philosophy",
+      "phases": [
+        {
+          "phase": "glossary",
+          "passage_iast": "yada yada hi dharmasya glanih bhavati bharata",
+          "passage_dev": "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत",
+          "prompt": "What does 'glanih' mean here?",
+          "options": [
+            "Systemic decline of cosmic order",
+            "Weakness or fatigue",
+            "Physical illness",
+            "Synonym for destruction"
+          ],
+          "correct": "Systemic decline of cosmic order",
+          "partial_idx": [
+            1
+          ]
+        },
+        {
+          "phase": "sandhi",
+          "passage_iast": "dharmasya glanir bhavati",
+          "passage_dev": "धर्मस्य ग्लानिर्भवति",
+          "prompt": "How does 'glanirbhavati' split?",
+          "options": [
+            "glanih + bhavati (visarga sandhi)",
+            "glanir + bhavati",
+            "glani + rbhavati",
+            "gla + nirbhavati"
+          ],
+          "correct": "glanih + bhavati (visarga sandhi)",
+          "partial_idx": [
+            1
+          ]
+        },
+        {
+          "phase": "samasa",
+          "passage_iast": "ksetrajnam",
+          "passage_dev": "क्षेत्रज्ञ",
+          "prompt": "What compound type is 'ksetrajna'?",
+          "options": [
+            "Tatpurusa — knower of the field",
+            "Bahuvrihi — one who knows the field",
+            "Karmadharaya — field-knower",
+            "Avyayibhava — in the field"
+          ],
+          "correct": "Tatpurusa — knower of the field",
+          "partial_idx": [
+            1
+          ]
+        },
+        {
+          "phase": "coherence",
+          "passage_iast": "ksetrajnam capi mam viddhi sarvaksetresu bharata",
+          "passage_dev": "क्षेत्रज्ञं चापि मां विद्धि सर्वक्षेत्रेषु भारत",
+          "prompt": "Who does 'mam' refer to?",
+          "options": [
+            "Krishna as universal knower",
+            "Arjuna",
+            "The individual soul only",
+            "The body"
+          ],
+          "correct": "Krishna as universal knower",
+          "partial_idx": [
+            2
+          ]
+        },
+        {
+          "phase": "restoration",
+          "passage_iast": "yada yada hi dharmasya glanih bhavati bharata",
+          "passage_dev": "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत",
+          "gloss": "Whenever there is a decline of dharma",
+          "correct": "glanih means systemic decline of cosmic order not individual moral failure",
+          "options": [
+            "glanih means systemic decline of cosmic order not individual moral failure",
+            "glanih means weakness or fatigue",
+            "The word refers to physical illness",
+            "glanih is synonym for destruction"
+          ],
+          "partial_idx": [
+            1
+          ],
+          "tool_budget": 4,
+          "tools_needed": [
+            "lexicon_lookup",
+            "commentary_fetch"
+          ],
+          "glossary_data": {
+            "glanih": [
+              {
+                "meaning": "decline of cosmic order",
+                "domain": "philosophy",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "sandhi_data": {},
+          "meter_data": {},
+          "commentary_data": {
+            "glanih": "Sankara: decline means waning of varnasrama order"
+          },
+          "witness_data": {
+            "4.7": {
+              "witness_a": "glanir bhavati",
+              "witness_b": "hanir bhavati"
+            }
+          },
+          "entity_map": {}
+        }
+      ],
+      "contradiction_pairs": [
+        [
+          "glanih means weakness or fatigue",
+          "glanih means systemic decline"
+        ]
+      ]
+    }
+  ]
+}

@@ -199,6 +199,15 @@ async def model_run(payload: ModelEpisodeRequest):
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Unexpected model run error: {exc}")
 
+from server.tools import ManuscriptToolkit
+
+
+@app.get("/tools/catalog")
+async def tools_catalog():
+    """Return specifications for the six manuscript restoration tools."""
+    return {"tools": ManuscriptToolkit.catalog()}
+
+
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 

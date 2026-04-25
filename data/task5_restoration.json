@@ -1,0 +1,3424 @@
+{
+  "task": "manuscript_restoration",
+  "version": "2.0.0",
+  "episodes": [
+    {
+      "id": "rest_001",
+      "difficulty": "beginner",
+      "source": "Bhagavad Gita 2.19",
+      "domain": "philosophy",
+      "passage_iast": "ya enaṃ vetti hantāraṃ yaś cainaṃ manyate hatam",
+      "passage_devanagari": "य एनं वेत्ति हन्तारं यश्चैनं मन्यते हतम्",
+      "passage_english_gloss": "He who thinks this Self is a slayer and he who thinks it is slain",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "The Self neither slays nor is it slain — 'hantāram' refers to the agent of action, not the true subject",
+      "partial_credit_answers": [
+        "The verse concerns action and non-action"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "hantāram": [
+          {
+            "meaning": "slayer, one who kills",
+            "domain": "general",
+            "confidence": 0.9
+          },
+          {
+            "meaning": "agent of action (philosophical sense)",
+            "domain": "vedanta",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "sandhi_data": {
+        "yaścainaṃ": [
+          {
+            "split": "yaś ca enaṃ",
+            "rule": "visarga sandhi + vowel coalescence",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "yaś cai naṃ",
+            "rule": "invalid split",
+            "plausibility_score": 0.05
+          }
+        ]
+      },
+      "meter_data": {
+        "yaś ca enaṃ": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "yaś cai naṃ": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {
+        "hantāram": "Śaṅkarācārya: 'hantā' here refers to the buddhi, the apparent agent, not the ātman",
+        "2.19": "This verse establishes the doctrine of ātman as akartā — the non-doer"
+      },
+      "witness_data": {},
+      "entity_map": {
+        "enaṃ": [
+          "ātman (Self)",
+          "śarīra (body)"
+        ],
+        "yaḥ": [
+          "the one who knows"
+        ]
+      },
+      "candidate_options": [
+        "The Self neither slays nor is it slain — 'hantāram' refers to the agent of action, not the true subject",
+        "The verse describes physical combat and the ethics of killing",
+        "The verse concerns action and non-action",
+        "Both slaying and being slain are valid interpretations depending on context"
+      ],
+      "partial_credit_indices": [
+        2
+      ]
+    },
+    {
+      "id": "rest_002",
+      "difficulty": "beginner",
+      "source": "Sushruta Samhita 1.15",
+      "domain": "ayurveda",
+      "passage_iast": "agniḥ sarvaṃ pacati dhātuṣu",
+      "passage_devanagari": "अग्निः सर्वं पचति धातुषु",
+      "passage_english_gloss": "Agni digests everything in the bodily tissues",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'agniḥ' refers to the digestive fire (jaṭharāgni) that transforms nutrients within the seven dhātus",
+      "partial_credit_answers": [
+        "Agni here means the general element of fire"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "agniḥ": [
+          {
+            "meaning": "digestive fire (jaṭharāgni)",
+            "domain": "ayurveda",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "fire element",
+            "domain": "general",
+            "confidence": 0.7
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {
+        "agniḥ": "Dalhana: agni here is specifically jaṭharāgni"
+      },
+      "witness_data": {},
+      "entity_map": {
+        "agniḥ": [
+          "jaṭharāgni",
+          "bhūtāgni"
+        ]
+      },
+      "candidate_options": [
+        "'agniḥ' refers to the digestive fire (jaṭharāgni) that transforms nutrients within the seven dhātus",
+        "Agni here means the general element of fire",
+        "The verse describes ritual fire offerings",
+        "Agni refers to inflammation in the tissues"
+      ],
+      "partial_credit_indices": [
+        1
+      ]
+    },
+    {
+      "id": "rest_003",
+      "difficulty": "beginner",
+      "source": "Ramayana 2.34",
+      "domain": "narrative",
+      "passage_iast": "sa rāmaḥ pitaraṃ natvā vanaṃ jagāma",
+      "passage_devanagari": "स रामः पितरं नत्वा वनं जगाम",
+      "passage_english_gloss": "That Rama, having bowed to his father, went to the forest",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "The pronoun 'sa' refers to Rama who departed for exile after receiving his father's blessing",
+      "partial_credit_answers": [
+        "'sa' could refer to any male character present"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {
+        "natvā": [
+          {
+            "meaning": "having bowed",
+            "domain": "general",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {
+        "sa": [
+          "Rāma",
+          "Lakṣmaṇa",
+          "Daśaratha"
+        ],
+        "pitaram": [
+          "Daśaratha"
+        ]
+      },
+      "candidate_options": [
+        "The pronoun 'sa' refers to Rama who departed for exile after receiving his father's blessing",
+        "'sa' refers to Lakshmana who accompanied Rama",
+        "'sa' could refer to any male character present",
+        "The verse describes Dasharatha going to the forest"
+      ],
+      "partial_credit_indices": [
+        2
+      ]
+    },
+    {
+      "id": "rest_004",
+      "difficulty": "intermediate",
+      "source": "Bhagavad Gita 3.27",
+      "domain": "philosophy",
+      "passage_iast": "prakṛteḥ kriyamāṇāni guṇaiḥ karmāṇi sarvaśaḥ",
+      "passage_devanagari": "प्रकृतेः क्रियमाणानि गुणैः कर्माणि सर्वशः",
+      "passage_english_gloss": "All actions are performed by the gunas of prakrti",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "The compound 'kriyamāṇāni' splits as 'kriya + māṇa + āni' — passive present participle meaning 'being done'",
+      "partial_credit_answers": [
+        "It is a simple verb form meaning 'doing'"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "kriyamāṇāni": [
+          {
+            "split": "kriya + māṇa + āni",
+            "rule": "passive participle formation",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "kri + yamāṇa + āni",
+            "rule": "alternative root split",
+            "plausibility_score": 0.3
+          }
+        ]
+      },
+      "meter_data": {
+        "kriya + māṇa + āni": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "kri + yamāṇa + āni": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {
+        "3.27": "Actions are attributed to prakṛti's guṇas, not the Self"
+      },
+      "witness_data": {
+        "3.27": {
+          "witness_a": "kriyamāṇāni",
+          "witness_b": "kriyamāṇāni"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "The compound 'kriyamāṇāni' splits as 'kriya + māṇa + āni' — passive present participle meaning 'being done'",
+        "The word is an active participle meaning 'the doer of actions'",
+        "It is a simple verb form meaning 'doing'",
+        "The compound means 'actions that will be done in future'"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "prakṛteḥ kriyamāṇāni gunaiḥ karmāṇi sarvaśaḥ"
+    },
+    {
+      "id": "rest_005",
+      "difficulty": "intermediate",
+      "source": "Arthashastra 2.6",
+      "domain": "narrative",
+      "passage_iast": "kośo hi rājñaḥ pradhānam aṅgam",
+      "passage_devanagari": "कोशो हि राज्ञः प्रधानम् अङ्गम्",
+      "passage_english_gloss": "The treasury is indeed the chief limb of the king",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'kośa' here means the state treasury (rājakośa), the primary resource for governance",
+      "partial_credit_answers": [
+        "'kośa' could mean a repository or sheath"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "kośa": [
+          {
+            "meaning": "treasury, state treasury",
+            "domain": "arthashastra",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "sheath, covering",
+            "domain": "vedanta",
+            "confidence": 0.6
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {
+        "kośa": "Kauṭilya uses kośa specifically for rājakośa"
+      },
+      "witness_data": {
+        "2.6": {
+          "witness_a": "kośo hi",
+          "witness_b": "kośo vai"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'kośa' here means the state treasury (rājakośa), the primary resource for governance",
+        "'kośa' could mean a repository or sheath",
+        "'kośa' refers to the five sheaths of the self (pañcakośa)",
+        "The verse describes military equipment storage"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "kośo hi rājñaḥ pradhānam aṅgam"
+    },
+    {
+      "id": "rest_006",
+      "difficulty": "intermediate",
+      "source": "Surya Siddhanta 1.12",
+      "domain": "astronomy",
+      "passage_iast": "bhūmermadhyāt sahasrāṃśoḥ khamadhyam upagacchati",
+      "passage_devanagari": "भूमेर्मध्यात् सहस्रांशोः खमध्यम् उपगच्छति",
+      "passage_english_gloss": "From the center of the earth, the thousand-rayed one reaches the mid-sky",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'bhūmermadhyāt' splits as 'bhūmeḥ + madhyāt' via visarga sandhi — 'from the middle of the earth'",
+      "partial_credit_answers": [
+        "The compound describes a location but the split is unclear"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "bhūmermadhyāt": [
+          {
+            "split": "bhūmeḥ + madhyāt",
+            "rule": "visarga sandhi",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "bhūma + ermadhyāt",
+            "rule": "invalid",
+            "plausibility_score": 0.05
+          }
+        ]
+      },
+      "meter_data": {
+        "bhūmeḥ + madhyāt": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "bhūma + ermadhyāt": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {
+        "1.12": {
+          "witness_a": "bhūmermadhyāt",
+          "witness_b": "bhūmeḥ madhyāt"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'bhūmermadhyāt' splits as 'bhūmeḥ + madhyāt' via visarga sandhi — 'from the middle of the earth'",
+        "The compound is 'bhūma + ermadhyāt' meaning 'from the great middle'",
+        "'bhūmer + madhyāt' is a tatpuruṣa meaning 'earth-center'",
+        "The compound describes a location but the split is unclear"
+      ],
+      "partial_credit_indices": [
+        3
+      ],
+      "passage_iast_noisy": "bhūmermadhyāt sahasramśoḥ khamadhyam upagacchati"
+    },
+    {
+      "id": "rest_007",
+      "difficulty": "hard",
+      "source": "Bhagavad Gita 4.7",
+      "domain": "philosophy",
+      "passage_iast": "yadā yadā hi dharmasya glānir bhavati bhārata",
+      "passage_devanagari": "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत",
+      "passage_english_gloss": "Whenever there is a decline of dharma, O Bharata",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'glāniḥ' signifies a systemic decline or decay of cosmic order, not merely individual moral failure",
+      "partial_credit_answers": [
+        "'glāniḥ' means weakness or fatigue"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "glāniḥ": [
+          {
+            "meaning": "decline, decay of order",
+            "domain": "philosophy",
+            "confidence": 0.9
+          },
+          {
+            "meaning": "weakness, fatigue",
+            "domain": "general",
+            "confidence": 0.6
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {
+        "glāniḥ": "Śaṅkara: decline of dharma means the waning of varṇāśrama order"
+      },
+      "witness_data": {
+        "4.7": {
+          "witness_a": "glānir bhavati",
+          "witness_b": "hānir bhavati"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'glāniḥ' signifies a systemic decline or decay of cosmic order, not merely individual moral failure",
+        "'glāniḥ' means weakness or fatigue",
+        "The word refers to physical illness of dharma personified",
+        "'glāniḥ' is a synonym for destruction (vināśa)"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "yadā yadā hi dharmasya glanir bhavati bhārata"
+    },
+    {
+      "id": "rest_008",
+      "difficulty": "hard",
+      "source": "Sushruta Samhita 4.3",
+      "domain": "ayurveda",
+      "passage_iast": "vātapittakaphaś caiva tridoṣā iti saṃjñitāḥ",
+      "passage_devanagari": "वातपित्तकफश्चैव त्रिदोषा इति संज्ञिताः",
+      "passage_english_gloss": "Vata, Pitta, and Kapha — these are known as the three doshas",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'vātapittakaphaś' splits as 'vāta + pitta + kaphaḥ + ca + eva' — a dvandva compound listing the three doṣas",
+      "partial_credit_answers": [
+        "It is a simple list of three terms"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "vātapittakaphaś": [
+          {
+            "split": "vāta + pitta + kaphaḥ + ca + eva",
+            "rule": "dvandva + visarga sandhi",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "vātapitta + kaphaś",
+            "rule": "partial split",
+            "plausibility_score": 0.3
+          }
+        ]
+      },
+      "meter_data": {
+        "vāta + pitta + kaphaḥ + ca + eva": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "vātapitta + kaphaś": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {
+        "4.3": {
+          "witness_a": "vātapittakaphaś",
+          "witness_b": "vātapittaśleshmaś"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'vātapittakaphaś' splits as 'vāta + pitta + kaphaḥ + ca + eva' — a dvandva compound listing the three doṣas",
+        "The compound means 'the wind-bile-phlegm' as a single entity",
+        "It is a simple list of three terms",
+        "The word is a bahuvrīhi meaning 'one who has vāta, pitta, and kapha'"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "vatapittakaphaś caiva tridoṣā iti samjñitāḥ"
+    },
+    {
+      "id": "rest_009",
+      "difficulty": "hard",
+      "source": "Ramayana 5.1",
+      "domain": "narrative",
+      "passage_iast": "hanūmān sāgaraṃ tīrtvā laṅkāṃ prāpya sa vānaraḥ",
+      "passage_devanagari": "हनूमान् सागरं तीर्त्वा लङ्कां प्राप्य स वानरः",
+      "passage_english_gloss": "Hanuman, having crossed the ocean and reached Lanka, that monkey...",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "'sa vānaraḥ' is a resumptive pronoun referring back to Hanūmān — emphasizing his identity as the heroic monkey",
+      "partial_credit_answers": [
+        "'sa' is a generic demonstrative"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "5.1": {
+          "witness_a": "sa vānaraḥ",
+          "witness_b": "mahāvīraḥ"
+        }
+      },
+      "entity_map": {
+        "sa": [
+          "Hanūmān",
+          "Sugrīva",
+          "Aṅgada"
+        ],
+        "vānaraḥ": [
+          "monkey warrior"
+        ]
+      },
+      "candidate_options": [
+        "'sa vānaraḥ' is a resumptive pronoun referring back to Hanūmān — emphasizing his identity as the heroic monkey",
+        "'sa' refers to Sugriva who sent Hanuman",
+        "The verse describes a different monkey warrior",
+        "'sa' is a generic demonstrative"
+      ],
+      "partial_credit_indices": [
+        3
+      ],
+      "passage_iast_noisy": "hanūmān sāgaraṃ tīrtvā laṅkāṃ prāpya sa vānaraḥ"
+    },
+    {
+      "id": "rest_010",
+      "difficulty": "expert",
+      "source": "Bhagavad Gita 13.2",
+      "domain": "philosophy",
+      "passage_iast": "kṣetrajñaṃ cāpi māṃ viddhi sarvakṣetreṣu bhārata",
+      "passage_devanagari": "क्षेत्रज्ञं चापि मां विद्धि सर्वक्षेत्रेषु भारत",
+      "passage_english_gloss": "Know Me also as the Knower of the Field in all fields, O Bharata",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'kṣetrajña' is the conscious principle (ātman/puruṣa) that knows the body-field — Krishna identifies himself with this universal knower",
+      "partial_credit_answers": [
+        "'kṣetrajña' means the owner of the land"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "kṣetrajña": [
+          {
+            "meaning": "knower of the field, conscious principle",
+            "domain": "vedanta",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "landowner",
+            "domain": "general",
+            "confidence": 0.3
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "13.2": {
+          "witness_a": "kṣetrajñaṃ cāpi",
+          "witness_b": "kṣetrajñaṃ ca api"
+        }
+      },
+      "entity_map": {
+        "māṃ": [
+          "Kṛṣṇa",
+          "Paramātman"
+        ],
+        "kṣetrajña": [
+          "ātman",
+          "jīva"
+        ]
+      },
+      "candidate_options": [
+        "'kṣetrajña' is the conscious principle (ātman/puruṣa) that knows the body-field — Krishna identifies himself with this universal knower",
+        "'kṣetrajña' refers to the individual soul only, not the supreme",
+        "'kṣetrajña' means the owner of the land",
+        "The verse describes agricultural knowledge"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "ksetrajñam capi maṃ viddhi sarvaksetresu bhārata"
+    },
+    {
+      "id": "rest_011",
+      "difficulty": "expert",
+      "source": "Surya Siddhanta 2.1",
+      "domain": "astronomy",
+      "passage_iast": "madhyamaṃ ravicandrāṇāṃ sphuṭaṃ kurvan vidhānataḥ",
+      "passage_devanagari": "मध्यमं रविचन्द्राणां स्फुटं कुर्वन् विधानतः",
+      "passage_english_gloss": "Making the mean positions of the sun and moon true, according to rule",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'ravicandrāṇāṃ' splits as 'ravi + candrāṇām' — genitive plural dvandva meaning 'of the sun and moons/planets'",
+      "partial_credit_answers": [
+        "It means 'of the sun-moon' as a single compound"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "ravicandrāṇāṃ": [
+          {
+            "split": "ravi + candrāṇām",
+            "rule": "dvandva compound",
+            "plausibility_score": 0.9
+          }
+        ]
+      },
+      "meter_data": {
+        "ravi + candrāṇām": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {
+        "2.1": {
+          "witness_a": "ravicandrāṇāṃ",
+          "witness_b": "ravīndūnāṃ"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'ravicandrāṇāṃ' splits as 'ravi + candrāṇām' — genitive plural dvandva meaning 'of the sun and moons/planets'",
+        "It means 'of the sun-moon' as a single compound",
+        "The word is a tatpuruṣa meaning 'the moon of the sun'",
+        "'ravicandrāṇāṃ' is an avyayībhāva compound"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "madhyamaṃ ravicandrānaṃ sphuṭaṃ kurvan vidhanataḥ"
+    },
+    {
+      "id": "rest_012",
+      "difficulty": "expert",
+      "source": "Sushruta Samhita 6.1",
+      "domain": "ayurveda",
+      "passage_iast": "sa vaidyaḥ rogaṃ jñātvā cikitsāṃ kuryāt",
+      "passage_devanagari": "स वैद्यः रोगं ज्ञात्वा चिकित्सां कुर्यात्",
+      "passage_english_gloss": "That physician, having known the disease, should perform treatment",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "'sa vaidyaḥ' refers to the skilled physician (prāpta-śāstra) who must diagnose before treating",
+      "partial_credit_answers": [
+        "'sa' refers to any healer"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "6.1": {
+          "witness_a": "sa vaidyaḥ",
+          "witness_b": "sa cikitsakaḥ"
+        }
+      },
+      "entity_map": {
+        "sa": [
+          "vaidya (physician)",
+          "rogi (patient)"
+        ],
+        "rogaṃ": [
+          "vyādhi",
+          "āmaya"
+        ]
+      },
+      "candidate_options": [
+        "'sa vaidyaḥ' refers to the skilled physician (prāpta-śāstra) who must diagnose before treating",
+        "'sa' refers to the patient who must know his disease",
+        "'sa' refers to any healer",
+        "The verse describes self-treatment"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "sa vaidyaḥ rogam jñātva cikitsāṃ kuryat"
+    },
+    {
+      "id": "rest_013",
+      "difficulty": "beginner",
+      "source": "Bhagavad Gita 2.47",
+      "domain": "philosophy",
+      "passage_iast": "karmaṇy evādhikāras te mā phaleṣu kadācana",
+      "passage_devanagari": "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन",
+      "passage_english_gloss": "Your right is to action alone, never to its fruits",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'karmaṇy evādhikāras' splits as 'karmaṇi + eva + adhikāraḥ' — locative + emphatic + nominative via sandhi",
+      "partial_credit_answers": [
+        "The compound simply means 'right to work'"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "karmaṇyevādhikāras": [
+          {
+            "split": "karmaṇi + eva + adhikāraḥ",
+            "rule": "locative sandhi + vowel coalescence",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "karma + ṇyeva + adhikāraḥ",
+            "rule": "invalid",
+            "plausibility_score": 0.05
+          }
+        ]
+      },
+      "meter_data": {
+        "karmaṇi + eva + adhikāraḥ": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "karma + ṇyeva + adhikāraḥ": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {
+        "2.47": "Śaṅkara: your adhikāra is only in performing action, not in desiring results"
+      },
+      "witness_data": {},
+      "entity_map": {},
+      "candidate_options": [
+        "'karmaṇy evādhikāras' splits as 'karmaṇi + eva + adhikāraḥ' — locative + emphatic + nominative via sandhi",
+        "'karmaṇyeva' is a single word meaning 'work-only'",
+        "The compound simply means 'right to work'",
+        "The split is 'karma + ṇyeva + adhikāraḥ'"
+      ],
+      "partial_credit_indices": [
+        2
+      ]
+    },
+    {
+      "id": "rest_014",
+      "difficulty": "intermediate",
+      "source": "Ramayana 1.2",
+      "domain": "narrative",
+      "passage_iast": "ko nv asmin sāmprataṃ loke guṇavān kaś ca vīryavān",
+      "passage_devanagari": "को न्वस्मिन् साम्प्रतं लोके गुणवान् कश्च वीर्यवान्",
+      "passage_english_gloss": "Who in this world today is virtuous and who is valorous?",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "Vālmīki asks Nārada about the ideal man — the two 'kaḥ' pronouns seek a single person embodying both guṇa and vīrya",
+      "partial_credit_answers": [
+        "The verse asks about two different people"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {
+        "1.2": "This is the praśna that initiates the entire Rāmāyaṇa"
+      },
+      "witness_data": {
+        "1.2": {
+          "witness_a": "guṇavān kaś ca",
+          "witness_b": "guṇavān ko'pi"
+        }
+      },
+      "entity_map": {
+        "kaḥ": [
+          "Rāma",
+          "ideal person"
+        ],
+        "asmin loke": [
+          "this world"
+        ]
+      },
+      "candidate_options": [
+        "Vālmīki asks Nārada about the ideal man — the two 'kaḥ' pronouns seek a single person embodying both guṇa and vīrya",
+        "The verse asks about two different people",
+        "The pronouns refer to gods, not humans",
+        "'kaḥ' is rhetorical and expects no answer"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "ko nv asmin sāmprataṃ loke guṇavān kaś ca vīryavān"
+    },
+    {
+      "id": "rest_015",
+      "difficulty": "expert",
+      "source": "Arthashastra 7.1",
+      "domain": "narrative",
+      "passage_iast": "ṣāḍguṇyaṃ rājñāṃ pradhānaṃ sādhanaṃ vijaye",
+      "passage_devanagari": "षाड्गुण्यं राज्ञां प्रधानं साधनं विजये",
+      "passage_english_gloss": "The sixfold policy is the chief instrument of kings for victory",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'ṣāḍguṇya' refers to the six measures of foreign policy: sandhi, vigraha, yāna, āsana, dvaidha, saṃśraya",
+      "partial_credit_answers": [
+        "'ṣāḍguṇya' means six virtues"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "ṣāḍguṇya": [
+          {
+            "meaning": "sixfold policy (sandhi, vigraha, yāna, āsana, dvaidha, saṃśraya)",
+            "domain": "arthashastra",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "six qualities",
+            "domain": "general",
+            "confidence": 0.4
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "7.1": {
+          "witness_a": "ṣāḍguṇyaṃ rājñāṃ",
+          "witness_b": "ṣāḍguṇyaṃ nṛpāṇāṃ"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'ṣāḍguṇya' refers to the six measures of foreign policy: sandhi, vigraha, yāna, āsana, dvaidha, saṃśraya",
+        "'ṣāḍguṇya' means six virtues",
+        "The word describes six types of military formations",
+        "'ṣāḍguṇya' refers to the six seasons relevant to warfare"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "ṣadguṇyaṃ rajñāṃ pradhānaṃ sādhanaṃ vijaye"
+    },
+    {
+      "id": "rest_016",
+      "difficulty": "intermediate",
+      "source": "Bhagavad Gita 2.19",
+      "domain": "philosophy",
+      "passage_iast": "ya enaṃ vetti hantāraṃ yaś cainaṃ manyate hatam",
+      "passage_devanagari": "य एनं वेत्ति हन्तारं यश्चैनं मन्यते हतम्",
+      "passage_english_gloss": "He who thinks this Self is a slayer and he who thinks it is slain",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "The Self neither slays nor is it slain — 'hantāram' refers to the agent of action, not the true subject",
+      "partial_credit_answers": [
+        "The verse concerns action and non-action"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "hantāram": [
+          {
+            "meaning": "slayer, one who kills",
+            "domain": "general",
+            "confidence": 0.9
+          },
+          {
+            "meaning": "agent of action (philosophical sense)",
+            "domain": "vedanta",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "sandhi_data": {
+        "yaścainaṃ": [
+          {
+            "split": "yaś ca enaṃ",
+            "rule": "visarga sandhi + vowel coalescence",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "yaś cai naṃ",
+            "rule": "invalid split",
+            "plausibility_score": 0.05
+          }
+        ]
+      },
+      "meter_data": {
+        "yaś ca enaṃ": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "yaś cai naṃ": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {
+        "hantāram": "Śaṅkarācārya: 'hantā' here refers to the buddhi, the apparent agent, not the ātman",
+        "2.19": "This verse establishes the doctrine of ātman as akartā — the non-doer"
+      },
+      "witness_data": {},
+      "entity_map": {
+        "enaṃ": [
+          "ātman (Self)",
+          "śarīra (body)"
+        ],
+        "yaḥ": [
+          "the one who knows"
+        ]
+      },
+      "candidate_options": [
+        "The Self neither slays nor is it slain — 'hantāram' refers to the agent of action, not the true subject",
+        "The verse describes physical combat and the ethics of killing",
+        "The verse concerns action and non-action",
+        "Both slaying and being slain are valid interpretations depending on context"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "ya enaṃ vetti hantāraṃ yaś cainaṃ manyate hatam"
+    },
+    {
+      "id": "rest_017",
+      "difficulty": "hard",
+      "source": "Bhagavad Gita 2.19",
+      "domain": "philosophy",
+      "passage_iast": "ya enaṃ vetti hantāraṃ yaś cainaṃ manyate hatam",
+      "passage_devanagari": "य एनं वेत्ति हन्तारं यश्चैनं मन्यते हतम्",
+      "passage_english_gloss": "He who thinks this Self is a slayer and he who thinks it is slain",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "The Self neither slays nor is it slain — 'hantāram' refers to the agent of action, not the true subject",
+      "partial_credit_answers": [
+        "The verse concerns action and non-action"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "hantāram": [
+          {
+            "meaning": "slayer, one who kills",
+            "domain": "general",
+            "confidence": 0.9
+          },
+          {
+            "meaning": "agent of action (philosophical sense)",
+            "domain": "vedanta",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "sandhi_data": {
+        "yaścainaṃ": [
+          {
+            "split": "yaś ca enaṃ",
+            "rule": "visarga sandhi + vowel coalescence",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "yaś cai naṃ",
+            "rule": "invalid split",
+            "plausibility_score": 0.05
+          }
+        ]
+      },
+      "meter_data": {
+        "yaś ca enaṃ": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "yaś cai naṃ": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {
+        "hantāram": "Śaṅkarācārya: 'hantā' here refers to the buddhi, the apparent agent, not the ātman"
+      },
+      "witness_data": {},
+      "entity_map": {
+        "enaṃ": [
+          "ātman (Self)",
+          "śarīra (body)"
+        ],
+        "yaḥ": [
+          "the one who knows"
+        ]
+      },
+      "candidate_options": [
+        "The Self neither slays nor is it slain — 'hantāram' refers to the agent of action, not the true subject",
+        "The verse describes physical combat and the ethics of killing",
+        "The verse concerns action and non-action",
+        "Both slaying and being slain are valid interpretations depending on context"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "ya enaṃ vetti hantāraṃ yaś cainaṃ manyate hatam"
+    },
+    {
+      "id": "rest_018",
+      "difficulty": "expert",
+      "source": "Bhagavad Gita 2.19",
+      "domain": "philosophy",
+      "passage_iast": "ya enaṃ vetti hantāraṃ yaś cainaṃ manyate hatam",
+      "passage_devanagari": "य एनं वेत्ति हन्तारं यश्चैनं मन्यते हतम्",
+      "passage_english_gloss": "He who thinks this Self is a slayer and he who thinks it is slain",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "The Self neither slays nor is it slain — 'hantāram' refers to the agent of action, not the true subject",
+      "partial_credit_answers": [
+        "The verse concerns action and non-action"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "hantāram": [
+          {
+            "meaning": "slayer, one who kills",
+            "domain": "general",
+            "confidence": 0.9
+          },
+          {
+            "meaning": "agent of action (philosophical sense)",
+            "domain": "vedanta",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "sandhi_data": {
+        "yaścainaṃ": [
+          {
+            "split": "yaś ca enaṃ",
+            "rule": "visarga sandhi + vowel coalescence",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "yaś cai naṃ",
+            "rule": "invalid split",
+            "plausibility_score": 0.05
+          }
+        ]
+      },
+      "meter_data": {
+        "yaś ca enaṃ": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "yaś cai naṃ": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {
+        "enaṃ": [
+          "ātman (Self)",
+          "śarīra (body)"
+        ],
+        "yaḥ": [
+          "the one who knows"
+        ]
+      },
+      "candidate_options": [
+        "The Self neither slays nor is it slain — 'hantāram' refers to the agent of action, not the true subject",
+        "The verse describes physical combat and the ethics of killing",
+        "The verse concerns action and non-action",
+        "Both slaying and being slain are valid interpretations depending on context"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "ya enaṃ vetti hantāraṃ yaś cainaṃ manyate hatam"
+    },
+    {
+      "id": "rest_019",
+      "difficulty": "intermediate",
+      "source": "Sushruta Samhita 1.15",
+      "domain": "ayurveda",
+      "passage_iast": "agniḥ sarvaṃ pacati dhātuṣu",
+      "passage_devanagari": "अग्निः सर्वं पचति धातुषु",
+      "passage_english_gloss": "Agni digests everything in the bodily tissues",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'agniḥ' refers to the digestive fire (jaṭharāgni) that transforms nutrients within the seven dhātus",
+      "partial_credit_answers": [
+        "Agni here means the general element of fire"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "agniḥ": [
+          {
+            "meaning": "digestive fire (jaṭharāgni)",
+            "domain": "ayurveda",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "fire element",
+            "domain": "general",
+            "confidence": 0.7
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {
+        "agniḥ": "Dalhana: agni here is specifically jaṭharāgni"
+      },
+      "witness_data": {},
+      "entity_map": {
+        "agniḥ": [
+          "jaṭharāgni",
+          "bhūtāgni"
+        ]
+      },
+      "candidate_options": [
+        "'agniḥ' refers to the digestive fire (jaṭharāgni) that transforms nutrients within the seven dhātus",
+        "Agni here means the general element of fire",
+        "The verse describes ritual fire offerings",
+        "Agni refers to inflammation in the tissues"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "agniḥ sarvaṃ pacati dhātuṣu"
+    },
+    {
+      "id": "rest_020",
+      "difficulty": "hard",
+      "source": "Sushruta Samhita 1.15",
+      "domain": "ayurveda",
+      "passage_iast": "agniḥ sarvaṃ pacati dhātuṣu",
+      "passage_devanagari": "अग्निः सर्वं पचति धातुषु",
+      "passage_english_gloss": "Agni digests everything in the bodily tissues",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'agniḥ' refers to the digestive fire (jaṭharāgni) that transforms nutrients within the seven dhātus",
+      "partial_credit_answers": [
+        "Agni here means the general element of fire"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "agniḥ": [
+          {
+            "meaning": "digestive fire (jaṭharāgni)",
+            "domain": "ayurveda",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "fire element",
+            "domain": "general",
+            "confidence": 0.7
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {
+        "agniḥ": "Dalhana: agni here is specifically jaṭharāgni"
+      },
+      "witness_data": {},
+      "entity_map": {
+        "agniḥ": [
+          "jaṭharāgni",
+          "bhūtāgni"
+        ]
+      },
+      "candidate_options": [
+        "'agniḥ' refers to the digestive fire (jaṭharāgni) that transforms nutrients within the seven dhātus",
+        "Agni here means the general element of fire",
+        "The verse describes ritual fire offerings",
+        "Agni refers to inflammation in the tissues"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "agniḥ sarvaṃ pacati dhātuṣu"
+    },
+    {
+      "id": "rest_021",
+      "difficulty": "expert",
+      "source": "Sushruta Samhita 1.15",
+      "domain": "ayurveda",
+      "passage_iast": "agniḥ sarvaṃ pacati dhātuṣu",
+      "passage_devanagari": "अग्निः सर्वं पचति धातुषु",
+      "passage_english_gloss": "Agni digests everything in the bodily tissues",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'agniḥ' refers to the digestive fire (jaṭharāgni) that transforms nutrients within the seven dhātus",
+      "partial_credit_answers": [
+        "Agni here means the general element of fire"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "agniḥ": [
+          {
+            "meaning": "digestive fire (jaṭharāgni)",
+            "domain": "ayurveda",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "fire element",
+            "domain": "general",
+            "confidence": 0.7
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {
+        "agniḥ": [
+          "jaṭharāgni",
+          "bhūtāgni"
+        ]
+      },
+      "candidate_options": [
+        "'agniḥ' refers to the digestive fire (jaṭharāgni) that transforms nutrients within the seven dhātus",
+        "Agni here means the general element of fire",
+        "The verse describes ritual fire offerings",
+        "Agni refers to inflammation in the tissues"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "agniḥ sarvaṃ pacati dhātuṣu"
+    },
+    {
+      "id": "rest_022",
+      "difficulty": "intermediate",
+      "source": "Ramayana 2.34",
+      "domain": "narrative",
+      "passage_iast": "sa rāmaḥ pitaraṃ natvā vanaṃ jagāma",
+      "passage_devanagari": "स रामः पितरं नत्वा वनं जगाम",
+      "passage_english_gloss": "That Rama, having bowed to his father, went to the forest",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "The pronoun 'sa' refers to Rama who departed for exile after receiving his father's blessing",
+      "partial_credit_answers": [
+        "'sa' could refer to any male character present"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {
+        "natvā": [
+          {
+            "meaning": "having bowed",
+            "domain": "general",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {
+        "sa": [
+          "Rāma",
+          "Lakṣmaṇa",
+          "Daśaratha"
+        ],
+        "pitaram": [
+          "Daśaratha"
+        ]
+      },
+      "candidate_options": [
+        "The pronoun 'sa' refers to Rama who departed for exile after receiving his father's blessing",
+        "'sa' refers to Lakshmana who accompanied Rama",
+        "'sa' could refer to any male character present",
+        "The verse describes Dasharatha going to the forest"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "sa rāmaḥ pitaraṃ natvā vanaṃ jagāma"
+    },
+    {
+      "id": "rest_023",
+      "difficulty": "hard",
+      "source": "Ramayana 2.34",
+      "domain": "narrative",
+      "passage_iast": "sa rāmaḥ pitaraṃ natvā vanaṃ jagāma",
+      "passage_devanagari": "स रामः पितरं नत्वा वनं जगाम",
+      "passage_english_gloss": "That Rama, having bowed to his father, went to the forest",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "The pronoun 'sa' refers to Rama who departed for exile after receiving his father's blessing",
+      "partial_credit_answers": [
+        "'sa' could refer to any male character present"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {
+        "natvā": [
+          {
+            "meaning": "having bowed",
+            "domain": "general",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {
+        "sa": [
+          "Rāma",
+          "Lakṣmaṇa",
+          "Daśaratha"
+        ],
+        "pitaram": [
+          "Daśaratha"
+        ]
+      },
+      "candidate_options": [
+        "The pronoun 'sa' refers to Rama who departed for exile after receiving his father's blessing",
+        "'sa' refers to Lakshmana who accompanied Rama",
+        "'sa' could refer to any male character present",
+        "The verse describes Dasharatha going to the forest"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "sa rāmaḥ pitaraṃ natvā vanaṃ jagāma"
+    },
+    {
+      "id": "rest_024",
+      "difficulty": "expert",
+      "source": "Ramayana 2.34",
+      "domain": "narrative",
+      "passage_iast": "sa rāmaḥ pitaraṃ natvā vanaṃ jagāma",
+      "passage_devanagari": "स रामः पितरं नत्वा वनं जगाम",
+      "passage_english_gloss": "That Rama, having bowed to his father, went to the forest",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "The pronoun 'sa' refers to Rama who departed for exile after receiving his father's blessing",
+      "partial_credit_answers": [
+        "'sa' could refer to any male character present"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {
+        "natvā": [
+          {
+            "meaning": "having bowed",
+            "domain": "general",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {
+        "sa": [
+          "Rāma",
+          "Lakṣmaṇa",
+          "Daśaratha"
+        ],
+        "pitaram": [
+          "Daśaratha"
+        ]
+      },
+      "candidate_options": [
+        "The pronoun 'sa' refers to Rama who departed for exile after receiving his father's blessing",
+        "'sa' refers to Lakshmana who accompanied Rama",
+        "'sa' could refer to any male character present",
+        "The verse describes Dasharatha going to the forest"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "sa rāmaḥ pitaraṃ natvā vanaṃ jagāma"
+    },
+    {
+      "id": "rest_025",
+      "difficulty": "beginner",
+      "source": "Bhagavad Gita 3.27",
+      "domain": "philosophy",
+      "passage_iast": "prakṛteḥ kriyamāṇāni guṇaiḥ karmāṇi sarvaśaḥ",
+      "passage_devanagari": "प्रकृतेः क्रियमाणानि गुणैः कर्माणि सर्वशः",
+      "passage_english_gloss": "All actions are performed by the gunas of prakrti",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "The compound 'kriyamāṇāni' splits as 'kriya + māṇa + āni' — passive present participle meaning 'being done'",
+      "partial_credit_answers": [
+        "It is a simple verb form meaning 'doing'"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "kriyamāṇāni": [
+          {
+            "split": "kriya + māṇa + āni",
+            "rule": "passive participle formation",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "kri + yamāṇa + āni",
+            "rule": "alternative root split",
+            "plausibility_score": 0.3
+          }
+        ]
+      },
+      "meter_data": {
+        "kriya + māṇa + āni": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "kri + yamāṇa + āni": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {
+        "3.27": "Actions are attributed to prakṛti's guṇas, not the Self"
+      },
+      "witness_data": {},
+      "entity_map": {},
+      "candidate_options": [
+        "The compound 'kriyamāṇāni' splits as 'kriya + māṇa + āni' — passive present participle meaning 'being done'",
+        "The word is an active participle meaning 'the doer of actions'",
+        "It is a simple verb form meaning 'doing'",
+        "The compound means 'actions that will be done in future'"
+      ],
+      "partial_credit_indices": [
+        2
+      ]
+    },
+    {
+      "id": "rest_026",
+      "difficulty": "hard",
+      "source": "Bhagavad Gita 3.27",
+      "domain": "philosophy",
+      "passage_iast": "prakṛteḥ kriyamāṇāni guṇaiḥ karmāṇi sarvaśaḥ",
+      "passage_devanagari": "प्रकृतेः क्रियमाणानि गुणैः कर्माणि सर्वशः",
+      "passage_english_gloss": "All actions are performed by the gunas of prakrti",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "The compound 'kriyamāṇāni' splits as 'kriya + māṇa + āni' — passive present participle meaning 'being done'",
+      "partial_credit_answers": [
+        "It is a simple verb form meaning 'doing'"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "kriyamāṇāni": [
+          {
+            "split": "kriya + māṇa + āni",
+            "rule": "passive participle formation",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "kri + yamāṇa + āni",
+            "rule": "alternative root split",
+            "plausibility_score": 0.3
+          }
+        ]
+      },
+      "meter_data": {
+        "kriya + māṇa + āni": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "kri + yamāṇa + āni": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {
+        "3.27": "Actions are attributed to prakṛti's guṇas, not the Self"
+      },
+      "witness_data": {
+        "3.27": {
+          "witness_a": "kriyamāṇāni",
+          "witness_b": "kriyamāṇāni"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "The compound 'kriyamāṇāni' splits as 'kriya + māṇa + āni' — passive present participle meaning 'being done'",
+        "The word is an active participle meaning 'the doer of actions'",
+        "It is a simple verb form meaning 'doing'",
+        "The compound means 'actions that will be done in future'"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "prakṛteḥ kriyamāṇāni guṇaiḥ karmāṇi sarvaśaḥ"
+    },
+    {
+      "id": "rest_027",
+      "difficulty": "expert",
+      "source": "Bhagavad Gita 3.27",
+      "domain": "philosophy",
+      "passage_iast": "prakṛteḥ kriyamāṇāni guṇaiḥ karmāṇi sarvaśaḥ",
+      "passage_devanagari": "प्रकृतेः क्रियमाणानि गुणैः कर्माणि सर्वशः",
+      "passage_english_gloss": "All actions are performed by the gunas of prakrti",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "The compound 'kriyamāṇāni' splits as 'kriya + māṇa + āni' — passive present participle meaning 'being done'",
+      "partial_credit_answers": [
+        "It is a simple verb form meaning 'doing'"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "kriyamāṇāni": [
+          {
+            "split": "kriya + māṇa + āni",
+            "rule": "passive participle formation",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "kri + yamāṇa + āni",
+            "rule": "alternative root split",
+            "plausibility_score": 0.3
+          }
+        ]
+      },
+      "meter_data": {
+        "kriya + māṇa + āni": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "kri + yamāṇa + āni": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {
+        "3.27": {
+          "witness_a": "kriyamāṇāni",
+          "witness_b": "kriyamāṇāni"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "The compound 'kriyamāṇāni' splits as 'kriya + māṇa + āni' — passive present participle meaning 'being done'",
+        "The word is an active participle meaning 'the doer of actions'",
+        "It is a simple verb form meaning 'doing'",
+        "The compound means 'actions that will be done in future'"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "prakṛteḥ kriyamāṇāni guṇaiḥ karmāṇi sarvaśaḥ"
+    },
+    {
+      "id": "rest_028",
+      "difficulty": "beginner",
+      "source": "Arthashastra 2.6",
+      "domain": "narrative",
+      "passage_iast": "kośo hi rājñaḥ pradhānam aṅgam",
+      "passage_devanagari": "कोशो हि राज्ञः प्रधानम् अङ्गम्",
+      "passage_english_gloss": "The treasury is indeed the chief limb of the king",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'kośa' here means the state treasury (rājakośa), the primary resource for governance",
+      "partial_credit_answers": [
+        "'kośa' could mean a repository or sheath"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "kośa": [
+          {
+            "meaning": "treasury, state treasury",
+            "domain": "arthashastra",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "sheath, covering",
+            "domain": "vedanta",
+            "confidence": 0.6
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {
+        "kośa": "Kauṭilya uses kośa specifically for rājakośa"
+      },
+      "witness_data": {},
+      "entity_map": {},
+      "candidate_options": [
+        "'kośa' here means the state treasury (rājakośa), the primary resource for governance",
+        "'kośa' could mean a repository or sheath",
+        "'kośa' refers to the five sheaths of the self (pañcakośa)",
+        "The verse describes military equipment storage"
+      ],
+      "partial_credit_indices": [
+        1
+      ]
+    },
+    {
+      "id": "rest_029",
+      "difficulty": "hard",
+      "source": "Arthashastra 2.6",
+      "domain": "narrative",
+      "passage_iast": "kośo hi rājñaḥ pradhānam aṅgam",
+      "passage_devanagari": "कोशो हि राज्ञः प्रधानम् अङ्गम्",
+      "passage_english_gloss": "The treasury is indeed the chief limb of the king",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'kośa' here means the state treasury (rājakośa), the primary resource for governance",
+      "partial_credit_answers": [
+        "'kośa' could mean a repository or sheath"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "kośa": [
+          {
+            "meaning": "treasury, state treasury",
+            "domain": "arthashastra",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "sheath, covering",
+            "domain": "vedanta",
+            "confidence": 0.6
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {
+        "kośa": "Kauṭilya uses kośa specifically for rājakośa"
+      },
+      "witness_data": {
+        "2.6": {
+          "witness_a": "kośo hi",
+          "witness_b": "kośo vai"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'kośa' here means the state treasury (rājakośa), the primary resource for governance",
+        "'kośa' could mean a repository or sheath",
+        "'kośa' refers to the five sheaths of the self (pañcakośa)",
+        "The verse describes military equipment storage"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "kośo hi rājñaḥ pradhānam aṅgam"
+    },
+    {
+      "id": "rest_030",
+      "difficulty": "expert",
+      "source": "Arthashastra 2.6",
+      "domain": "narrative",
+      "passage_iast": "kośo hi rājñaḥ pradhānam aṅgam",
+      "passage_devanagari": "कोशो हि राज्ञः प्रधानम् अङ्गम्",
+      "passage_english_gloss": "The treasury is indeed the chief limb of the king",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'kośa' here means the state treasury (rājakośa), the primary resource for governance",
+      "partial_credit_answers": [
+        "'kośa' could mean a repository or sheath"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "kośa": [
+          {
+            "meaning": "treasury, state treasury",
+            "domain": "arthashastra",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "sheath, covering",
+            "domain": "vedanta",
+            "confidence": 0.6
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "2.6": {
+          "witness_a": "kośo hi",
+          "witness_b": "kośo vai"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'kośa' here means the state treasury (rājakośa), the primary resource for governance",
+        "'kośa' could mean a repository or sheath",
+        "'kośa' refers to the five sheaths of the self (pañcakośa)",
+        "The verse describes military equipment storage"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "kośo hi rājñaḥ pradhānam aṅgam"
+    },
+    {
+      "id": "rest_031",
+      "difficulty": "beginner",
+      "source": "Surya Siddhanta 1.12",
+      "domain": "astronomy",
+      "passage_iast": "bhūmermadhyāt sahasrāṃśoḥ khamadhyam upagacchati",
+      "passage_devanagari": "भूमेर्मध्यात् सहस्रांशोः खमध्यम् उपगच्छति",
+      "passage_english_gloss": "From the center of the earth, the thousand-rayed one reaches the mid-sky",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'bhūmermadhyāt' splits as 'bhūmeḥ + madhyāt' via visarga sandhi — 'from the middle of the earth'",
+      "partial_credit_answers": [
+        "The compound describes a location but the split is unclear"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "bhūmermadhyāt": [
+          {
+            "split": "bhūmeḥ + madhyāt",
+            "rule": "visarga sandhi",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "bhūma + ermadhyāt",
+            "rule": "invalid",
+            "plausibility_score": 0.05
+          }
+        ]
+      },
+      "meter_data": {
+        "bhūmeḥ + madhyāt": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "bhūma + ermadhyāt": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {},
+      "candidate_options": [
+        "'bhūmermadhyāt' splits as 'bhūmeḥ + madhyāt' via visarga sandhi — 'from the middle of the earth'",
+        "The compound is 'bhūma + ermadhyāt' meaning 'from the great middle'",
+        "'bhūmer + madhyāt' is a tatpuruṣa meaning 'earth-center'",
+        "The compound describes a location but the split is unclear"
+      ],
+      "partial_credit_indices": [
+        3
+      ]
+    },
+    {
+      "id": "rest_032",
+      "difficulty": "hard",
+      "source": "Surya Siddhanta 1.12",
+      "domain": "astronomy",
+      "passage_iast": "bhūmermadhyāt sahasrāṃśoḥ khamadhyam upagacchati",
+      "passage_devanagari": "भूमेर्मध्यात् सहस्रांशोः खमध्यम् उपगच्छति",
+      "passage_english_gloss": "From the center of the earth, the thousand-rayed one reaches the mid-sky",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'bhūmermadhyāt' splits as 'bhūmeḥ + madhyāt' via visarga sandhi — 'from the middle of the earth'",
+      "partial_credit_answers": [
+        "The compound describes a location but the split is unclear"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "bhūmermadhyāt": [
+          {
+            "split": "bhūmeḥ + madhyāt",
+            "rule": "visarga sandhi",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "bhūma + ermadhyāt",
+            "rule": "invalid",
+            "plausibility_score": 0.05
+          }
+        ]
+      },
+      "meter_data": {
+        "bhūmeḥ + madhyāt": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "bhūma + ermadhyāt": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {
+        "1.12": {
+          "witness_a": "bhūmermadhyāt",
+          "witness_b": "bhūmeḥ madhyāt"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'bhūmermadhyāt' splits as 'bhūmeḥ + madhyāt' via visarga sandhi — 'from the middle of the earth'",
+        "The compound is 'bhūma + ermadhyāt' meaning 'from the great middle'",
+        "'bhūmer + madhyāt' is a tatpuruṣa meaning 'earth-center'",
+        "The compound describes a location but the split is unclear"
+      ],
+      "partial_credit_indices": [
+        3
+      ],
+      "passage_iast_noisy": "bhūmermadhyāt sahasrāṃśoḥ khamadhyam upagacchati"
+    },
+    {
+      "id": "rest_033",
+      "difficulty": "expert",
+      "source": "Surya Siddhanta 1.12",
+      "domain": "astronomy",
+      "passage_iast": "bhūmermadhyāt sahasrāṃśoḥ khamadhyam upagacchati",
+      "passage_devanagari": "भूमेर्मध्यात् सहस्रांशोः खमध्यम् उपगच्छति",
+      "passage_english_gloss": "From the center of the earth, the thousand-rayed one reaches the mid-sky",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'bhūmermadhyāt' splits as 'bhūmeḥ + madhyāt' via visarga sandhi — 'from the middle of the earth'",
+      "partial_credit_answers": [
+        "The compound describes a location but the split is unclear"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "bhūmermadhyāt": [
+          {
+            "split": "bhūmeḥ + madhyāt",
+            "rule": "visarga sandhi",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "bhūma + ermadhyāt",
+            "rule": "invalid",
+            "plausibility_score": 0.05
+          }
+        ]
+      },
+      "meter_data": {
+        "bhūmeḥ + madhyāt": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "bhūma + ermadhyāt": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {
+        "1.12": {
+          "witness_a": "bhūmermadhyāt",
+          "witness_b": "bhūmeḥ madhyāt"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'bhūmermadhyāt' splits as 'bhūmeḥ + madhyāt' via visarga sandhi — 'from the middle of the earth'",
+        "The compound is 'bhūma + ermadhyāt' meaning 'from the great middle'",
+        "'bhūmer + madhyāt' is a tatpuruṣa meaning 'earth-center'",
+        "The compound describes a location but the split is unclear"
+      ],
+      "partial_credit_indices": [
+        3
+      ],
+      "passage_iast_noisy": "bhūmermadhyāt sahasrāṃśoḥ khamadhyam upagacchati"
+    },
+    {
+      "id": "rest_034",
+      "difficulty": "beginner",
+      "source": "Bhagavad Gita 4.7",
+      "domain": "philosophy",
+      "passage_iast": "yadā yadā hi dharmasya glānir bhavati bhārata",
+      "passage_devanagari": "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत",
+      "passage_english_gloss": "Whenever there is a decline of dharma, O Bharata",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'glāniḥ' signifies a systemic decline or decay of cosmic order, not merely individual moral failure",
+      "partial_credit_answers": [
+        "'glāniḥ' means weakness or fatigue"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "glāniḥ": [
+          {
+            "meaning": "decline, decay of order",
+            "domain": "philosophy",
+            "confidence": 0.9
+          },
+          {
+            "meaning": "weakness, fatigue",
+            "domain": "general",
+            "confidence": 0.6
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {
+        "glāniḥ": "Śaṅkara: decline of dharma means the waning of varṇāśrama order"
+      },
+      "witness_data": {},
+      "entity_map": {},
+      "candidate_options": [
+        "'glāniḥ' signifies a systemic decline or decay of cosmic order, not merely individual moral failure",
+        "'glāniḥ' means weakness or fatigue",
+        "The word refers to physical illness of dharma personified",
+        "'glāniḥ' is a synonym for destruction (vināśa)"
+      ],
+      "partial_credit_indices": [
+        1
+      ]
+    },
+    {
+      "id": "rest_035",
+      "difficulty": "intermediate",
+      "source": "Bhagavad Gita 4.7",
+      "domain": "philosophy",
+      "passage_iast": "yadā yadā hi dharmasya glānir bhavati bhārata",
+      "passage_devanagari": "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत",
+      "passage_english_gloss": "Whenever there is a decline of dharma, O Bharata",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'glāniḥ' signifies a systemic decline or decay of cosmic order, not merely individual moral failure",
+      "partial_credit_answers": [
+        "'glāniḥ' means weakness or fatigue"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "glāniḥ": [
+          {
+            "meaning": "decline, decay of order",
+            "domain": "philosophy",
+            "confidence": 0.9
+          },
+          {
+            "meaning": "weakness, fatigue",
+            "domain": "general",
+            "confidence": 0.6
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {
+        "glāniḥ": "Śaṅkara: decline of dharma means the waning of varṇāśrama order"
+      },
+      "witness_data": {
+        "4.7": {
+          "witness_a": "glānir bhavati",
+          "witness_b": "hānir bhavati"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'glāniḥ' signifies a systemic decline or decay of cosmic order, not merely individual moral failure",
+        "'glāniḥ' means weakness or fatigue",
+        "The word refers to physical illness of dharma personified",
+        "'glāniḥ' is a synonym for destruction (vināśa)"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "yadā yadā hi dharmasya glānir bhavati bhārata"
+    },
+    {
+      "id": "rest_036",
+      "difficulty": "expert",
+      "source": "Bhagavad Gita 4.7",
+      "domain": "philosophy",
+      "passage_iast": "yadā yadā hi dharmasya glānir bhavati bhārata",
+      "passage_devanagari": "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत",
+      "passage_english_gloss": "Whenever there is a decline of dharma, O Bharata",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'glāniḥ' signifies a systemic decline or decay of cosmic order, not merely individual moral failure",
+      "partial_credit_answers": [
+        "'glāniḥ' means weakness or fatigue"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "glāniḥ": [
+          {
+            "meaning": "decline, decay of order",
+            "domain": "philosophy",
+            "confidence": 0.9
+          },
+          {
+            "meaning": "weakness, fatigue",
+            "domain": "general",
+            "confidence": 0.6
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "4.7": {
+          "witness_a": "glānir bhavati",
+          "witness_b": "hānir bhavati"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'glāniḥ' signifies a systemic decline or decay of cosmic order, not merely individual moral failure",
+        "'glāniḥ' means weakness or fatigue",
+        "The word refers to physical illness of dharma personified",
+        "'glāniḥ' is a synonym for destruction (vināśa)"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "yadā yadā hi dharmasya glānir bhavati bhārata"
+    },
+    {
+      "id": "rest_037",
+      "difficulty": "beginner",
+      "source": "Sushruta Samhita 4.3",
+      "domain": "ayurveda",
+      "passage_iast": "vātapittakaphaś caiva tridoṣā iti saṃjñitāḥ",
+      "passage_devanagari": "वातपित्तकफश्चैव त्रिदोषा इति संज्ञिताः",
+      "passage_english_gloss": "Vata, Pitta, and Kapha — these are known as the three doshas",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'vātapittakaphaś' splits as 'vāta + pitta + kaphaḥ + ca + eva' — a dvandva compound listing the three doṣas",
+      "partial_credit_answers": [
+        "It is a simple list of three terms"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "vātapittakaphaś": [
+          {
+            "split": "vāta + pitta + kaphaḥ + ca + eva",
+            "rule": "dvandva + visarga sandhi",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "vātapitta + kaphaś",
+            "rule": "partial split",
+            "plausibility_score": 0.3
+          }
+        ]
+      },
+      "meter_data": {
+        "vāta + pitta + kaphaḥ + ca + eva": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "vātapitta + kaphaś": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {},
+      "candidate_options": [
+        "'vātapittakaphaś' splits as 'vāta + pitta + kaphaḥ + ca + eva' — a dvandva compound listing the three doṣas",
+        "The compound means 'the wind-bile-phlegm' as a single entity",
+        "It is a simple list of three terms",
+        "The word is a bahuvrīhi meaning 'one who has vāta, pitta, and kapha'"
+      ],
+      "partial_credit_indices": [
+        2
+      ]
+    },
+    {
+      "id": "rest_038",
+      "difficulty": "intermediate",
+      "source": "Sushruta Samhita 4.3",
+      "domain": "ayurveda",
+      "passage_iast": "vātapittakaphaś caiva tridoṣā iti saṃjñitāḥ",
+      "passage_devanagari": "वातपित्तकफश्चैव त्रिदोषा इति संज्ञिताः",
+      "passage_english_gloss": "Vata, Pitta, and Kapha — these are known as the three doshas",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'vātapittakaphaś' splits as 'vāta + pitta + kaphaḥ + ca + eva' — a dvandva compound listing the three doṣas",
+      "partial_credit_answers": [
+        "It is a simple list of three terms"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "vātapittakaphaś": [
+          {
+            "split": "vāta + pitta + kaphaḥ + ca + eva",
+            "rule": "dvandva + visarga sandhi",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "vātapitta + kaphaś",
+            "rule": "partial split",
+            "plausibility_score": 0.3
+          }
+        ]
+      },
+      "meter_data": {
+        "vāta + pitta + kaphaḥ + ca + eva": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "vātapitta + kaphaś": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {
+        "4.3": {
+          "witness_a": "vātapittakaphaś",
+          "witness_b": "vātapittaśleshmaś"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'vātapittakaphaś' splits as 'vāta + pitta + kaphaḥ + ca + eva' — a dvandva compound listing the three doṣas",
+        "The compound means 'the wind-bile-phlegm' as a single entity",
+        "It is a simple list of three terms",
+        "The word is a bahuvrīhi meaning 'one who has vāta, pitta, and kapha'"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "vātapittakaphaś caiva tridoṣā iti saṃjñitāḥ"
+    },
+    {
+      "id": "rest_039",
+      "difficulty": "expert",
+      "source": "Sushruta Samhita 4.3",
+      "domain": "ayurveda",
+      "passage_iast": "vātapittakaphaś caiva tridoṣā iti saṃjñitāḥ",
+      "passage_devanagari": "वातपित्तकफश्चैव त्रिदोषा इति संज्ञिताः",
+      "passage_english_gloss": "Vata, Pitta, and Kapha — these are known as the three doshas",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'vātapittakaphaś' splits as 'vāta + pitta + kaphaḥ + ca + eva' — a dvandva compound listing the three doṣas",
+      "partial_credit_answers": [
+        "It is a simple list of three terms"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "vātapittakaphaś": [
+          {
+            "split": "vāta + pitta + kaphaḥ + ca + eva",
+            "rule": "dvandva + visarga sandhi",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "vātapitta + kaphaś",
+            "rule": "partial split",
+            "plausibility_score": 0.3
+          }
+        ]
+      },
+      "meter_data": {
+        "vāta + pitta + kaphaḥ + ca + eva": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "vātapitta + kaphaś": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {
+        "4.3": {
+          "witness_a": "vātapittakaphaś",
+          "witness_b": "vātapittaśleshmaś"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'vātapittakaphaś' splits as 'vāta + pitta + kaphaḥ + ca + eva' — a dvandva compound listing the three doṣas",
+        "The compound means 'the wind-bile-phlegm' as a single entity",
+        "It is a simple list of three terms",
+        "The word is a bahuvrīhi meaning 'one who has vāta, pitta, and kapha'"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "vātapittakaphaś caiva tridoṣā iti saṃjñitāḥ"
+    },
+    {
+      "id": "rest_040",
+      "difficulty": "beginner",
+      "source": "Ramayana 5.1",
+      "domain": "narrative",
+      "passage_iast": "hanūmān sāgaraṃ tīrtvā laṅkāṃ prāpya sa vānaraḥ",
+      "passage_devanagari": "हनूमान् सागरं तीर्त्वा लङ्कां प्राप्य स वानरः",
+      "passage_english_gloss": "Hanuman, having crossed the ocean and reached Lanka, that monkey...",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "'sa vānaraḥ' is a resumptive pronoun referring back to Hanūmān — emphasizing his identity as the heroic monkey",
+      "partial_credit_answers": [
+        "'sa' is a generic demonstrative"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {
+        "sa": [
+          "Hanūmān",
+          "Sugrīva",
+          "Aṅgada"
+        ],
+        "vānaraḥ": [
+          "monkey warrior"
+        ]
+      },
+      "candidate_options": [
+        "'sa vānaraḥ' is a resumptive pronoun referring back to Hanūmān — emphasizing his identity as the heroic monkey",
+        "'sa' refers to Sugriva who sent Hanuman",
+        "The verse describes a different monkey warrior",
+        "'sa' is a generic demonstrative"
+      ],
+      "partial_credit_indices": [
+        3
+      ]
+    },
+    {
+      "id": "rest_041",
+      "difficulty": "intermediate",
+      "source": "Ramayana 5.1",
+      "domain": "narrative",
+      "passage_iast": "hanūmān sāgaraṃ tīrtvā laṅkāṃ prāpya sa vānaraḥ",
+      "passage_devanagari": "हनूमान् सागरं तीर्त्वा लङ्कां प्राप्य स वानरः",
+      "passage_english_gloss": "Hanuman, having crossed the ocean and reached Lanka, that monkey...",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "'sa vānaraḥ' is a resumptive pronoun referring back to Hanūmān — emphasizing his identity as the heroic monkey",
+      "partial_credit_answers": [
+        "'sa' is a generic demonstrative"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "5.1": {
+          "witness_a": "sa vānaraḥ",
+          "witness_b": "mahāvīraḥ"
+        }
+      },
+      "entity_map": {
+        "sa": [
+          "Hanūmān",
+          "Sugrīva",
+          "Aṅgada"
+        ],
+        "vānaraḥ": [
+          "monkey warrior"
+        ]
+      },
+      "candidate_options": [
+        "'sa vānaraḥ' is a resumptive pronoun referring back to Hanūmān — emphasizing his identity as the heroic monkey",
+        "'sa' refers to Sugriva who sent Hanuman",
+        "The verse describes a different monkey warrior",
+        "'sa' is a generic demonstrative"
+      ],
+      "partial_credit_indices": [
+        3
+      ],
+      "passage_iast_noisy": "hanūmān sāgaraṃ tīrtvā laṅkāṃ prāpya sa vānaraḥ"
+    },
+    {
+      "id": "rest_042",
+      "difficulty": "expert",
+      "source": "Ramayana 5.1",
+      "domain": "narrative",
+      "passage_iast": "hanūmān sāgaraṃ tīrtvā laṅkāṃ prāpya sa vānaraḥ",
+      "passage_devanagari": "हनूमान् सागरं तीर्त्वा लङ्कां प्राप्य स वानरः",
+      "passage_english_gloss": "Hanuman, having crossed the ocean and reached Lanka, that monkey...",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "'sa vānaraḥ' is a resumptive pronoun referring back to Hanūmān — emphasizing his identity as the heroic monkey",
+      "partial_credit_answers": [
+        "'sa' is a generic demonstrative"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "5.1": {
+          "witness_a": "sa vānaraḥ",
+          "witness_b": "mahāvīraḥ"
+        }
+      },
+      "entity_map": {
+        "sa": [
+          "Hanūmān",
+          "Sugrīva",
+          "Aṅgada"
+        ],
+        "vānaraḥ": [
+          "monkey warrior"
+        ]
+      },
+      "candidate_options": [
+        "'sa vānaraḥ' is a resumptive pronoun referring back to Hanūmān — emphasizing his identity as the heroic monkey",
+        "'sa' refers to Sugriva who sent Hanuman",
+        "The verse describes a different monkey warrior",
+        "'sa' is a generic demonstrative"
+      ],
+      "partial_credit_indices": [
+        3
+      ],
+      "passage_iast_noisy": "hanūmān sāgaraṃ tīrtvā laṅkāṃ prāpya sa vānaraḥ"
+    },
+    {
+      "id": "rest_043",
+      "difficulty": "beginner",
+      "source": "Bhagavad Gita 13.2",
+      "domain": "philosophy",
+      "passage_iast": "kṣetrajñaṃ cāpi māṃ viddhi sarvakṣetreṣu bhārata",
+      "passage_devanagari": "क्षेत्रज्ञं चापि मां विद्धि सर्वक्षेत्रेषु भारत",
+      "passage_english_gloss": "Know Me also as the Knower of the Field in all fields, O Bharata",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'kṣetrajña' is the conscious principle (ātman/puruṣa) that knows the body-field — Krishna identifies himself with this universal knower",
+      "partial_credit_answers": [
+        "'kṣetrajña' means the owner of the land"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "kṣetrajña": [
+          {
+            "meaning": "knower of the field, conscious principle",
+            "domain": "vedanta",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "landowner",
+            "domain": "general",
+            "confidence": 0.3
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {
+        "māṃ": [
+          "Kṛṣṇa",
+          "Paramātman"
+        ],
+        "kṣetrajña": [
+          "ātman",
+          "jīva"
+        ]
+      },
+      "candidate_options": [
+        "'kṣetrajña' is the conscious principle (ātman/puruṣa) that knows the body-field — Krishna identifies himself with this universal knower",
+        "'kṣetrajña' refers to the individual soul only, not the supreme",
+        "'kṣetrajña' means the owner of the land",
+        "The verse describes agricultural knowledge"
+      ],
+      "partial_credit_indices": [
+        2
+      ]
+    },
+    {
+      "id": "rest_044",
+      "difficulty": "intermediate",
+      "source": "Bhagavad Gita 13.2",
+      "domain": "philosophy",
+      "passage_iast": "kṣetrajñaṃ cāpi māṃ viddhi sarvakṣetreṣu bhārata",
+      "passage_devanagari": "क्षेत्रज्ञं चापि मां विद्धि सर्वक्षेत्रेषु भारत",
+      "passage_english_gloss": "Know Me also as the Knower of the Field in all fields, O Bharata",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'kṣetrajña' is the conscious principle (ātman/puruṣa) that knows the body-field — Krishna identifies himself with this universal knower",
+      "partial_credit_answers": [
+        "'kṣetrajña' means the owner of the land"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "kṣetrajña": [
+          {
+            "meaning": "knower of the field, conscious principle",
+            "domain": "vedanta",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "landowner",
+            "domain": "general",
+            "confidence": 0.3
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "13.2": {
+          "witness_a": "kṣetrajñaṃ cāpi",
+          "witness_b": "kṣetrajñaṃ ca api"
+        }
+      },
+      "entity_map": {
+        "māṃ": [
+          "Kṛṣṇa",
+          "Paramātman"
+        ],
+        "kṣetrajña": [
+          "ātman",
+          "jīva"
+        ]
+      },
+      "candidate_options": [
+        "'kṣetrajña' is the conscious principle (ātman/puruṣa) that knows the body-field — Krishna identifies himself with this universal knower",
+        "'kṣetrajña' refers to the individual soul only, not the supreme",
+        "'kṣetrajña' means the owner of the land",
+        "The verse describes agricultural knowledge"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "kṣetrajñaṃ cāpi māṃ viddhi sarvakṣetreṣu bhārata"
+    },
+    {
+      "id": "rest_045",
+      "difficulty": "hard",
+      "source": "Bhagavad Gita 13.2",
+      "domain": "philosophy",
+      "passage_iast": "kṣetrajñaṃ cāpi māṃ viddhi sarvakṣetreṣu bhārata",
+      "passage_devanagari": "क्षेत्रज्ञं चापि मां विद्धि सर्वक्षेत्रेषु भारत",
+      "passage_english_gloss": "Know Me also as the Knower of the Field in all fields, O Bharata",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'kṣetrajña' is the conscious principle (ātman/puruṣa) that knows the body-field — Krishna identifies himself with this universal knower",
+      "partial_credit_answers": [
+        "'kṣetrajña' means the owner of the land"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "kṣetrajña": [
+          {
+            "meaning": "knower of the field, conscious principle",
+            "domain": "vedanta",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "landowner",
+            "domain": "general",
+            "confidence": 0.3
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "13.2": {
+          "witness_a": "kṣetrajñaṃ cāpi",
+          "witness_b": "kṣetrajñaṃ ca api"
+        }
+      },
+      "entity_map": {
+        "māṃ": [
+          "Kṛṣṇa",
+          "Paramātman"
+        ],
+        "kṣetrajña": [
+          "ātman",
+          "jīva"
+        ]
+      },
+      "candidate_options": [
+        "'kṣetrajña' is the conscious principle (ātman/puruṣa) that knows the body-field — Krishna identifies himself with this universal knower",
+        "'kṣetrajña' refers to the individual soul only, not the supreme",
+        "'kṣetrajña' means the owner of the land",
+        "The verse describes agricultural knowledge"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "kṣetrajñaṃ cāpi māṃ viddhi sarvakṣetreṣu bhārata"
+    },
+    {
+      "id": "rest_046",
+      "difficulty": "beginner",
+      "source": "Surya Siddhanta 2.1",
+      "domain": "astronomy",
+      "passage_iast": "madhyamaṃ ravicandrāṇāṃ sphuṭaṃ kurvan vidhānataḥ",
+      "passage_devanagari": "मध्यमं रविचन्द्राणां स्फुटं कुर्वन् विधानतः",
+      "passage_english_gloss": "Making the mean positions of the sun and moon true, according to rule",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'ravicandrāṇāṃ' splits as 'ravi + candrāṇām' — genitive plural dvandva meaning 'of the sun and moons/planets'",
+      "partial_credit_answers": [
+        "It means 'of the sun-moon' as a single compound"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "ravicandrāṇāṃ": [
+          {
+            "split": "ravi + candrāṇām",
+            "rule": "dvandva compound",
+            "plausibility_score": 0.9
+          }
+        ]
+      },
+      "meter_data": {
+        "ravi + candrāṇām": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {},
+      "candidate_options": [
+        "'ravicandrāṇāṃ' splits as 'ravi + candrāṇām' — genitive plural dvandva meaning 'of the sun and moons/planets'",
+        "It means 'of the sun-moon' as a single compound",
+        "The word is a tatpuruṣa meaning 'the moon of the sun'",
+        "'ravicandrāṇāṃ' is an avyayībhāva compound"
+      ],
+      "partial_credit_indices": [
+        1
+      ]
+    },
+    {
+      "id": "rest_047",
+      "difficulty": "intermediate",
+      "source": "Surya Siddhanta 2.1",
+      "domain": "astronomy",
+      "passage_iast": "madhyamaṃ ravicandrāṇāṃ sphuṭaṃ kurvan vidhānataḥ",
+      "passage_devanagari": "मध्यमं रविचन्द्राणां स्फुटं कुर्वन् विधानतः",
+      "passage_english_gloss": "Making the mean positions of the sun and moon true, according to rule",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'ravicandrāṇāṃ' splits as 'ravi + candrāṇām' — genitive plural dvandva meaning 'of the sun and moons/planets'",
+      "partial_credit_answers": [
+        "It means 'of the sun-moon' as a single compound"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "ravicandrāṇāṃ": [
+          {
+            "split": "ravi + candrāṇām",
+            "rule": "dvandva compound",
+            "plausibility_score": 0.9
+          }
+        ]
+      },
+      "meter_data": {
+        "ravi + candrāṇām": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {
+        "2.1": {
+          "witness_a": "ravicandrāṇāṃ",
+          "witness_b": "ravīndūnāṃ"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'ravicandrāṇāṃ' splits as 'ravi + candrāṇām' — genitive plural dvandva meaning 'of the sun and moons/planets'",
+        "It means 'of the sun-moon' as a single compound",
+        "The word is a tatpuruṣa meaning 'the moon of the sun'",
+        "'ravicandrāṇāṃ' is an avyayībhāva compound"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "madhyamaṃ ravicandrāṇāṃ sphuṭaṃ kurvan vidhānataḥ"
+    },
+    {
+      "id": "rest_048",
+      "difficulty": "hard",
+      "source": "Surya Siddhanta 2.1",
+      "domain": "astronomy",
+      "passage_iast": "madhyamaṃ ravicandrāṇāṃ sphuṭaṃ kurvan vidhānataḥ",
+      "passage_devanagari": "मध्यमं रविचन्द्राणां स्फुटं कुर्वन् विधानतः",
+      "passage_english_gloss": "Making the mean positions of the sun and moon true, according to rule",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'ravicandrāṇāṃ' splits as 'ravi + candrāṇām' — genitive plural dvandva meaning 'of the sun and moons/planets'",
+      "partial_credit_answers": [
+        "It means 'of the sun-moon' as a single compound"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "ravicandrāṇāṃ": [
+          {
+            "split": "ravi + candrāṇām",
+            "rule": "dvandva compound",
+            "plausibility_score": 0.9
+          }
+        ]
+      },
+      "meter_data": {
+        "ravi + candrāṇām": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {
+        "2.1": {
+          "witness_a": "ravicandrāṇāṃ",
+          "witness_b": "ravīndūnāṃ"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'ravicandrāṇāṃ' splits as 'ravi + candrāṇām' — genitive plural dvandva meaning 'of the sun and moons/planets'",
+        "It means 'of the sun-moon' as a single compound",
+        "The word is a tatpuruṣa meaning 'the moon of the sun'",
+        "'ravicandrāṇāṃ' is an avyayībhāva compound"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "madhyamaṃ ravicandrāṇāṃ sphuṭaṃ kurvan vidhānataḥ"
+    },
+    {
+      "id": "rest_049",
+      "difficulty": "beginner",
+      "source": "Sushruta Samhita 6.1",
+      "domain": "ayurveda",
+      "passage_iast": "sa vaidyaḥ rogaṃ jñātvā cikitsāṃ kuryāt",
+      "passage_devanagari": "स वैद्यः रोगं ज्ञात्वा चिकित्सां कुर्यात्",
+      "passage_english_gloss": "That physician, having known the disease, should perform treatment",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "'sa vaidyaḥ' refers to the skilled physician (prāpta-śāstra) who must diagnose before treating",
+      "partial_credit_answers": [
+        "'sa' refers to any healer"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {
+        "sa": [
+          "vaidya (physician)",
+          "rogi (patient)"
+        ],
+        "rogaṃ": [
+          "vyādhi",
+          "āmaya"
+        ]
+      },
+      "candidate_options": [
+        "'sa vaidyaḥ' refers to the skilled physician (prāpta-śāstra) who must diagnose before treating",
+        "'sa' refers to the patient who must know his disease",
+        "'sa' refers to any healer",
+        "The verse describes self-treatment"
+      ],
+      "partial_credit_indices": [
+        2
+      ]
+    },
+    {
+      "id": "rest_050",
+      "difficulty": "intermediate",
+      "source": "Sushruta Samhita 6.1",
+      "domain": "ayurveda",
+      "passage_iast": "sa vaidyaḥ rogaṃ jñātvā cikitsāṃ kuryāt",
+      "passage_devanagari": "स वैद्यः रोगं ज्ञात्वा चिकित्सां कुर्यात्",
+      "passage_english_gloss": "That physician, having known the disease, should perform treatment",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "'sa vaidyaḥ' refers to the skilled physician (prāpta-śāstra) who must diagnose before treating",
+      "partial_credit_answers": [
+        "'sa' refers to any healer"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "6.1": {
+          "witness_a": "sa vaidyaḥ",
+          "witness_b": "sa cikitsakaḥ"
+        }
+      },
+      "entity_map": {
+        "sa": [
+          "vaidya (physician)",
+          "rogi (patient)"
+        ],
+        "rogaṃ": [
+          "vyādhi",
+          "āmaya"
+        ]
+      },
+      "candidate_options": [
+        "'sa vaidyaḥ' refers to the skilled physician (prāpta-śāstra) who must diagnose before treating",
+        "'sa' refers to the patient who must know his disease",
+        "'sa' refers to any healer",
+        "The verse describes self-treatment"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "sa vaidyaḥ rogaṃ jñātvā cikitsāṃ kuryāt"
+    },
+    {
+      "id": "rest_051",
+      "difficulty": "hard",
+      "source": "Sushruta Samhita 6.1",
+      "domain": "ayurveda",
+      "passage_iast": "sa vaidyaḥ rogaṃ jñātvā cikitsāṃ kuryāt",
+      "passage_devanagari": "स वैद्यः रोगं ज्ञात्वा चिकित्सां कुर्यात्",
+      "passage_english_gloss": "That physician, having known the disease, should perform treatment",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "'sa vaidyaḥ' refers to the skilled physician (prāpta-śāstra) who must diagnose before treating",
+      "partial_credit_answers": [
+        "'sa' refers to any healer"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "6.1": {
+          "witness_a": "sa vaidyaḥ",
+          "witness_b": "sa cikitsakaḥ"
+        }
+      },
+      "entity_map": {
+        "sa": [
+          "vaidya (physician)",
+          "rogi (patient)"
+        ],
+        "rogaṃ": [
+          "vyādhi",
+          "āmaya"
+        ]
+      },
+      "candidate_options": [
+        "'sa vaidyaḥ' refers to the skilled physician (prāpta-śāstra) who must diagnose before treating",
+        "'sa' refers to the patient who must know his disease",
+        "'sa' refers to any healer",
+        "The verse describes self-treatment"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "sa vaidyaḥ rogaṃ jñātvā cikitsāṃ kuryāt"
+    },
+    {
+      "id": "rest_052",
+      "difficulty": "intermediate",
+      "source": "Bhagavad Gita 2.47",
+      "domain": "philosophy",
+      "passage_iast": "karmaṇy evādhikāras te mā phaleṣu kadācana",
+      "passage_devanagari": "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन",
+      "passage_english_gloss": "Your right is to action alone, never to its fruits",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'karmaṇy evādhikāras' splits as 'karmaṇi + eva + adhikāraḥ' — locative + emphatic + nominative via sandhi",
+      "partial_credit_answers": [
+        "The compound simply means 'right to work'"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "karmaṇyevādhikāras": [
+          {
+            "split": "karmaṇi + eva + adhikāraḥ",
+            "rule": "locative sandhi + vowel coalescence",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "karma + ṇyeva + adhikāraḥ",
+            "rule": "invalid",
+            "plausibility_score": 0.05
+          }
+        ]
+      },
+      "meter_data": {
+        "karmaṇi + eva + adhikāraḥ": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "karma + ṇyeva + adhikāraḥ": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {
+        "2.47": "Śaṅkara: your adhikāra is only in performing action, not in desiring results"
+      },
+      "witness_data": {},
+      "entity_map": {},
+      "candidate_options": [
+        "'karmaṇy evādhikāras' splits as 'karmaṇi + eva + adhikāraḥ' — locative + emphatic + nominative via sandhi",
+        "'karmaṇyeva' is a single word meaning 'work-only'",
+        "The compound simply means 'right to work'",
+        "The split is 'karma + ṇyeva + adhikāraḥ'"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "karmaṇy evādhikāras te mā phaleṣu kadācana"
+    },
+    {
+      "id": "rest_053",
+      "difficulty": "hard",
+      "source": "Bhagavad Gita 2.47",
+      "domain": "philosophy",
+      "passage_iast": "karmaṇy evādhikāras te mā phaleṣu kadācana",
+      "passage_devanagari": "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन",
+      "passage_english_gloss": "Your right is to action alone, never to its fruits",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'karmaṇy evādhikāras' splits as 'karmaṇi + eva + adhikāraḥ' — locative + emphatic + nominative via sandhi",
+      "partial_credit_answers": [
+        "The compound simply means 'right to work'"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "karmaṇyevādhikāras": [
+          {
+            "split": "karmaṇi + eva + adhikāraḥ",
+            "rule": "locative sandhi + vowel coalescence",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "karma + ṇyeva + adhikāraḥ",
+            "rule": "invalid",
+            "plausibility_score": 0.05
+          }
+        ]
+      },
+      "meter_data": {
+        "karmaṇi + eva + adhikāraḥ": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "karma + ṇyeva + adhikāraḥ": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {
+        "2.47": "Śaṅkara: your adhikāra is only in performing action, not in desiring results"
+      },
+      "witness_data": {},
+      "entity_map": {},
+      "candidate_options": [
+        "'karmaṇy evādhikāras' splits as 'karmaṇi + eva + adhikāraḥ' — locative + emphatic + nominative via sandhi",
+        "'karmaṇyeva' is a single word meaning 'work-only'",
+        "The compound simply means 'right to work'",
+        "The split is 'karma + ṇyeva + adhikāraḥ'"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "karmaṇy evādhikāras te mā phaleṣu kadācana"
+    },
+    {
+      "id": "rest_054",
+      "difficulty": "expert",
+      "source": "Bhagavad Gita 2.47",
+      "domain": "philosophy",
+      "passage_iast": "karmaṇy evādhikāras te mā phaleṣu kadācana",
+      "passage_devanagari": "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन",
+      "passage_english_gloss": "Your right is to action alone, never to its fruits",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "sandhi",
+      "correct_answer": "'karmaṇy evādhikāras' splits as 'karmaṇi + eva + adhikāraḥ' — locative + emphatic + nominative via sandhi",
+      "partial_credit_answers": [
+        "The compound simply means 'right to work'"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "sandhi_parser",
+        "meter_checker"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {
+        "karmaṇyevādhikāras": [
+          {
+            "split": "karmaṇi + eva + adhikāraḥ",
+            "rule": "locative sandhi + vowel coalescence",
+            "plausibility_score": 0.95
+          },
+          {
+            "split": "karma + ṇyeva + adhikāraḥ",
+            "rule": "invalid",
+            "plausibility_score": 0.05
+          }
+        ]
+      },
+      "meter_data": {
+        "karmaṇi + eva + adhikāraḥ": {
+          "preserves_meter": true,
+          "meter_name": "anuṣṭubh"
+        },
+        "karma + ṇyeva + adhikāraḥ": {
+          "preserves_meter": false,
+          "meter_name": null
+        }
+      },
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {},
+      "candidate_options": [
+        "'karmaṇy evādhikāras' splits as 'karmaṇi + eva + adhikāraḥ' — locative + emphatic + nominative via sandhi",
+        "'karmaṇyeva' is a single word meaning 'work-only'",
+        "The compound simply means 'right to work'",
+        "The split is 'karma + ṇyeva + adhikāraḥ'"
+      ],
+      "partial_credit_indices": [
+        2
+      ],
+      "passage_iast_noisy": "karmaṇy evādhikāras te mā phaleṣu kadācana"
+    },
+    {
+      "id": "rest_055",
+      "difficulty": "beginner",
+      "source": "Ramayana 1.2",
+      "domain": "narrative",
+      "passage_iast": "ko nv asmin sāmprataṃ loke guṇavān kaś ca vīryavān",
+      "passage_devanagari": "को न्वस्मिन् साम्प्रतं लोके गुणवान् कश्च वीर्यवान्",
+      "passage_english_gloss": "Who in this world today is virtuous and who is valorous?",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "Vālmīki asks Nārada about the ideal man — the two 'kaḥ' pronouns seek a single person embodying both guṇa and vīrya",
+      "partial_credit_answers": [
+        "The verse asks about two different people"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {
+        "1.2": "This is the praśna that initiates the entire Rāmāyaṇa"
+      },
+      "witness_data": {},
+      "entity_map": {
+        "kaḥ": [
+          "Rāma",
+          "ideal person"
+        ],
+        "asmin loke": [
+          "this world"
+        ]
+      },
+      "candidate_options": [
+        "Vālmīki asks Nārada about the ideal man — the two 'kaḥ' pronouns seek a single person embodying both guṇa and vīrya",
+        "The verse asks about two different people",
+        "The pronouns refer to gods, not humans",
+        "'kaḥ' is rhetorical and expects no answer"
+      ],
+      "partial_credit_indices": [
+        1
+      ]
+    },
+    {
+      "id": "rest_056",
+      "difficulty": "hard",
+      "source": "Ramayana 1.2",
+      "domain": "narrative",
+      "passage_iast": "ko nv asmin sāmprataṃ loke guṇavān kaś ca vīryavān",
+      "passage_devanagari": "को न्वस्मिन् साम्प्रतं लोके गुणवान् कश्च वीर्यवान्",
+      "passage_english_gloss": "Who in this world today is virtuous and who is valorous?",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "Vālmīki asks Nārada about the ideal man — the two 'kaḥ' pronouns seek a single person embodying both guṇa and vīrya",
+      "partial_credit_answers": [
+        "The verse asks about two different people"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {
+        "1.2": "This is the praśna that initiates the entire Rāmāyaṇa"
+      },
+      "witness_data": {
+        "1.2": {
+          "witness_a": "guṇavān kaś ca",
+          "witness_b": "guṇavān ko'pi"
+        }
+      },
+      "entity_map": {
+        "kaḥ": [
+          "Rāma",
+          "ideal person"
+        ],
+        "asmin loke": [
+          "this world"
+        ]
+      },
+      "candidate_options": [
+        "Vālmīki asks Nārada about the ideal man — the two 'kaḥ' pronouns seek a single person embodying both guṇa and vīrya",
+        "The verse asks about two different people",
+        "The pronouns refer to gods, not humans",
+        "'kaḥ' is rhetorical and expects no answer"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "ko nv asmin sāmprataṃ loke guṇavān kaś ca vīryavān"
+    },
+    {
+      "id": "rest_057",
+      "difficulty": "expert",
+      "source": "Ramayana 1.2",
+      "domain": "narrative",
+      "passage_iast": "ko nv asmin sāmprataṃ loke guṇavān kaś ca vīryavān",
+      "passage_devanagari": "को न्वस्मिन् साम्प्रतं लोके गुणवान् कश्च वीर्यवान्",
+      "passage_english_gloss": "Who in this world today is virtuous and who is valorous?",
+      "ocr_noise_level": 0.4,
+      "primary_disambiguation_type": "coherence",
+      "correct_answer": "Vālmīki asks Nārada about the ideal man — the two 'kaḥ' pronouns seek a single person embodying both guṇa and vīrya",
+      "partial_credit_answers": [
+        "The verse asks about two different people"
+      ],
+      "tool_budget": 4,
+      "tools_needed": [
+        "referent_tracker",
+        "witness_compare"
+      ],
+      "glossary_data": {},
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "1.2": {
+          "witness_a": "guṇavān kaś ca",
+          "witness_b": "guṇavān ko'pi"
+        }
+      },
+      "entity_map": {
+        "kaḥ": [
+          "Rāma",
+          "ideal person"
+        ],
+        "asmin loke": [
+          "this world"
+        ]
+      },
+      "candidate_options": [
+        "Vālmīki asks Nārada about the ideal man — the two 'kaḥ' pronouns seek a single person embodying both guṇa and vīrya",
+        "The verse asks about two different people",
+        "The pronouns refer to gods, not humans",
+        "'kaḥ' is rhetorical and expects no answer"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "ko nv asmin sāmprataṃ loke guṇavān kaś ca vīryavān"
+    },
+    {
+      "id": "rest_058",
+      "difficulty": "beginner",
+      "source": "Arthashastra 7.1",
+      "domain": "narrative",
+      "passage_iast": "ṣāḍguṇyaṃ rājñāṃ pradhānaṃ sādhanaṃ vijaye",
+      "passage_devanagari": "षाड्गुण्यं राज्ञां प्रधानं साधनं विजये",
+      "passage_english_gloss": "The sixfold policy is the chief instrument of kings for victory",
+      "ocr_noise_level": 0.0,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'ṣāḍguṇya' refers to the six measures of foreign policy: sandhi, vigraha, yāna, āsana, dvaidha, saṃśraya",
+      "partial_credit_answers": [
+        "'ṣāḍguṇya' means six virtues"
+      ],
+      "tool_budget": 8,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "ṣāḍguṇya": [
+          {
+            "meaning": "sixfold policy (sandhi, vigraha, yāna, āsana, dvaidha, saṃśraya)",
+            "domain": "arthashastra",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "six qualities",
+            "domain": "general",
+            "confidence": 0.4
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {},
+      "entity_map": {},
+      "candidate_options": [
+        "'ṣāḍguṇya' refers to the six measures of foreign policy: sandhi, vigraha, yāna, āsana, dvaidha, saṃśraya",
+        "'ṣāḍguṇya' means six virtues",
+        "The word describes six types of military formations",
+        "'ṣāḍguṇya' refers to the six seasons relevant to warfare"
+      ],
+      "partial_credit_indices": [
+        1
+      ]
+    },
+    {
+      "id": "rest_059",
+      "difficulty": "intermediate",
+      "source": "Arthashastra 7.1",
+      "domain": "narrative",
+      "passage_iast": "ṣāḍguṇyaṃ rājñāṃ pradhānaṃ sādhanaṃ vijaye",
+      "passage_devanagari": "षाड्गुण्यं राज्ञां प्रधानं साधनं विजये",
+      "passage_english_gloss": "The sixfold policy is the chief instrument of kings for victory",
+      "ocr_noise_level": 0.1,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'ṣāḍguṇya' refers to the six measures of foreign policy: sandhi, vigraha, yāna, āsana, dvaidha, saṃśraya",
+      "partial_credit_answers": [
+        "'ṣāḍguṇya' means six virtues"
+      ],
+      "tool_budget": 6,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "ṣāḍguṇya": [
+          {
+            "meaning": "sixfold policy (sandhi, vigraha, yāna, āsana, dvaidha, saṃśraya)",
+            "domain": "arthashastra",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "six qualities",
+            "domain": "general",
+            "confidence": 0.4
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "7.1": {
+          "witness_a": "ṣāḍguṇyaṃ rājñāṃ",
+          "witness_b": "ṣāḍguṇyaṃ nṛpāṇāṃ"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'ṣāḍguṇya' refers to the six measures of foreign policy: sandhi, vigraha, yāna, āsana, dvaidha, saṃśraya",
+        "'ṣāḍguṇya' means six virtues",
+        "The word describes six types of military formations",
+        "'ṣāḍguṇya' refers to the six seasons relevant to warfare"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "ṣāḍguṇyaṃ rājñāṃ pradhānaṃ sādhanaṃ vijaye"
+    },
+    {
+      "id": "rest_060",
+      "difficulty": "hard",
+      "source": "Arthashastra 7.1",
+      "domain": "narrative",
+      "passage_iast": "ṣāḍguṇyaṃ rājñāṃ pradhānaṃ sādhanaṃ vijaye",
+      "passage_devanagari": "षाड्गुण्यं राज्ञां प्रधानं साधनं विजये",
+      "passage_english_gloss": "The sixfold policy is the chief instrument of kings for victory",
+      "ocr_noise_level": 0.25,
+      "primary_disambiguation_type": "glossary",
+      "correct_answer": "'ṣāḍguṇya' refers to the six measures of foreign policy: sandhi, vigraha, yāna, āsana, dvaidha, saṃśraya",
+      "partial_credit_answers": [
+        "'ṣāḍguṇya' means six virtues"
+      ],
+      "tool_budget": 5,
+      "tools_needed": [
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "glossary_data": {
+        "ṣāḍguṇya": [
+          {
+            "meaning": "sixfold policy (sandhi, vigraha, yāna, āsana, dvaidha, saṃśraya)",
+            "domain": "arthashastra",
+            "confidence": 0.95
+          },
+          {
+            "meaning": "six qualities",
+            "domain": "general",
+            "confidence": 0.4
+          }
+        ]
+      },
+      "sandhi_data": {},
+      "meter_data": {},
+      "commentary_data": {},
+      "witness_data": {
+        "7.1": {
+          "witness_a": "ṣāḍguṇyaṃ rājñāṃ",
+          "witness_b": "ṣāḍguṇyaṃ nṛpāṇāṃ"
+        }
+      },
+      "entity_map": {},
+      "candidate_options": [
+        "'ṣāḍguṇya' refers to the six measures of foreign policy: sandhi, vigraha, yāna, āsana, dvaidha, saṃśraya",
+        "'ṣāḍguṇya' means six virtues",
+        "The word describes six types of military formations",
+        "'ṣāḍguṇya' refers to the six seasons relevant to warfare"
+      ],
+      "partial_credit_indices": [
+        1
+      ],
+      "passage_iast_noisy": "ṣāḍguṇyaṃ rājñāṃ pradhānaṃ sādhanaṃ vijaye"
+    }
+  ]
+}

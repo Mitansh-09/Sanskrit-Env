@@ -13,15 +13,27 @@ class ManuscriptAction(Action):
     """
     The action an agent takes each step.
 
-    The agent selects ONE option from the candidate_options list
-    provided in the observation. The selected_option must exactly
-    match one of the strings in candidate_options.
+    For Tasks 1-4: set action_type="option_select" and selected_option.
+    For Task 5 tool calls: set action_type="tool_call", tool_name, tool_input.
+    For Task 5 commit: set action_type="commit" and final_answer.
     """
-    selected_option: str
+    action_type: str = "option_select"
+    """'option_select' (tasks 1-4) | 'tool_call' | 'commit' (task 5)."""
+
+    selected_option: str = ""
     """The agent's chosen interpretation. Must match one candidate_options entry exactly."""
 
+    tool_name: Optional[str] = None
+    """Tool to call (task 5 tool_call only)."""
+
+    tool_input: Optional[str] = None
+    """Input to the tool (task 5 tool_call only)."""
+
+    final_answer: Optional[str] = None
+    """Final interpretation (task 5 commit only)."""
+
     confidence: float = 0.5
-    """Agent's self-reported confidence, 0.0–1.0. Used for logging only, not graded."""
+    """Agent's self-reported confidence, 0.0-1.0. Used for logging only, not graded."""
 
     reasoning: str = ""
     """Agent's explanation of its choice. Logged for analysis, not graded."""
@@ -99,6 +111,25 @@ class ManuscriptObservation(Observation):
     consistency_history: Optional[List[Dict[str, str]]] = None
     """Prior checkpoint Q&A for this episode. Agent should maintain consistency."""
 
+    # Task 5 (Manuscript Restoration)
+    tool_call_history: Optional[List[Dict[str, Any]]] = None
+    """History of tool calls and their outputs (task 5 only)."""
+
+    steps_remaining: Optional[int] = None
+    """Remaining tool budget (task 5 only)."""
+
+    available_tools: Optional[List[str]] = None
+    """List of available tool names (task 5 only)."""
+
+    last_tool_output: Optional[Dict[str, Any]] = None
+    """Output from the most recent tool call (task 5 only)."""
+
+    ocr_noise_level: Optional[float] = None
+    """OCR noise level applied to the passage (task 5 only)."""
+
+    difficulty: Optional[str] = None
+    """Current difficulty level (task 5 only)."""
+
 
 class ManuscriptState(State):
     """
@@ -129,3 +160,16 @@ class ManuscriptState(State):
 
     is_complete: bool = False
     """True when all decisions in the episode have been made."""
+
+    # Task 5 adaptive difficulty
+    current_difficulty: str = "beginner"
+    """Current difficulty level for manuscript_restoration."""
+
+    agent_recent_scores: List[float] = []
+    """Rolling window of last 10 episode scores for difficulty curriculum."""
+
+    difficulty_escalations: int = 0
+    """Number of times difficulty has been escalated."""
+
+    evidence_use_history: List[int] = []
+    """Number of distinct tools used per episode."""
