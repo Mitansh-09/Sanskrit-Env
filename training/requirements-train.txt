@@ -1,0 +1,17 @@
+# Training-only dependencies for SanskritEnv GRPO.
+# Install on top of the base requirements.txt.
+
+# Core RL / fine-tuning stack
+trl>=0.13.0
+transformers>=4.45.0
+accelerate>=0.34.0
+peft>=0.13.0
+datasets>=3.0.0
+
+# Quantization (4-bit QLoRA)
+bitsandbytes>=0.43.0
+
+# Utility
+sentencepiece>=0.1.99
+tqdm>=4.66.0
+requests>=2.31.0
