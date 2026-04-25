@@ -70,7 +70,7 @@ python training/submit_hf_job.py --smoke --flavor a10g-small --timeout 45m
 python training/submit_hf_job.py --flavor a100-large --timeout 6h
 ```
 
-The script calls [`run_job()`](https://huggingface.co/docs/huggingface_hub/guides/jobs) with `secrets={"HF_TOKEN": ...}` and passes `ENV_URL` to the container. It prints a **Job URL** where you can follow logs.
+The script calls [`run_job()`](https://huggingface.co/docs/huggingface_hub/guides/jobs) with `secrets={"HF_TOKEN": ...}`. The clone **URL and branch** are set as `SANSKRIT_GIT_CLONE_URL` / `SANSKRIT_GIT_BRANCH` in the job `env` (not crammed into one giant shell string) so the Hub does not mangle quotes. The job uses `bash -c` (not `bash -lc`) and installs **git** + **ca-certificates** before `git clone`. It prints a **Job URL** where you can follow logs.
 
 **HTTP 429 on the deployed Space (`/reset` / `/step`):** The Space rate-limits rapid requests. The trainer now **paces** calls to `hf.space` URLs (~0.35s between requests) and **retries** on 429. If logs still show many `[warn] reset failed ... 429`, set **`SANSKRIT_ENV_MIN_INTERVAL=0.6`** (or `1.0`) in the **job environment** (or on your machine) before training. Slower, but reliable.
 
