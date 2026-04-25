@@ -1,0 +1,548 @@
+{
+  "model": "@cf/meta/llama-3.2-3b-instruct",
+  "provider": "cloudflare",
+  "timestamp": "2026-04-25T08:03:57.729476+00:00",
+  "seed": 42,
+  "summary": {
+    "overall_mean": 0.351,
+    "overall_std": 0.385,
+    "tasks": {
+      "glossary_anchoring": {
+        "mean": 0.2,
+        "std": 0.245,
+        "episodes": 5
+      },
+      "sandhi_resolution": {
+        "mean": 0.38,
+        "std": 0.465,
+        "episodes": 5
+      },
+      "samasa_classification": {
+        "mean": 0.48,
+        "std": 0.425,
+        "episodes": 5
+      },
+      "referential_coherence": {
+        "mean": 0.435,
+        "std": 0.355,
+        "episodes": 5
+      },
+      "manuscript_restoration": {
+        "mean": 0.26,
+        "std": 0.318,
+        "episodes": 5,
+        "mean_tools_used": 2.8,
+        "mean_steps_used": 3.8
+      }
+    }
+  },
+  "episodes": [
+    {
+      "task_id": "glossary_anchoring",
+      "episode_id": "6e6bbfe1-7772-4705-8f12-c5d31f707085",
+      "difficulty": null,
+      "score": 0.5,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.5
+        }
+      ]
+    },
+    {
+      "task_id": "glossary_anchoring",
+      "episode_id": "model_ui_5x3wof1hns5_moe1wivf",
+      "difficulty": "beginner",
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "glossary_anchoring",
+      "episode_id": "c2d341a4-b00e-47dd-b3c2-ffff8bf91508",
+      "difficulty": null,
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "glossary_anchoring",
+      "episode_id": "model_ui_b8ms1ulyb6d_moe1wn2o",
+      "difficulty": "beginner",
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "glossary_anchoring",
+      "episode_id": "39f11eff-460e-465e-b13b-d3991f90a76b",
+      "difficulty": null,
+      "score": 0.5,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.5
+        }
+      ]
+    },
+    {
+      "task_id": "sandhi_resolution",
+      "episode_id": "df78bb43-2a83-4d72-a385-29b595d38fcc",
+      "difficulty": null,
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "sandhi_resolution",
+      "episode_id": "model_ui_aszv5e7btnu_moe1wsl8",
+      "difficulty": "beginner",
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "sandhi_resolution",
+      "episode_id": "ff441ca9-416d-4cbc-8008-949dad9f6361",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.95
+        }
+      ]
+    },
+    {
+      "task_id": "sandhi_resolution",
+      "episode_id": "89e046d7-3b99-4844-9727-5d69b6d1ce08",
+      "difficulty": null,
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "sandhi_resolution",
+      "episode_id": "18257659-2396-4f42-aa3e-9eb5341e51d7",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.95
+        }
+      ]
+    },
+    {
+      "task_id": "samasa_classification",
+      "episode_id": "aa4cde8f-e3e0-42d6-9298-6ac0666a84f3",
+      "difficulty": null,
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "samasa_classification",
+      "episode_id": "5dee938f-e405-4974-a5c4-1a109c08bd81",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.95
+        }
+      ]
+    },
+    {
+      "task_id": "samasa_classification",
+      "episode_id": "c4bd3b57-cd3c-42c4-8246-fbb80c8fcec9",
+      "difficulty": null,
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "samasa_classification",
+      "episode_id": "247c6b00-8205-4723-b39e-58bc602b5234",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.95
+        }
+      ]
+    },
+    {
+      "task_id": "samasa_classification",
+      "episode_id": "064de80f-3748-4f5f-835f-ec129991c660",
+      "difficulty": null,
+      "score": 0.5,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.5
+        }
+      ]
+    },
+    {
+      "task_id": "referential_coherence",
+      "episode_id": "be511ca6-6b14-46a7-af68-72684b5479b4",
+      "difficulty": null,
+      "score": 0.0,
+      "steps": 4,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.0
+        },
+        {
+          "step": 3,
+          "reward": 0.0
+        },
+        {
+          "step": 4,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "referential_coherence",
+      "episode_id": "0e4fc611-2301-4a39-8802-1828568c944d",
+      "difficulty": null,
+      "score": 0.725,
+      "steps": 4,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.0
+        },
+        {
+          "step": 3,
+          "reward": 0.0
+        },
+        {
+          "step": 4,
+          "reward": 0.725
+        }
+      ]
+    },
+    {
+      "task_id": "referential_coherence",
+      "episode_id": "33e732a3-094a-4f74-a3c1-1faf0b06226d",
+      "difficulty": null,
+      "score": 0.0,
+      "steps": 4,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.0
+        },
+        {
+          "step": 3,
+          "reward": 0.0
+        },
+        {
+          "step": 4,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "referential_coherence",
+      "episode_id": "7d4381a9-be9b-4cb7-8615-fb526027a1e7",
+      "difficulty": null,
+      "score": 0.725,
+      "steps": 4,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.0
+        },
+        {
+          "step": 3,
+          "reward": 0.0
+        },
+        {
+          "step": 4,
+          "reward": 0.725
+        }
+      ]
+    },
+    {
+      "task_id": "referential_coherence",
+      "episode_id": "b901b7a0-19a4-476e-aa05-2d65d0b2ee1f",
+      "difficulty": null,
+      "score": 0.725,
+      "steps": 4,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.0
+        },
+        {
+          "step": 3,
+          "reward": 0.0
+        },
+        {
+          "step": 4,
+          "reward": 0.725
+        }
+      ]
+    },
+    {
+      "task_id": "manuscript_restoration",
+      "episode_id": "afad73eb-bd52-4755-b415-4ac2b02b3ab3",
+      "difficulty": "beginner",
+      "score": 0.65,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.65
+        }
+      ]
+    },
+    {
+      "task_id": "manuscript_restoration",
+      "episode_id": "b26a4a18-42ca-4061-9be9-0038e26015c8",
+      "difficulty": "beginner",
+      "score": 0.0,
+      "steps": 8,
+      "tools_used": [
+        "sandhi_parser",
+        "lexicon_lookup",
+        "commentary_fetch",
+        "lexicon_lookup",
+        "commentary_fetch",
+        "sandhi_parser",
+        "commentary_fetch"
+      ],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.08
+        },
+        {
+          "step": 2,
+          "reward": 0.04
+        },
+        {
+          "step": 3,
+          "reward": 0.05
+        },
+        {
+          "step": 4,
+          "reward": 0.0
+        },
+        {
+          "step": 5,
+          "reward": 0.0
+        },
+        {
+          "step": 6,
+          "reward": 0.03
+        },
+        {
+          "step": 7,
+          "reward": 0.0
+        },
+        {
+          "step": 8,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "manuscript_restoration",
+      "episode_id": "170ed7b4-8341-4238-8f64-4397e829d119",
+      "difficulty": "beginner",
+      "score": 0.0,
+      "steps": 8,
+      "tools_used": [
+        "sandhi_parser",
+        "lexicon_lookup",
+        "commentary_fetch",
+        "lexicon_lookup",
+        "commentary_fetch",
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.08
+        },
+        {
+          "step": 2,
+          "reward": 0.04
+        },
+        {
+          "step": 3,
+          "reward": 0.05
+        },
+        {
+          "step": 4,
+          "reward": 0.0
+        },
+        {
+          "step": 5,
+          "reward": 0.0
+        },
+        {
+          "step": 6,
+          "reward": 0.0
+        },
+        {
+          "step": 7,
+          "reward": 0.0
+        },
+        {
+          "step": 8,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "manuscript_restoration",
+      "episode_id": "57d48652-97d2-4ea8-8be0-da4a3b759116",
+      "difficulty": "beginner",
+      "score": 0.65,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.65
+        }
+      ]
+    },
+    {
+      "task_id": "manuscript_restoration",
+      "episode_id": "9ed5f9a8-e9ae-4b3a-bdfd-c3ba4bc0925a",
+      "difficulty": "beginner",
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    }
+  ]
+}

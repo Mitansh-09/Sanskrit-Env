@@ -1,0 +1,708 @@
+{
+  "model": "@cf/meta/llama-3.2-3b-instruct",
+  "provider": "cloudflare",
+  "timestamp": "2026-04-25T08:10:08.711015+00:00",
+  "seed": 42,
+  "summary": {
+    "overall_mean": 0.559,
+    "overall_std": 0.404,
+    "tasks": {
+      "glossary_anchoring": {
+        "mean": 0.67,
+        "std": 0.378,
+        "episodes": 5
+      },
+      "sandhi_resolution": {
+        "mean": 0.76,
+        "std": 0.38,
+        "episodes": 5
+      },
+      "samasa_classification": {
+        "mean": 0.29,
+        "std": 0.383,
+        "episodes": 5
+      },
+      "referential_coherence": {
+        "mean": 0.74,
+        "std": 0.274,
+        "episodes": 5
+      },
+      "manuscript_restoration": {
+        "mean": 0.102,
+        "std": 0.125,
+        "episodes": 5,
+        "mean_tools_used": 2.8,
+        "mean_steps_used": 3.8
+      },
+      "full_manuscript_session": {
+        "mean": 0.79,
+        "std": 0.193,
+        "episodes": 5
+      }
+    }
+  },
+  "episodes": [
+    {
+      "task_id": "glossary_anchoring",
+      "episode_id": "ebb6d956-3ac2-457b-92b5-4113c9a1daa8",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.95
+        }
+      ]
+    },
+    {
+      "task_id": "glossary_anchoring",
+      "episode_id": "9287908a-311b-43ef-8521-fad15636743e",
+      "difficulty": null,
+      "score": 0.5,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.5
+        }
+      ]
+    },
+    {
+      "task_id": "glossary_anchoring",
+      "episode_id": "352d63f7-f967-4c3c-a172-467b76d23243",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.95
+        }
+      ]
+    },
+    {
+      "task_id": "glossary_anchoring",
+      "episode_id": "04dea989-2f7b-41d1-b595-96a9b1506547",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.95
+        }
+      ]
+    },
+    {
+      "task_id": "glossary_anchoring",
+      "episode_id": "7414d518-4912-4203-af48-ca81b46ad1dd",
+      "difficulty": null,
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "sandhi_resolution",
+      "episode_id": "11bba5e9-7e3b-41dd-9cd7-b49107d0a040",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.95
+        }
+      ]
+    },
+    {
+      "task_id": "sandhi_resolution",
+      "episode_id": "c59cb9c7-1bb4-46ab-841e-b0e616163e38",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.95
+        }
+      ]
+    },
+    {
+      "task_id": "sandhi_resolution",
+      "episode_id": "ff8c9132-e245-4854-abf4-7c71122763ca",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.95
+        }
+      ]
+    },
+    {
+      "task_id": "sandhi_resolution",
+      "episode_id": "60e85f1e-4698-49c3-bc43-dc734dc531d1",
+      "difficulty": null,
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "sandhi_resolution",
+      "episode_id": "271fa589-2861-46ce-b697-84f5f61487b4",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.95
+        }
+      ]
+    },
+    {
+      "task_id": "samasa_classification",
+      "episode_id": "808190ff-fcb1-4735-a843-97f4ec41f79e",
+      "difficulty": null,
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "samasa_classification",
+      "episode_id": "59bcaa41-4fc6-4c0d-8190-9b11756bd097",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.95
+        }
+      ]
+    },
+    {
+      "task_id": "samasa_classification",
+      "episode_id": "ebdd4c25-c01b-4980-9675-859f8f8028b6",
+      "difficulty": null,
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "samasa_classification",
+      "episode_id": "c2f1f34f-7e38-4a7e-b2cf-d24ab0ef27d8",
+      "difficulty": null,
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "samasa_classification",
+      "episode_id": "80fcf890-d09d-451f-b18c-a1615e07c608",
+      "difficulty": null,
+      "score": 0.5,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.5
+        }
+      ]
+    },
+    {
+      "task_id": "referential_coherence",
+      "episode_id": "6e911706-9bf6-44e5-97b0-ce567a247ddf",
+      "difficulty": null,
+      "score": 0.2,
+      "steps": 4,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.1
+        },
+        {
+          "step": 3,
+          "reward": 0.1
+        },
+        {
+          "step": 4,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "referential_coherence",
+      "episode_id": "d89c728c-9843-4591-aeae-b325960dbb93",
+      "difficulty": null,
+      "score": 0.875,
+      "steps": 4,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.1
+        },
+        {
+          "step": 3,
+          "reward": 0.1
+        },
+        {
+          "step": 4,
+          "reward": 0.725
+        }
+      ]
+    },
+    {
+      "task_id": "referential_coherence",
+      "episode_id": "3bbdc0ce-c9ea-4d05-a1e4-01d557435809",
+      "difficulty": null,
+      "score": 0.875,
+      "steps": 4,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.1
+        },
+        {
+          "step": 3,
+          "reward": 0.1
+        },
+        {
+          "step": 4,
+          "reward": 0.725
+        }
+      ]
+    },
+    {
+      "task_id": "referential_coherence",
+      "episode_id": "04e1fdef-8df5-4f8b-88e7-5773c281d9cf",
+      "difficulty": null,
+      "score": 0.8,
+      "steps": 4,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.0
+        },
+        {
+          "step": 3,
+          "reward": 0.1
+        },
+        {
+          "step": 4,
+          "reward": 0.725
+        }
+      ]
+    },
+    {
+      "task_id": "referential_coherence",
+      "episode_id": "8b4edd6d-e90d-434c-bb9c-8561ac02c03f",
+      "difficulty": null,
+      "score": 0.95,
+      "steps": 4,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.1
+        },
+        {
+          "step": 2,
+          "reward": 0.1
+        },
+        {
+          "step": 3,
+          "reward": 0.1
+        },
+        {
+          "step": 4,
+          "reward": 0.725
+        }
+      ]
+    },
+    {
+      "task_id": "manuscript_restoration",
+      "episode_id": "47f3e482-0952-427e-aade-9073c8cf6f5b",
+      "difficulty": "beginner",
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "manuscript_restoration",
+      "episode_id": "ddbc6241-baaa-49cd-ba82-ab6168ea7bc9",
+      "difficulty": "beginner",
+      "score": 0.27,
+      "steps": 8,
+      "tools_used": [
+        "sandhi_parser",
+        "lexicon_lookup",
+        "commentary_fetch",
+        "witness_compare",
+        "sandhi_parser",
+        "lexicon_lookup",
+        "commentary_fetch"
+      ],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.08
+        },
+        {
+          "step": 2,
+          "reward": 0.04
+        },
+        {
+          "step": 3,
+          "reward": 0.05
+        },
+        {
+          "step": 4,
+          "reward": 0.01
+        },
+        {
+          "step": 5,
+          "reward": 0.03
+        },
+        {
+          "step": 6,
+          "reward": 0.0
+        },
+        {
+          "step": 7,
+          "reward": 0.0
+        },
+        {
+          "step": 8,
+          "reward": 0.27
+        }
+      ]
+    },
+    {
+      "task_id": "manuscript_restoration",
+      "episode_id": "fc9f6f0d-7ff1-45b3-8074-77dbdf40e044",
+      "difficulty": "beginner",
+      "score": 0.0,
+      "steps": 8,
+      "tools_used": [
+        "sandhi_parser",
+        "lexicon_lookup",
+        "commentary_fetch",
+        "witness_compare",
+        "sandhi_parser",
+        "referent_tracker",
+        "lexicon_lookup"
+      ],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.08
+        },
+        {
+          "step": 2,
+          "reward": 0.04
+        },
+        {
+          "step": 3,
+          "reward": 0.05
+        },
+        {
+          "step": 4,
+          "reward": 0.01
+        },
+        {
+          "step": 5,
+          "reward": 0.03
+        },
+        {
+          "step": 6,
+          "reward": 0.03
+        },
+        {
+          "step": 7,
+          "reward": 0.0
+        },
+        {
+          "step": 8,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "manuscript_restoration",
+      "episode_id": "8156a96b-bd07-4322-aaad-d09c0529be8c",
+      "difficulty": "beginner",
+      "score": 0.24,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.24
+        }
+      ]
+    },
+    {
+      "task_id": "manuscript_restoration",
+      "episode_id": "606a3dff-06f6-4ebe-958a-85c062a7ab92",
+      "difficulty": "beginner",
+      "score": 0.0,
+      "steps": 1,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        }
+      ]
+    },
+    {
+      "task_id": "full_manuscript_session",
+      "episode_id": "c6e55c9b-cfb9-47fc-b709-d1f58c151533",
+      "difficulty": null,
+      "score": 0.9400000000000001,
+      "steps": 5,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.0
+        },
+        {
+          "step": 3,
+          "reward": 0.0
+        },
+        {
+          "step": 4,
+          "reward": 0.0
+        },
+        {
+          "step": 5,
+          "reward": 0.9400000000000001
+        }
+      ]
+    },
+    {
+      "task_id": "full_manuscript_session",
+      "episode_id": "ddf6bd70-ba69-49b9-8719-77853d21f025",
+      "difficulty": null,
+      "score": 0.9400000000000001,
+      "steps": 5,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.0
+        },
+        {
+          "step": 3,
+          "reward": 0.0
+        },
+        {
+          "step": 4,
+          "reward": 0.0
+        },
+        {
+          "step": 5,
+          "reward": 0.9400000000000001
+        }
+      ]
+    },
+    {
+      "task_id": "full_manuscript_session",
+      "episode_id": "468f88be-7855-4f0f-8e51-4cbf319346b5",
+      "difficulty": null,
+      "score": 0.66,
+      "steps": 5,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.0
+        },
+        {
+          "step": 3,
+          "reward": 0.0
+        },
+        {
+          "step": 4,
+          "reward": 0.0
+        },
+        {
+          "step": 5,
+          "reward": 0.66
+        }
+      ]
+    },
+    {
+      "task_id": "full_manuscript_session",
+      "episode_id": "8858a6ea-9209-456e-b0a2-e9d06cfb31ca",
+      "difficulty": null,
+      "score": 0.47000000000000003,
+      "steps": 5,
+      "tools_used": [],
+      "committed_correctly": false,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.0
+        },
+        {
+          "step": 3,
+          "reward": 0.0
+        },
+        {
+          "step": 4,
+          "reward": 0.0
+        },
+        {
+          "step": 5,
+          "reward": 0.47000000000000003
+        }
+      ]
+    },
+    {
+      "task_id": "full_manuscript_session",
+      "episode_id": "28e9c4df-c2c6-4569-a733-3d6f386d5a0f",
+      "difficulty": null,
+      "score": 0.9400000000000001,
+      "steps": 5,
+      "tools_used": [],
+      "committed_correctly": true,
+      "step_trace": [
+        {
+          "step": 1,
+          "reward": 0.0
+        },
+        {
+          "step": 2,
+          "reward": 0.0
+        },
+        {
+          "step": 3,
+          "reward": 0.0
+        },
+        {
+          "step": 4,
+          "reward": 0.0
+        },
+        {
+          "step": 5,
+          "reward": 0.9400000000000001
+        }
+      ]
+    }
+  ]
+}

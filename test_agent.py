@@ -136,13 +136,35 @@ def env_reset(base_url, task_id, seed=None, difficulty=None):
         payload["difficulty"] = difficulty
     resp = requests.post(f"{base_url}/reset", json=payload, timeout=30)
     resp.raise_for_status()
-    return resp.json()
+    data = resp.json()
+    # OpenEnv servers may return wrapped StepResult payload:
+    # {"observation": {...}, "reward": ..., "done": ...}
+    if isinstance(data, dict) and "observation" in data:
+        obs = data.get("observation") or {}
+        if isinstance(obs, dict):
+            obs.setdefault("reward", data.get("reward"))
+            obs.setdefault("done", data.get("done", False))
+            return obs
+    return data
 
 
 def env_step(base_url, action):
-    resp = requests.post(f"{base_url}/step", json=action, timeout=30)
+    # New OpenEnv API expects body shape: {"action": {...}}
+    resp = requests.post(f"{base_url}/step", json={"action": action}, timeout=30)
+
+    # Backward-compat fallback for older servers expecting raw action payload.
+    if resp.status_code == 422:
+        resp = requests.post(f"{base_url}/step", json=action, timeout=30)
+
     resp.raise_for_status()
-    return resp.json()
+    data = resp.json()
+    if isinstance(data, dict) and "observation" in data:
+        obs = data.get("observation") or {}
+        if isinstance(obs, dict):
+            obs.setdefault("reward", data.get("reward"))
+            obs.setdefault("done", data.get("done", False))
+            return obs
+    return data
 
 
 # ── Response Parsing ─────────────────────────────────────────────────────────
