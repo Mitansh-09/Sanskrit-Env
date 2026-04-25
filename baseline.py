@@ -166,14 +166,37 @@ def env_reset(base_url, task_id, seed=None, episode_id=None, difficulty=None):
         payload["difficulty"] = difficulty
     resp = requests.post(f"{base_url}/reset", json=payload, timeout=30)
     resp.raise_for_status()
-    return resp.json()
+    data = resp.json()
+    if isinstance(data, dict) and "observation" in data:
+        obs = data.get("observation") or {}
+        if isinstance(obs, dict):
+            obs.setdefault("reward", data.get("reward"))
+            obs.setdefault("done", data.get("done", False))
+            return obs
+    return data
 
 
 def env_step(base_url, action):
     """Call /step on the environment."""
-    resp = requests.post(f"{base_url}/step", json=action, timeout=30)
+    resp = requests.post(f"{base_url}/step", json={"action": action}, timeout=30)
+    if resp.status_code >= 400:
+        print(f"Server error for {{'action': action}} {resp.status_code}: {resp.text}")
+    
+    if resp.status_code == 422:
+        resp2 = requests.post(f"{base_url}/step", json=action, timeout=30)
+        if resp2.status_code >= 400:
+            print(f"Server error for raw action {resp2.status_code}: {resp2.text}")
+        resp = resp2
+
     resp.raise_for_status()
-    return resp.json()
+    data = resp.json()
+    if isinstance(data, dict) and "observation" in data:
+        obs = data.get("observation") or {}
+        if isinstance(obs, dict):
+            obs.setdefault("reward", data.get("reward"))
+            obs.setdefault("done", data.get("done", False))
+            return obs
+    return data
 
 
 # ── Response Parsing ─────────────────────────────────────────────────────────
@@ -249,7 +272,7 @@ def run_episode(base_url, task_id, model, seed, difficulty=None, verbose=False):
         messages.append({"role": "assistant", "content": response})
 
         # Parse and step
-        if task_id == "manuscript_restoration":
+        if task_id in ["manuscript_restoration", "full_manuscript_session"]:
             parsed = parse_restoration_response(response, candidates)
             action = {
                 "action_type": parsed["action_type"],

@@ -42,7 +42,7 @@ DEFAULTS = {
     "task": os.environ.get("TEST_TASK", "all"),
     "episodes": int(os.environ.get("TEST_EPISODES", "10")),
     "seed": int(os.environ.get("TEST_SEED", "42")),
-    "env_url": os.environ.get("TEST_ENV_URL", "http://localhost:7860"),
+    "env_url": os.environ.get("TEST_ENV_URL", os.environ.get("HF_SPACE_URL", "https://adityahars-sanskrit-env.hf.space")),
     "difficulty": os.environ.get("TEST_DIFFICULTY", "auto"),
     "output": os.environ.get("TEST_OUTPUT_FILE", "test_results.json"),
 }
@@ -232,7 +232,7 @@ def run_episode(base_url, task_id, model, provider, seed, difficulty=None, verbo
 
         messages.append({"role": "assistant", "content": response})
 
-        if task_id == "manuscript_restoration":
+        if task_id in ["manuscript_restoration", "full_manuscript_session"]:
             parsed = parse_restoration_response(response, candidates)
             action = {
                 "action_type": parsed["action_type"],
