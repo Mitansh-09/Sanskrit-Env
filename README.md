@@ -1,319 +1,288 @@
----
-title: SanskritEnv
-emoji: 📜
-colorFrom: red
-colorTo: yellow
-sdk: docker
-app_port: 7860
-license: apache-2.0
-short_description: RL environment for Sanskrit manuscript interpretation
-huggingFace_url: https://huggingface.co/spaces/Adityahars/Sanskrit-env
----
+# SanskritEnv - RL Environment for Sanskrit Manuscript Interpretation
 
-# SanskritEnv
+[![OpenEnv Compatible](https://img.shields.io/badge/OpenEnv-compatible-blue?logo=huggingface)](https://github.com/meta-pytorch/OpenEnv)
+[![HuggingFace Space](https://img.shields.io/badge/HuggingFace-Space-yellow?logo=huggingface)](https://huggingface.co/spaces/Adityahars/Sanskrit-env)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
 
-> An OpenEnv-compatible RL environment that trains AI agents to act like Sanskrit
-> philologists — using deterministic tools to gather evidence and interpret
-> ambiguous manuscript passages. Five tasks from simple MCQ to a full tool-use
-> POMDP with adaptive difficulty.
+## The Real-World Problem
 
-[![openenv](https://img.shields.io/badge/openenv-compatible-blue?logo=huggingface)](https://github.com/meta-pytorch/OpenEnv)
-[![HF Space](https://img.shields.io/badge/HuggingFace-Space-yellow?logo=huggingface)](https://huggingface.co/spaces/Adityahars/Sanskrit-env)
-[![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://python.org)
+India has approximately 10 million Sanskrit manuscripts. The Union Budget 2025-26 allocated INR 60 crore for digitization under the Gyan Bharatam Mission. Digitization, however, is only the first bottleneck.
 
----
+The deeper bottleneck is translation and interpretation. Expert Sanskrit scholars with manuscript-level training are retiring faster than new scholars are being trained. Most current AI systems fail on this problem because they process words independently, without a structured world model of how Sanskrit ambiguity propagates across linguistic layers.
 
-## The Problem
+## The Four Linguistic Layers
 
-India possesses an estimated **1 crore Sanskrit manuscripts** — the largest manuscript collection of any civilisation on Earth. The **Union Budget 2025-26** allocated ₹60 crore to digitize these under the **Gyan Bharatam Mission**. Digitization is accelerating, but translation is not.
-
-The bottleneck is a collapse in human expertise. Trained Sanskrit scholars capable of reading classical manuscripts are retiring faster than new scholars can replace them. Current AI tools fail because they treat each word independently — they have no world model of how Sanskrit's four linguistic layers interact:
-
-| Layer | Problem | Why AI fails |
-|-------|---------|-------------|
-| Lexical | A single term (e.g. *agni*) has 4–6 domain-specific meanings | No contextual disambiguation |
-| Phonological | Compound words (*sandhi*) have multiple valid splits | Requires grammatical + contextual reasoning |
-| Morphological | Compound words (samāsa) must be classified before parsing | Requires grammatical meta-knowledge |
-| Discourse | Pronouns span multiple verses with no antecedent markers | Requires cross-sentence coreference tracking |
-
----
+| Layer | Core ambiguity | Why this is hard |
+|---|---|---|
+| Lexical | Polysemy (for example, `agni` shifts meaning across Ayurveda, ritual, and philosophy) | Correct answer depends on domain-grounded context, not dictionary frequency |
+| Phonological | Sandhi splitting admits multiple valid parses | Requires jointly reasoning over grammar, meter, and local semantics |
+| Morphological | Samasa compounds must be classified before interpretation | Type errors upstream corrupt downstream parsing |
+| Discourse | Pronoun/antecedent links span multiple verses with implicit references | Requires long-range coherence and memory across steps |
 
 ## How SanskritEnv Solves This
 
-SanskritEnv trains AI agents to act like Sanskrit philologists through six escalating tasks:
+SanskritEnv defines six escalating tasks:
 
-**Tasks 1–4: Skill Drills** — single-step MCQ tasks that build foundational Sanskrit skills.
-**Task 5: Manuscript Restoration** — a full tool-use POMDP where the agent must gather evidence using six philological tools before committing an interpretation.
-**Task 6: Full Manuscript Session** — a long-horizon task chaining all 5 challenges on a single passage with cross-phase consistency scoring.
+- Tasks 1-4 are single-step MCQ skill drills.
+- Task 5 is a full tool-use POMDP (manuscript restoration).
+- Task 6 is a long-horizon full session chaining all five skills with cross-phase consistency scoring.
 
-```
-Passage → [lexicon_lookup] → [sandhi_parser] → [meter_checker] → COMMIT answer
-                ↓                    ↓                  ↓
-           glossary data        split options       meter check
-```
+| Task | ID | Type |
+|---|---|---|
+| 1 | `glossary_anchoring` | Single-step lexical disambiguation |
+| 2 | `sandhi_resolution` | Single-step phonological parsing |
+| 3 | `referential_coherence` | Multi-step discourse tracking |
+| 4 | `samasa_classification` | Single-step morphological classification |
+| 5 | `manuscript_restoration` | Tool-use POMDP with commit action |
+| 6 | `full_manuscript_session` | Long-horizon phase chain with consistency checks |
 
-| Task | ID | Difficulty | Steps | Core challenge |
-|------|----|-----------|-------|----------------|
-| Glossary Anchoring | `glossary_anchoring` | Easy | 1 | Domain-specific term disambiguation |
-| Sandhi Resolution | `sandhi_resolution` | Medium | 1 | Phonological compound splitting |
-| Samāsa Classification | `samasa_classification` | Medium | 1 | Grammatical compound type ID |
-| Referential Coherence | `referential_coherence` | Hard | 4–7 | Cross-verse pronoun tracking |
-| Manuscript Restoration | `manuscript_restoration` | Expert | 4–10 | Tool-use POMDP with evidence |
-| Full Manuscript Session | `full_manuscript_session` | Master | 8–15 | 5-phase chain with consistency penalty |
+## Reward Structure - DETAILED
 
-### Adaptive Difficulty Curriculum
+Wrong answers always return exactly `0.0`. This is intentional for GRPO compatibility, not a floor.
 
-Task 5 uses a self-paced curriculum (Bengio et al. 2009):
-- **Beginner**: Clean text, full commentary, budget=8
-- **Intermediate**: 10% OCR noise, partial commentary, budget=6
-- **Hard**: 25% OCR noise, manuscript witnesses, budget=5
-- **Expert**: 40% OCR noise, conflicting witnesses, no commentary, budget=4
+`A_i = (r_i - mean(group)) / (std(group) + epsilon)`
 
-Difficulty escalates when `mean(last 10 scores) > 0.80` and de-escalates when `< 0.45`.
+With a floor around `0.5`, group standard deviation typically collapses near `0.10-0.15`, producing weak training signal. With true zero for wrong answers, standard deviation typically rises near `0.35-0.45`, yielding stronger group-relative advantages.
 
----
+Reward shaping in the environment:
 
-## Reward Function
+- Wrong (`raw = 0.0`) -> `0.0` (unchanged)
+- `0.0 < raw < 0.40` -> linear identity mapping (`shaped = raw`)
+- `0.40 <= raw <= 1.00` -> `shaped = 0.50 + (raw - 0.40) * (0.45 / 0.60)`
 
-### Critical Design: Wrong → 0.0 (GRPO-Compatible)
-
-Wrong answers return **exactly 0.0** — no floor. This gives GRPO the variance it needs:
-
-```
-GRPO advantage: A_i = (r_i - mean(r_group)) / (std(r_group) + ε)
-
-With old 0.50 floor: std ≈ 0.10–0.15 → weak gradients → no learning
-With true zero:      std ≈ 0.35–0.45 → strong gradients → meaningful training
-```
-
-### Tasks 1–4 (Single-Step MCQ)
+### Tasks 1-4 (Single-Step MCQ)
 
 | Outcome | Raw | Shaped |
-|---------|-----|--------|
-| Correct | 1.00 | 0.95 |
+|---|---|---|
+| Full credit | 1.00 | 0.95 |
 | Partial credit | 0.40 | 0.50 |
 | Adjacent sandhi | 0.25 | 0.25 |
-| Wrong | 0.00 | **0.00** |
+| Wrong | 0.00 | 0.00 |
 
 ### Task 5 (Manuscript Restoration POMDP)
 
-**Per-step tool reward:**
-```
-r_tool = relevance_bonus + workflow_bonus - redundancy_penalty
-```
-- PRIMARY tool: +0.08 | Supporting: +0.04 | Redundant: -0.05
+Per-step tool reward:
 
-**Terminal commit reward:**
-```
-r_terminal = r_correctness × M_evidence - P_budget
+`tool_reward = relevance_bonus + workflow_bonus - redundancy_penalty`
 
-M_evidence = 0.60 + 0.40 × (distinct_relevant_tools / tools_needed)
-P_budget   = 0.10 × max(0, steps_used - ideal_steps) / budget
+- PRIMARY tool for episode type: `+0.08`
+- SECOND tool:
+  - If PRIMARY already used: `+0.05`
+  - Otherwise: `+0.04`
+- Supporting tool: `+0.04`
+- Redundant call (same tool + same input): `-0.05`
+- Irrelevant tool example (`meter_checker` on prose): `-0.05`
 
-Evidence never rescues wrong answers: wrong → 0.0 regardless of tools used.
-```
+Workflow pair bonuses:
 
-This implements potential-based reward shaping (Ng et al. 1999) that preserves the optimal policy while guiding toward evidence-gathering behavior.
+- `sandhi_parser -> meter_checker`: `+0.05`
+- `lexicon_lookup -> commentary_fetch`: `+0.05`
+- `witness_compare -> referent_tracker`: `+0.03`
+
+Terminal commit reward:
+
+`terminal_reward = r_correctness * M_evidence - P_budget`
+
+Where:
+
+- `M_evidence = 0.60 + 0.40 * (distinct_relevant_tools_used / tools_needed)` (range `0.60` to `1.00`)
+- `P_budget = 0.10 * max(0, steps_used - ideal_steps) / tool_budget` (range `0.00` to `0.10`)
+
+Critical invariant:
+
+- Wrong commit -> `0.0` regardless of evidence gathered.
+- Episode score is terminal commit reward only.
+- Tool rewards are dense intermediate signals and are not added into final episode score.
 
 ### Task 6 (Full Manuscript Session)
 
-**Cross-Phase Consistency:**
-The agent completes 5 phases (glossary, sandhi, samāsa, coherence, restoration) on a single passage.
-```
-r_session = mean(r_phases) - consistency_penalty + consistency_bonus
+Session score:
 
-consistency_penalty = 0.05 × violations
-consistency_bonus   = 0.05 (if violations == 0)
-```
-A violation occurs if the agent's final interpretation in the restoration phase contradicts an answer it selected in an earlier phase. This penalizes "reasoning drift" across long horizons.
+`session_score = mean(phase_rewards) - consistency_penalty + consistency_bonus`
 
----
+- Each contradiction between phases: `-0.05` per violation
+- Zero violations across phases: `+0.05` bonus
+- Violation rule: if restoration-phase final interpretation contradicts earlier phase answers, it counts as a violation
 
-## Baseline Benchmark Matrix
+### Tool Relevance Matrix (Task 5)
 
-| Model | Episodes | Glossary | Sandhi | Samāsa | Coherence | Restoration | Session | Overall |
-|-------|----------|----------|--------|--------|-----------|-------------|---------|---------|
-| @cf/meta/llama-3.3-70b-instruct-fp8-fast | 20 | 1.000 | 1.000 | 0.970 | 0.700 | — | — | 0.917 |
-| @cf/meta/llama-3.1-70b-instruct | 5 | 1.000 | 1.000 | 1.000 | 0.700 | — | — | 0.925 |
-| @cf/meta/llama-3.1-8b-instruct | 5 | 1.000 | 1.000 | 1.000 | 0.280 | — | — | 0.820 |
-| @cf/meta/llama-3.2-3b-instruct | 5 | 1.000 | 0.800 | 0.480 | 0.140 | — | — | 0.605 |
+| Episode type | `lexicon_lookup` | `sandhi_parser` | `meter_checker` | `commentary_fetch` | `witness_compare` | `referent_tracker` |
+|---|---|---|---|---|---|---|
+| glossary | PRIMARY | support | none | SECOND | support | none |
+| sandhi | support | PRIMARY | SECOND | none | support | none |
+| samasa | support | PRIMARY | SECOND | none | none | none |
+| coherence | support | support | none | support | support | PRIMARY |
 
----
+## The Six Philological Tools
 
-## Six Philological Tools (Task 5)
+| Tool | Input type | Returns | PRIMARY for episode types |
+|---|---|---|---|
+| `lexicon_lookup` | Sanskrit lemma/term | Domain-conditioned meanings and glosses | glossary |
+| `sandhi_parser` | Compound form | Candidate sandhi splits with rule-level structure | sandhi, samasa |
+| `meter_checker` | Candidate split/text span | Meter compatibility signal | none (SECOND in sandhi/samasa) |
+| `commentary_fetch` | Term, phrase, or verse reference | Commentary snippets linked to interpretation | none (SECOND in glossary) |
+| `witness_compare` | Verse/manuscript locus | Variant witness readings and differences | none (support in glossary/sandhi/coherence) |
+| `referent_tracker` | Pronoun/entity cue | Candidate antecedents and discourse links | coherence |
 
-| Tool | Input | Returns |
-|------|-------|---------|
-| `lexicon_lookup` | Sanskrit term | Domain-specific meanings from episode glossary |
-| `sandhi_parser` | Compound word | All valid phonological splits with rules |
-| `meter_checker` | Proposed split | Whether split preserves verse meter |
-| `commentary_fetch` | Term or verse ID | Medieval commentary fragment |
-| `witness_compare` | Verse ID | Variant readings from manuscript witnesses |
-| `referent_tracker` | Pronoun | Possible antecedents with grammatical info |
+## Adaptive Difficulty Curriculum (Task 5)
 
-All tools are **deterministic** — they read from pre-annotated episode data, not computed on the fly.
+Difficulty levels:
 
----
+- Beginner: clean text, full commentary, `budget=8`
+- Intermediate: 10% OCR noise, partial commentary, `budget=6`
+- Hard: 25% OCR noise, partial commentary, `budget=5`
+- Expert: 40% OCR noise, conflicting witnesses, no commentary, `budget=4`
 
-## Setup
+Promotion and fallback:
 
-### Prerequisites
-
-- Python 3.11+
-- Docker (for containerized deployment)
-
-### Local development
-
-```bash
-git clone https://huggingface.co/spaces/Adityahars/Sanskrit-env
-cd sanskrit-env
-python -m venv .venv
-
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
-# macOS/Linux
-# source .venv/bin/activate
-
-pip install -r requirements.txt
-python -m uvicorn server.app:app --host 0.0.0.0 --port 7860 --reload
-
-# Validate (separate terminal)
-openenv validate --url http://localhost:7860
-```
-
-### Docker
-
-```bash
-docker build -t sanskrit-env:local .
-docker run --rm -p 7860:7860 sanskrit-env:local
-curl http://localhost:7860/health
-```
-
-### Run baseline
-
-```bash
-export CLOUDFLARE_API_TOKEN=your_token
-export CLOUDFLARE_ACCOUNT_ID=your_account_id
-
-python baseline.py                                    # all tasks
-python baseline.py --task referential_coherence        # single task
-python baseline.py --task manuscript_restoration --difficulty hard
-```
-
-### Run test agent
-
-```bash
-python test_agent.py --task manuscript_restoration --episodes 3 --difficulty beginner
-python test_agent.py --task all --episodes 5
-python test_agent.py --provider cloudflare --model "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
-```
-
-### Run inference.py
-
-```bash
-export HF_TOKEN=your_huggingface_token
-export API_BASE_URL=https://router.huggingface.co/v1
-export MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
-python inference.py
-```
-
----
-
-## Training (GRPO)
-
-### Recommended setup
-
-- **Model**: Qwen/Qwen2.5-1.5B-Instruct or google/gemma-2-2b-it
-- **Framework**: HuggingFace TRL GRPO
-- **Key insight**: The evidence_use metric should increase during training
-
-### Expected reward curve
-
-1. **Episodes 1–5**: All rewards near 0.0 (agent guesses randomly)
-2. **Episodes 5–20**: Evidence-gathering behavior emerges (tools get used)
-3. **Episodes 20+**: Correct+evidence patterns form (rewards 0.75–0.95)
-
----
-
-## Why RL, Not SFT
-
-| Aspect | SFT | RL (SanskritEnv) |
-|--------|-----|-----------------|
-| Learning signal | Static dataset | Interactive environment |
-| Evidence gathering | Memorized | Learned through exploration |
-| Generalization | To training passages only | To unseen passages |
-| Key metric | Accuracy | Accuracy + evidence quality |
-
-SFT on a static dataset teaches memorization. RL on `manuscript_restoration` teaches the evidence-gathering **workflow**. The trained agent will generalize to unseen passages; an SFT agent will not. The `evidence_use` metric (distinct tools used / tools needed) is the key indicator.
-
----
-
-## Grader Design — No LLM, No BLEU
-
-All graders are fully deterministic:
-- **No LLM judge calls** — reproducible across runs
-- **No BLEU/ROUGE** — unreliable for Sanskrit free word order
-- **Exact string match** against pre-annotated answer tables
-
-Two runs with the same seed produce identical scores.
-
----
+- Escalation threshold: mean of last 10 scores `> 0.80` with at least 5 episodes
+- De-escalation threshold: mean `< 0.45`
 
 ## Data Sources
 
 | Text | Domain | Tasks |
-|------|--------|-------|
+|---|---|---|
 | Sushruta Samhita | Ayurveda | 1, 5 |
-| Bhagavad Gita | Vedanta philosophy | 1, 2, 4, 5 |
+| Bhagavad Gita | Philosophy / Vedanta | 1, 2, 4, 5 |
 | Charaka Samhita | Ayurveda | 1, 3 |
 | Ramayana | Narrative | 2, 3, 4, 5 |
 | Arthashastra | Political philosophy | 1, 3, 4, 5 |
 | Surya Siddhanta | Astronomy | 5 |
 | Aryabhatiya | Astronomy | 1, 3 |
 
----
+## Project Setup - Local Development
 
-## Contributing
+1. Clone the repository:
 
-Contributions welcome. Priority areas:
+   ```bash
+   git clone https://huggingface.co/spaces/Adityahars/Sanskrit-env
+   cd sanskrit-env
+   ```
 
-1. **More Task 5 episodes** — manuscript restoration passages with tool data
-2. **New domains** — Jyotisha, Natya Shastra, Vedic hymns
-3. **Harder sandhi cases** — anusvara, visarga, vowel coalescence
-4. **More samāsa episodes** — Dvigu and Avyayibhava patterns
-5. **Multi-language targets** — Hindi or regional language translations
+2. Create and activate a Python 3.11+ virtual environment:
 
----
+   ```bash
+   python -m venv .venv
+   # PowerShell
+   .venv\Scripts\Activate.ps1
+   # bash/zsh
+   # source .venv/bin/activate
+   ```
 
-## Citation
+3. Install dependencies:
 
-```bibtex
-@misc{sanskritenv2026,
-  title   = {SanskritEnv: A Reinforcement Learning Environment for Sanskrit Manuscript Interpretation},
-  author  = {Meta\_Mesh},
-  year    = {2026},
-  url     = {https://huggingface.co/spaces/Adityahars/Sanskrit-env},
-  note    = {OpenEnv-compatible tool-use POMDP for structured linguistic ambiguity resolution}
-}
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Configure environment variables:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Fill `.env` with your Cloudflare and/or HuggingFace credentials.
+
+5. Start the server locally:
+
+   ```bash
+   python -m uvicorn server.app:app --host 0.0.0.0 --port 7860 --reload
+   ```
+
+6. Validate health endpoint:
+
+   ```bash
+   curl http://localhost:7860/health
+   ```
+
+7. Run the test agent against localhost:
+
+   ```bash
+   python test_agent.py --local --task all --episodes 5
+   ```
+
+## Project Setup - Docker
+
+Build image:
+
+```bash
+docker build -t sanskrit-env:local .
 ```
 
----
+Run container:
 
-## License
+```bash
+docker run --rm -p 7860:7860 sanskrit-env:local
+```
 
-Apache 2.0 — see [LICENSE](LICENSE).
+Check health:
 
-Sanskrit texts used are in the public domain (composed before 1928).
-Annotations, graders, and environment code are original to this project.
+```bash
+curl http://localhost:7860/health
+```
 
----
+## Running `inference.py` (Submission Script)
 
-## Acknowledgements
+`inference.py` is the submission artifact and is designed to follow OpenEnv output constraints strictly:
 
-- [Meta × HuggingFace OpenEnv](https://github.com/meta-pytorch/OpenEnv) — environment framework
-- [Gyan Bharatam Mission](https://indiaculture.gov.in) — the real-world problem this addresses
-- [Monier-Williams Sanskrit Dictionary](https://www.sanskrit-lexicon.uni-koeln.de) — lexical reference
-- [Sanskrit Sandhi Split Sighum](https://huggingface.co/datasets/chronbmm/sanskrit-sandhi-split-sighum) — annotated corpus reference
-- [Itihasa](https://huggingface.co/datasets/rahular/itihasa) — annotated corpus reference
-- Ng et al. (1999) "Policy Invariance Under Reward Transformations" — theoretical foundation for reward shaping
+- Stdout contains only `[START]`, `[STEP]`, and `[END]` lines.
+- Debug/error details are written to stderr.
+- Model/router settings are pulled from environment variables.
+
+Required environment variables:
+
+- `HF_TOKEN`
+- `API_BASE_URL` (for example `https://router.huggingface.co/v1`)
+- `MODEL_NAME` (for example `Qwen/Qwen2.5-72B-Instruct`)
+
+Example:
+
+```bash
+export HF_TOKEN=your_token
+export API_BASE_URL=https://router.huggingface.co/v1
+export MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
+python inference.py
+```
+
+## Running `test_agent.py` (Development Evaluation)
+
+`test_agent.py` is the development/evaluation runner and supports both remote and local environments:
+
+- `--env-url` defaults to the HuggingFace Space URL
+- `--local` is a shortcut for `--env-url http://localhost:7860`
+
+Examples:
+
+Run all tasks against HuggingFace Space (default):
+
+```bash
+python test_agent.py --task all --episodes 5
+```
+
+Run all tasks against localhost:
+
+```bash
+python test_agent.py --local --task all --episodes 5
+```
+
+Run a single task with verbose multi-step output:
+
+```bash
+python test_agent.py --task referential_coherence --episodes 1 --verbose
+```
+
+Run manuscript restoration at hard difficulty with 10 episodes:
+
+```bash
+python test_agent.py --task manuscript_restoration --difficulty hard --episodes 10
+```
+
+## Baseline Results
+
+| Model | Episodes | Glossary | Sandhi | Samasa | Coherence | Restoration | Session | Overall |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | 20 | 1.000 | 1.000 | 0.970 | 0.700 | pending | pending | 0.917 |
+| `@cf/meta/llama-3.1-70b-instruct` | 5 | 1.000 | 1.000 | 1.000 | 0.700 | pending | pending | 0.925 |
+| `@cf/meta/llama-3.1-8b-instruct` | 5 | 1.000 | 1.000 | 1.000 | 0.280 | pending | pending | 0.820 |
+| `@cf/meta/llama-3.2-3b-instruct` | 5 | 1.000 | 0.800 | 0.480 | 0.140 | pending | pending | 0.605 |

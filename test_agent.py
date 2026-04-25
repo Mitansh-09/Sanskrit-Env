@@ -7,15 +7,15 @@ for the manuscript_restoration tool-use POMDP.
 Usage:
     python test_agent.py --task manuscript_restoration --episodes 3 --difficulty beginner
     python test_agent.py --task all --episodes 5
+    python test_agent.py --local --task all --episodes 3
+    python test_agent.py --task referential_coherence --episodes 1 --verbose
     python test_agent.py --provider cloudflare --model "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
 """
 
 import argparse
 import json
 import os
-import sys
 import time
-import random
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -37,11 +37,11 @@ TASK_IDS = [
 ]
 
 DEFAULTS = {
-    "model": os.environ.get("TEST_MODEL", "@cf/meta/llama-3.2-3b-instruct"),
+    "model": os.environ.get("TEST_MODEL", os.environ.get("BASELINE_MODEL", "@cf/meta/llama-3.2-3b-instruct")),
     "provider": os.environ.get("TEST_PROVIDER", "cloudflare"),
-    "task": os.environ.get("TEST_TASK", "all"),
-    "episodes": int(os.environ.get("TEST_EPISODES", "10")),
-    "seed": int(os.environ.get("TEST_SEED", "42")),
+    "task": os.environ.get("TEST_TASK", os.environ.get("BASELINE_TASK", "all")),
+    "episodes": int(os.environ.get("TEST_EPISODES", os.environ.get("EPISODES_PER_TASK", "10"))),
+    "seed": int(os.environ.get("TEST_SEED", os.environ.get("RANDOM_SEED", "42"))),
     "env_url": os.environ.get("TEST_ENV_URL", os.environ.get("HF_SPACE_URL", "https://adityahars-sanskrit-env.hf.space")),
     "difficulty": os.environ.get("TEST_DIFFICULTY", "auto"),
     "output": os.environ.get("TEST_OUTPUT_FILE", "test_results.json"),
@@ -198,6 +198,45 @@ def parse_restoration_response(raw_text, candidates):
         return {"action_type": "commit", "final_answer": match_to_option(raw, candidates)}
 
 
+def _format_value(value: Any) -> str:
+    if value is None:
+        return "None"
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, ensure_ascii=False, indent=2)
+    return str(value)
+
+
+def _print_trace_table(step_trace: List[Dict[str, Any]]) -> None:
+    if not step_trace:
+        print("    Episode Trace: (no steps recorded)")
+        return
+
+    headers = ["Step", "Action", "Reward", "Cumulative"]
+    rows = []
+    for row in step_trace:
+        rows.append([
+            str(row.get("step", "")),
+            str(row.get("action", "")),
+            f"{float(row.get('reward', 0.0) or 0.0):.4f}",
+            f"{float(row.get('cumulative_score', 0.0) or 0.0):.4f}",
+        ])
+
+    widths = []
+    for idx, header in enumerate(headers):
+        max_cell = max(len(r[idx]) for r in rows)
+        widths.append(max(len(header), max_cell))
+
+    def fmt_line(parts):
+        return " | ".join(parts[i].ljust(widths[i]) for i in range(len(parts)))
+
+    separator = "-+-".join("-" * w for w in widths)
+    print("    Episode Trace:")
+    print(f"    {fmt_line(headers)}")
+    print(f"    {separator}")
+    for row in rows:
+        print(f"    {fmt_line(row)}")
+
+
 # ── Episode Runner ───────────────────────────────────────────────────────────
 
 def run_episode(base_url, task_id, model, provider, seed, difficulty=None, verbose=False):
@@ -209,8 +248,9 @@ def run_episode(base_url, task_id, model, provider, seed, difficulty=None, verbo
 
     while not obs.get("done", False):
         candidates = obs.get("candidate_options", [])
+        decision_prompt = obs.get("decision_prompt", "")
         user_msg = f"Passage: {obs.get('source_text_iast', '')}\n"
-        user_msg += f"Question: {obs.get('decision_prompt', '')}\n"
+        user_msg += f"Question: {decision_prompt}\n"
         user_msg += "Options:\n" + "\n".join(f"  {i+1}. {o}" for i, o in enumerate(candidates))
 
         if obs.get("tool_call_history"):
@@ -236,7 +276,7 @@ def run_episode(base_url, task_id, model, provider, seed, difficulty=None, verbo
             parsed = parse_restoration_response(response, candidates)
             action = {
                 "action_type": parsed["action_type"],
-                "selected_option": parsed.get("final_answer", ""),
+                "selected_option": parsed.get("final_answer", "") or "",
                 "tool_name": parsed.get("tool_name"),
                 "tool_input": parsed.get("tool_input"),
                 "final_answer": parsed.get("final_answer"),
@@ -244,19 +284,59 @@ def run_episode(base_url, task_id, model, provider, seed, difficulty=None, verbo
             }
             if parsed["action_type"] == "tool_call":
                 tools_used.append(parsed["tool_name"])
+            if parsed["action_type"] == "commit":
+                matched_option = parsed.get("final_answer", "")
+                action_label = f"commit: {matched_option}"
+            else:
+                matched_option = f"N/A (tool_call: {parsed.get('tool_name', '')})"
+                action_label = f"tool: {parsed.get('tool_name', '')}"
         else:
             selected = match_to_option(response, candidates)
             action = {"selected_option": selected, "reasoning": response[:200]}
-
-        if verbose:
-            print(f"    Step {total_steps}: {response[:80]}...")
+            matched_option = selected
+            action_label = selected
 
         obs = env_step(base_url, action)
         total_steps += 1
-        step_trace.append({"step": total_steps, "reward": obs.get("step_reward")})
+        step_reward = float(obs.get("step_reward", 0.0) or 0.0)
+        cumulative_score = float(obs.get("cumulative_score", 0.0) or 0.0)
+        step_trace.append(
+            {
+                "step": total_steps,
+                "action": action_label,
+                "reward": step_reward,
+                "cumulative_score": cumulative_score,
+                "tool_name": action.get("tool_name"),
+                "tool_input": action.get("tool_input"),
+                "tool_output": obs.get("last_tool_output"),
+            }
+        )
+
+        if verbose:
+            print(f"    [Step {total_steps}]")
+            print(f"      Decision Prompt: {decision_prompt}")
+            print(f"      Raw Response: {response}")
+            print(f"      Matched Option: {matched_option}")
+            print(f"      Step Reward: {step_reward:.4f}")
+            if action.get("action_type") == "tool_call":
+                print(f"      Tool Called: {action.get('tool_name')}")
+                print(f"      Tool Input: {action.get('tool_input')}")
+                print(f"      Tool Output: {_format_value(obs.get('last_tool_output'))}")
+            print("")
 
         if total_steps > 20:
             break
+
+    if verbose:
+        _print_trace_table(step_trace)
+        if task_id in ["manuscript_restoration", "full_manuscript_session"]:
+            tool_steps = [s for s in step_trace if s.get("tool_name")]
+            if tool_steps:
+                print("    Tool Calls:")
+                for tool_step in tool_steps:
+                    print(f"      Step {tool_step['step']}: {tool_step.get('tool_name')}({tool_step.get('tool_input', '')})")
+                    print(f"        Output: {_format_value(tool_step.get('tool_output'))}")
+        print("")
 
     return {
         "task_id": task_id,
@@ -280,14 +360,23 @@ def main():
     parser.add_argument("--episodes", type=int, default=DEFAULTS["episodes"])
     parser.add_argument("--seed", type=int, default=DEFAULTS["seed"])
     parser.add_argument("--difficulty", default=DEFAULTS["difficulty"])
-    parser.add_argument("--env-url", default=DEFAULTS["env_url"])
+    parser.add_argument(
+        "--env-url",
+        default=DEFAULTS["env_url"],
+        help="Environment base URL (default: HuggingFace Space URL).",
+    )
+    parser.add_argument(
+        "--local",
+        action="store_true",
+        help="Shortcut for --env-url http://localhost:7860",
+    )
     parser.add_argument("--output", default=DEFAULTS["output"])
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
+    if args.local:
+        args.env_url = "http://localhost:7860"
 
     tasks = TASK_IDS if args.task == "all" else [args.task]
-    rng = random.Random(args.seed)
-
     print(f"Testing {args.model} on SanskritEnv")
     print("-" * 65)
 
