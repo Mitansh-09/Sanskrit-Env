@@ -83,6 +83,7 @@ def main() -> int:
     repo_quoted = shlex.quote(args.repo_url)
     cmd = (
         "set -euo pipefail && "
+        "apt-get update -qq && apt-get install -y -qq git && "
         f"git clone --depth 1 {repo_quoted} /tmp/sanskrit-env && "
         "exec bash /tmp/sanskrit-env/training/scripts/hf_job_entrypoint.sh"
     )
