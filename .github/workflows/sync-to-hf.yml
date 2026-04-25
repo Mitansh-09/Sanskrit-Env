@@ -16,10 +16,8 @@ jobs:
           lfs: true
 
       - name: Push to HuggingFace Space
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git config user.email "github-actions@github.com"
           git config user.name "GitHub Actions"
-          git remote add hf https://Adityahars:$HF_TOKEN@huggingface.co/spaces/Adityahars/Sanskrit-env
+          git remote add hf https://Adityahars:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/Adityahars/Sanskrit-env
           git push hf main --force
