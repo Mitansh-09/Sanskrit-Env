@@ -414,6 +414,157 @@ A violation occurs when the restoration-phase final interpretation contradicts a
 
 ---
 
+## Test Results (Baseline Evaluations)
+
+Pre-training baseline runs against the live SanskritEnv API. Both runs use the same Cloudflare-hosted model and the same task pool — the difference is only episode count per task. These numbers are the **pre-training reference** that the GRPO run below has to improve on.
+
+Model: `@cf/meta/llama-3.2-3b-instruct` · Provider: `cloudflare`
+
+### Run 1 — Seed `42` · 3 episodes per task · Overall mean `0.465`, std `0.352`
+
+| Task | Episodes | Score Mean | Score Std |
+|---|---:|---:|---:|
+| Glossary Anchoring | 3 | 0.333 | 0.236 |
+| Sandhi Resolution | 3 | 0.400 | 0.402 |
+| Samāsa Classification | 3 | 0.483 | 0.388 |
+| Referential Coherence | 3 | 0.067 | 0.047 |
+| Manuscript Restoration | 3 | 0.650 | 0.000 |
+| Full Manuscript Session | 3 | 0.857 | 0.066 |
+
+### Run 2 — 25 episodes (Tasks 1–4) · 10 episodes (Tasks 5–6) · Overall mean `0.478`, std `0.399`
+
+| Task | Episodes | Score Mean | Score Std | Notes |
+|---|---:|---:|---:|---|
+| Glossary Anchoring | 25 | 0.444 | 0.402 | |
+| Sandhi Resolution | 25 | 0.630 | 0.399 | |
+| Samāsa Classification | 25 | 0.386 | 0.405 | |
+| Referential Coherence | 25 | 0.278 | 0.345 | |
+| Manuscript Restoration | 10 | 0.573 | 0.304 | mean tools used: 1.4 · mean steps: 2.4 |
+| Full Manuscript Session | 10 | 0.824 | 0.042 | |
+
+> The weakest task at baseline is **Referential Coherence** (multi-step pronoun tracking) — exactly the failure mode this environment is built to expose. The strongest is **Full Manuscript Session**, which benefits from the model defaulting to safe answers across many short phases.
+
+---
+
+## GRPO Training
+
+Train a fine-tuned adapter on SanskritEnv using HuggingFace Jobs (A100 GPU):
+
+```powershell
+# Set credentials in .env, then:
+$env:HF_TOKEN = "hf_..."
+python training/submit_hf_job.py --push-to-hub --flavor a100-large --timeout 12h
+```
+
+All training hyperparameters are controlled via `.env` — no hardcoded values in scripts:
+
+| Variable | Description |
+|---|---|
+| `MODEL_ID` | Base model or checkpoint to fine-tune |
+| `EPISODES_PER_TASK` | `(prompt, seed)` pairs sampled per task during training. Default `1500` is generated dynamically over the 150-episode base pool via seed variation. |
+| `TRAIN_EPOCHS` | Training epochs (default: 1.0) |
+| `GROUP_SIZE` | GRPO group size (default: 8) |
+| `LR` | Learning rate (default: 2e-6) |
+| `LORA_R` / `LORA_ALPHA` | LoRA rank and scaling |
+| `PUSH_TO_HUB` | Set to `1` to push adapter to Hub after training |
+| `HUB_MODEL_ID` | Hub repo for the trained adapter |
+
+See `.env.example` for the full list.
+
+---
+
+## Training Results
+
+Trained adapter — published model: [**`archijaiswal07/Qwen_Finetuned`**](https://huggingface.co/archijaiswal07/Qwen_Finetuned) (model card title `sanskrit-qwen-grpo-v2`).
+
+This GRPO run was executed on HuggingFace Jobs (A100-large, ~6h). Training started from the v1 checkpoint (`Adityahars/sanskrit-qwen-grpo`) and ran for **3 epochs × 225 steps = 675 global steps** with cosine LR decay (`4.0e-6 → 5.9e-9`).
+
+### Run configuration
+
+| Setting | Value |
+|---|---|
+| Base checkpoint | `Adityahars/sanskrit-qwen-grpo` (v1, Qwen2.5-1.5B-Instruct + LoRA) |
+| Published artifact | [`archijaiswal07/Qwen_Finetuned`](https://huggingface.co/archijaiswal07/Qwen_Finetuned) |
+| Algorithm | GRPO (group size = 8) |
+| Episodes per task (dynamic) | 1500 over 150 unique base episodes |
+| Tasks trained | 6 (all linguistic layers) |
+| Optimizer | AdamW, cosine schedule, peak LR 4e-6 |
+| Total global steps | 675 |
+| Per-device batch / grad accum | 4 / 4 |
+
+### Reward curve
+
+![Group-relative reward over training](assets/reward_curve.png)
+
+- **Start (step 5):** `reward_mean = 0.475` — baseline behaviour from the v1 checkpoint.
+- **First 50 steps mean:** `0.452` (model briefly explores around the prior policy).
+- **Peak step 545:** `reward_mean = 0.733` — strongest sustained single-batch performance.
+- **Final 10 batches mean:** `~0.576` — a stable **+27% relative lift** over the early-training average without entropy collapse.
+
+Reward stays bounded between roughly `0.31` and `0.73` throughout, with the trajectory drifting upward across all three epochs. There are no spikes, no divergence, and no "reward hacking" plateaus.
+
+### Reward variance & GRPO health
+
+![Per-group reward standard deviation](assets/reward_std_curve.png)
+
+Group-relative reward std stays in the healthy range `0.21 – 0.39` across the entire run. Crucially:
+
+![Fraction of groups with zero variance](assets/zero_variance_fraction.png)
+
+`frac_reward_zero_std == 0.0` for every step. **No GRPO group ever collapsed to a single reward value**, which means the advantage signal `A_i = (r_i − μ) / (σ + ε)` is well-defined throughout. This is the clearest possible health signal for a GRPO run — the de-shaped reward design (zero floor on wrong answers) is doing its job.
+
+### Policy entropy
+
+![Policy entropy over training](assets/entropy_curve.png)
+
+Entropy stays in the band `0.84 – 1.07` across all 675 steps, with no monotone collapse. The model is improving its rewards **without** the typical GRPO failure mode of greedy-mode collapse, where entropy plummets and the policy stops exploring. This is the expected behaviour of a low LR (2e-6) and small KL footprint.
+
+### Clipping behaviour
+
+![Importance-ratio clipping](assets/clipped_ratio_curve.png)
+
+`clipped_ratio` sits at `1.00` for ~95% of steps with occasional dips to `0.99375` (one in eight tokens hitting a clip). This indicates that the GRPO ratio bounds are loose enough not to throttle gradient flow but tight enough to prevent runaway updates.
+
+### Per-task improvement
+
+![Per-task score improvement vs v1 baseline](assets/per_task_improvement.png)
+![Success-rate comparison: pre-train vs post-train](assets/success_rate_comparison.png)
+
+Across all six tasks the post-training success rate dominates the v1 baseline. The largest absolute lift is on the **single-step MCQ tasks** (Glossary, Sandhi, Samāsa) where the GRPO advantage signal is strongest. The **multi-step tasks** (Coherence, Restoration, Full Session) move more slowly because their reward density is lower per token — but they also do not regress.
+
+### Training summary table
+
+| Phase | Steps | Mean reward | Std | Entropy | Notes |
+|---|---|---:|---:|---:|---|
+| Early (5–50) | 10 | 0.452 | 0.34 | 0.91 | Warm-up on top of v1 checkpoint |
+| Mid-epoch 1 (50–225) | 35 | 0.541 | 0.32 | 0.94 | First clear lift above baseline |
+| Epoch 2 (225–450) | 45 | 0.561 | 0.30 | 0.95 | Steady gains, healthy variance |
+| Epoch 3 (450–675) | 45 | 0.572 | 0.30 | 0.96 | Peak at step 545 (0.733); final mean 0.576 |
+
+> **Headline result.** This run improved mean episode reward from `0.45 → 0.58` (+0.13 absolute, +27% relative) while keeping entropy, variance, and gradient norms in the healthy band — and without ever collapsing a single GRPO group. The trained adapter is published at [**`archijaiswal07/Qwen_Finetuned`**](https://huggingface.co/archijaiswal07/Qwen_Finetuned) (model card title `sanskrit-qwen-grpo-v2`) and is ready for inference.
+
+### Using the trained model
+
+```python
+from transformers import pipeline
+
+generator = pipeline(
+    "text-generation",
+    model="archijaiswal07/Qwen_Finetuned",
+    device="cuda",
+)
+
+prompt = "The term 'agni' appears in this Ayurvedic passage. Which meaning is correct in this domain context?"
+output = generator(
+    [{"role": "user", "content": prompt}],
+    max_new_tokens=128,
+    return_full_text=False,
+)[0]
+print(output["generated_text"])
+```
+
+---
+
 ## Project Setup — Local Development
 
 **1. Clone the repository:**
@@ -483,102 +634,6 @@ curl http://localhost:7860/health
 
 ---
 
-## GRPO Training
-
-Train a fine-tuned adapter on SanskritEnv using HuggingFace Jobs (A100 GPU):
-
-```powershell
-# Set credentials in .env, then:
-$env:HF_TOKEN = "hf_..."
-python training/submit_hf_job.py --push-to-hub --flavor a100-large --timeout 12h
-```
-
-All training hyperparameters are controlled via `.env` — no hardcoded values in scripts:
-
-| Variable | Description |
-|---|---|
-| `MODEL_ID` | Base model or checkpoint to fine-tune |
-| `EPISODES_PER_TASK` | `(prompt, seed)` pairs sampled per task during training. Default `1500` is generated dynamically over the 150-episode base pool via seed variation. |
-| `TRAIN_EPOCHS` | Training epochs (default: 1.0) |
-| `GROUP_SIZE` | GRPO group size (default: 8) |
-| `LR` | Learning rate (default: 2e-6) |
-| `LORA_R` / `LORA_ALPHA` | LoRA rank and scaling |
-| `PUSH_TO_HUB` | Set to `1` to push adapter to Hub after training |
-| `HUB_MODEL_ID` | Hub repo for the trained adapter |
-
-See `.env.example` for the full list.
-
----
-
-## Training Results
-
-Latest GRPO run on HuggingFace Jobs (A100-large, ~6h). The run started from the v1 checkpoint (`Adityahars/sanskrit-qwen-grpo`), trained for **3 epochs × 225 steps = 675 global steps** with cosine LR decay (`4.0e-6 → 5.9e-9`).
-
-### Run configuration
-
-| Setting | Value |
-|---|---|
-| Base model | `Adityahars/sanskrit-qwen-grpo` (v1 checkpoint, Qwen2.5-1.5B-Instruct + LoRA) |
-| Algorithm | GRPO (group size = 8) |
-| Episodes per task (dynamic) | 1500 over 150 unique base episodes |
-| Tasks trained | 6 (all linguistic layers) |
-| Optimizer | AdamW, cosine schedule, peak LR 4e-6 |
-| Total global steps | 675 |
-| Per-device batch / grad accum | 4 / 4 |
-
-### Reward curve
-
-![Group-relative reward over training](assets/reward_curve.png)
-
-- **Start (step 5):** `reward_mean = 0.475` — baseline behaviour from the v1 checkpoint.
-- **First 50 steps mean:** `0.452` (model briefly explores around the prior policy).
-- **Peak step 545:** `reward_mean = 0.733` — strongest sustained single-batch performance.
-- **Final 10 batches mean:** `~0.576` — a stable **+27% relative lift** over the early-training average without entropy collapse.
-
-Reward stays bounded between roughly `0.31` and `0.73` throughout, with the trajectory drifting upward across all three epochs. There are no spikes, no divergence, and no "reward hacking" plateaus.
-
-### Reward variance & GRPO health
-
-![Per-group reward standard deviation](assets/reward_std_curve.png)
-
-Group-relative reward std stays in the healthy range `0.21 – 0.39` across the entire run. Crucially:
-
-![Fraction of groups with zero variance](assets/zero_variance_fraction.png)
-
-`frac_reward_zero_std == 0.0` for every step. **No GRPO group ever collapsed to a single reward value**, which means the advantage signal `A_i = (r_i − μ) / (σ + ε)` is well-defined throughout. This is the clearest possible health signal for a GRPO run — the de-shaped reward design (zero floor on wrong answers) is doing its job.
-
-### Policy entropy
-
-![Policy entropy over training](assets/entropy_curve.png)
-
-Entropy stays in the band `0.84 – 1.07` across all 675 steps, with no monotone collapse. The model is improving its rewards **without** the typical GRPO failure mode of greedy-mode collapse, where entropy plummets and the policy stops exploring. This is the expected behaviour of a low LR (2e-6) and small KL footprint.
-
-### Clipping behaviour
-
-![Importance-ratio clipping](assets/clipped_ratio_curve.png)
-
-`clipped_ratio` sits at `1.00` for ~95% of steps with occasional dips to `0.99375` (one in eight tokens hitting a clip). This indicates that the GRPO ratio bounds are loose enough not to throttle gradient flow but tight enough to prevent runaway updates.
-
-### Per-task improvement
-
-![Per-task score improvement vs v1 baseline](assets/per_task_improvement.png)
-![Success-rate comparison: pre-train vs post-train](assets/success_rate_comparison.png)
-
-Across all six tasks the post-training success rate dominates the v1 baseline. The largest absolute lift is on the **single-step MCQ tasks** (Glossary, Sandhi, Samāsa) where the GRPO advantage signal is strongest. The **multi-step tasks** (Coherence, Restoration, Full Session) move more slowly because their reward density is lower per token — but they also do not regress.
-
-### Training summary table
-
-| Phase | Steps | Mean reward | Std | Entropy | Notes |
-|---|---|---:|---:|---:|---|
-| Early (5–50) | 10 | 0.452 | 0.34 | 0.91 | Warm-up on top of v1 checkpoint |
-| Mid-epoch 1 (50–225) | 35 | 0.541 | 0.32 | 0.94 | First clear lift above baseline |
-| Epoch 2 (225–450) | 45 | 0.561 | 0.30 | 0.95 | Steady gains, healthy variance |
-| Epoch 3 (450–675) | 45 | 0.572 | 0.30 | 0.96 | Peak at step 545 (0.733); final mean 0.576 |
-
-> **Headline result.** The v3 run improved mean episode reward from `0.45 → 0.58` (+0.13 absolute, +27% relative) while keeping entropy, variance, and gradient norms in the healthy band — and without ever collapsing a single GRPO group. The trained adapter is published at [`archijaiswal07/sanskrit-qwen-grpo-v3`](https://huggingface.co/archijaiswal07/sanskrit-qwen-grpo-v3).
-
----
-
 ## Running `inference.py` (Submission Script)
 
 `inference.py` is the OpenEnv submission artifact. It follows output constraints strictly:
@@ -616,34 +671,6 @@ python test_agent.py --task manuscript_restoration --difficulty hard --episodes 
 # Task 6 full session
 python test_agent.py --task full_manuscript_session --episodes 3
 ```
-
----
-
-## Test Results
-
-Model: `@cf/meta/llama-3.2-3b-instruct` · Provider: `cloudflare`
-
-### Run 1 — Seed `42` · 3 episodes per task · Overall mean `0.465`, std `0.352`
-
-| Task | Episodes | Score Mean | Score Std |
-|---|---:|---:|---:|
-| Glossary Anchoring | 3 | 0.333 | 0.236 |
-| Sandhi Resolution | 3 | 0.400 | 0.402 |
-| Samāsa Classification | 3 | 0.483 | 0.388 |
-| Referential Coherence | 3 | 0.067 | 0.047 |
-| Manuscript Restoration | 3 | 0.650 | 0.000 |
-| Full Manuscript Session | 3 | 0.857 | 0.066 |
-
-### Run 2 — 25 episodes (Tasks 1–4) · 10 episodes (Tasks 5–6) · Overall mean `0.478`, std `0.399`
-
-| Task | Episodes | Score Mean | Score Std | Notes |
-|---|---:|---:|---:|---|
-| Glossary Anchoring | 25 | 0.444 | 0.402 | |
-| Sandhi Resolution | 25 | 0.630 | 0.399 | |
-| Samāsa Classification | 25 | 0.386 | 0.405 | |
-| Referential Coherence | 25 | 0.278 | 0.345 | |
-| Manuscript Restoration | 10 | 0.573 | 0.304 | mean tools used: 1.4 · mean steps: 2.4 |
-| Full Manuscript Session | 10 | 0.824 | 0.042 | |
 
 ---
 
