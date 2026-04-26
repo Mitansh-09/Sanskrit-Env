@@ -63,8 +63,10 @@ def _pace_env_request(url: str) -> None:
     if raw:
         interval = max(0.0, float(raw))
     else:
+        # Default: 0.1s for hf.space (warmed instance); 0 for local.
+        # Set SANSKRIT_ENV_MIN_INTERVAL=0.35 explicitly if you see 429s.
         u = url.lower()
-        interval = 0.35 if ("hf.space" in u or "huggingface.co" in u) else 0.0
+        interval = 0.1 if ("hf.space" in u or "huggingface.co" in u) else 0.0
     if interval <= 0.0:
         return
     now = time.monotonic()
